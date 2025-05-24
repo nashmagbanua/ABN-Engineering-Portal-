@@ -115,11 +115,20 @@
   <audio id="loginAudio" autoplay loop>
     <source src="M1.mp3" type="audio/mpeg">
   </audio>
+
   <script>
     const audio = document.getElementById('loginAudio');
     audio.volume = 0.2;
-  </script>
 
+    // Auto-play fallback on first user interaction (mobile-safe)
+    document.body.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play().catch(err => {
+          console.log("Auto-play failed:", err);
+        });
+      }
+    }, { once: true });
+  </script>
 <div class="login-container">
     <div class="login-title">
         <img src="abn_logo_clean_green.png" alt="ABN Logo">
