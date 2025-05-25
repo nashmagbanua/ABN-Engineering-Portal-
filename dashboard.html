@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ABN Tools Portal</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="carousel-container">
+    <button class="nav left">&#10094;</button>
+    <div class="carousel">
+      <div class="card" onclick="window.open('https://cws-flowmeter-abn.vercel.app', '_blank')">
+        <img src="images/tool_card_1.png" alt="CWS GPM Tool"/>
+        <h2>CWS GPM Tool</h2>
+        <p>Log and compute water flow rate</p>
+      </div>
+      <div class="card" onclick="window.open('https://abnboiler.static.domains', '_blank')">
+        <img src="images/tool_card_2.png" alt="Boiler Efficiency"/>
+        <h2>Boiler Efficiency</h2>
+        <p>Monitor coal vs steam ratio</p>
+      </div>
+      <div class="card" onclick="alert('Coming Soon!')">
+        <img src="images/tool_card_3.png" alt="Coal Log"/>
+        <h2>Coal Log / Report</h2>
+        <p>Daily consumption logging</p>
+      </div>
+      <div class="card" onclick="window.open('https://power-log-abn.vercel.app', '_blank')">
+        <img src="images/tool_card_4.png" alt="Power Reading"/>
+        <h2>Power Consumption</h2>
+        <p>Daily equipment kWh tracker</p>
+      </div>
+    </div>
+    <button class="nav right">&#10095;</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
