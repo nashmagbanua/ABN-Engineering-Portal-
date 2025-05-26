@@ -356,12 +356,29 @@
     }
 
     function useCamera() {
-      document.getElementById("ocrPopup").style.display = "none";
-      document.getElementById("cameraModal").style.display = "flex";
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => { document.getElementById("video").srcObject = stream; })
-        .catch(err => alert("Camera error: " + err));
-    }
+  document.getElementById("ocrPopup").style.display = "none";
+  document.getElementById("cameraModal").style.display = "flex";
+
+  // Try rear camera first
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { exact: "environment" } }
+  })
+  .then(stream => {
+    document.getElementById("video").srcObject = stream;
+  })
+  .catch(() => {
+    // Fallback kung walang rear camera
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" }
+    })
+    .then(stream => {
+      document.getElementById("video").srcObject = stream;
+    })
+    .catch(err => {
+      alert("Camera error: " + err.message);
+    });
+  });
+}
 
     function captureImage() {
       const video = document.getElementById("video");
