@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Power Consumption Tool</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2/dist/tesseract.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    img { display: block; max-width: 100%; margin: 10px auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+    th.section-title { background-color: #a5c8f5; text-align: left; }
+    input[type="text"] { width: 100%; box-sizing: border-box; }
+    textarea { width: 100%; height: 60px; margin-top: 10px; }
+    .popup-overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none; background: rgba(0, 0, 0, 0.6);
+      justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .popup {
+      background: white; padding: 20px; border-radius: 8px; text-align: center;
+    }
+    .popup button { margin: 10px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <img src="nutribev_daily_power_banner.png" alt="Banner" />
+  <label><strong>Operator:</strong> <input type="text" /></label>
+
+  <table>
+    <tr><th>Equipment</th><th>Initial</th><th>Current</th><th>kWh</th></tr>
+    
+    <tr>
+      <td>Refrigeration System</td>
+      <td><input type="text" id="initial0" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current0" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh0" readonly /></td>
+    </tr>
+    <tr>
+      <td>Clean Steam Generator</td>
+      <td><input type="text" id="initial1" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current1" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh1" readonly /></td>
+    </tr>
+    <tr>
+      <td>Bulk Chemical System</td>
+      <td><input type="text" id="initial2" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current2" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh2" readonly /></td>
+    </tr>
+    <tr>
+      <td>Condensate Return System</td>
+      <td><input type="text" id="initial3" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current3" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh3" readonly /></td>
+    </tr>
+    <tr>
+      <td>RVAC</td>
+      <td><input type="text" id="initial4" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current4" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh4" readonly /></td>
+    </tr>
+    <tr>
+      <td>BOILER</td>
+      <td><input type="text" id="initial5" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current5" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh5" readonly /></td>
+    </tr>
+    <tr>
+      <td>Compressed Dry Air (CDA)</td>
+      <td><input type="text" id="initial6" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current6" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh6" readonly /></td>
+    </tr>
+    <tr>
+      <td>Waste Water Treatment Plant (WWTP)</td>
+      <td><input type="text" id="initial7" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current7" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh7" readonly /></td>
+    </tr>
+    <tr>
+      <td>Water Treatment Plant (WTP)</td>
+      <td><input type="text" id="initial8" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current8" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh8" readonly /></td>
+    </tr>
+    <tr>
+      <td>Combined Water Storage (CWS)</td>
+      <td><input type="text" id="initial9" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current9" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh9" readonly /></td>
+    </tr>
+    <tr>
+      <td>Sump Pit Pump 1</td>
+      <td><input type="text" id="initial10" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current10" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh10" readonly /></td>
+    </tr>
+    <tr>
+      <td>Freezer & Cold Storage</td>
+      <td><input type="text" id="initial11" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current11" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh11" readonly /></td>
+    </tr>
+    <tr>
+      <td>CIP Line (E7)</td>
+      <td><input type="text" id="initial12" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current12" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh12" readonly /></td>
+    </tr>
+    <tr>
+      <td>Bottle Washer (E8)</td>
+      <td><input type="text" id="initial13" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current13" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh13" readonly /></td>
+    </tr>
+    <tr>
+      <td>Modular Labeller (E9)</td>
+      <td><input type="text" id="initial14" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current14" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh14" readonly /></td>
+    </tr>
+    <tr>
+      <td>Container Conveyor (E10)</td>
+      <td><input type="text" id="initial15" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current15" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh15" readonly /></td>
+    </tr>
+    <tr>
+      <td>Conveyor Lubrication (E11)</td>
+      <td><input type="text" id="initial16" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current16" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh16" readonly /></td>
+    </tr>
+    <tr>
+      <td>Alwin Soy</td>
+      <td><input type="text" id="initial17" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current17" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh17" readonly /></td>
+    </tr>
+    <tr>
+      <td>Process MCC</td>
+      <td><input type="text" id="initial18" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current18" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh18" readonly /></td>
+    </tr>
+    <tr>
+      <td>Homogenizer</td>
+      <td><input type="text" id="initial19" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current19" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh19" readonly /></td>
+    </tr>
+    <tr>
+      <td>Soya Bean Pre-treatment & Handling</td>
+      <td><input type="text" id="initial20" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current20" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh20" readonly /></td>
+    </tr>
+    <tr>
+      <td>Sugar Dissolving</td>
+      <td><input type="text" id="initial21" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current21" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh21" readonly /></td>
+    </tr>
+    <tr>
+      <td>Container Dryer (E1)</td>
+      <td><input type="text" id="initial22" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current22" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh22" readonly /></td>
+    </tr>
+    <tr>
+      <td>Packer (E2)</td>
+      <td><input type="text" id="initial23" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current23" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh23" readonly /></td>
+    </tr>
+    <tr>
+      <td>Unpacker (E3)</td>
+      <td><input type="text" id="initial24" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current24" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh24" readonly /></td>
+    </tr>
+    <tr>
+      <td>Container Depalettiser (E4)</td>
+      <td><input type="text" id="initial25" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current25" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh25" readonly /></td>
+    </tr>
+    <tr>
+      <td>Pack Washing (E5)</td>
+      <td><input type="text" id="initial26" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current26" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh26" readonly /></td>
+    </tr>
+    <tr>
+      <td>Inspector (E6)</td>
+      <td><input type="text" id="initial27" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current27" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh27" readonly /></td>
+    </tr>
+    <tr>
+      <td>Pack Conveyor (E12)</td>
+      <td><input type="text" id="initial28" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current28" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh28" readonly /></td>
+    </tr>
+    <tr>
+      <td>LIPS (E13)</td>
+      <td><input type="text" id="initial29" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current29" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh29" readonly /></td>
+    </tr>
+    <tr>
+      <td>Wrap Around</td>
+      <td><input type="text" id="initial30" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current30" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh30" readonly /></td>
+    </tr>
+    <tr>
+      <td>Hydro Sterilizer</td>
+      <td><input type="text" id="initial31" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current31" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh31" readonly /></td>
+    </tr>
+    <tr>
+      <td>Filler</td>
+      <td><input type="text" id="initial32" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current32" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh32" readonly /></td>
+    </tr>
+    <tr>
+      <td>DPP</td>
+      <td><input type="text" id="initial33" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current33" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh33" readonly /></td>
+    </tr>
+    <tr>
+      <td>DLP</td>
+      <td><input type="text" id="initial34" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current34" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh34" readonly /></td>
+    </tr>
+    <tr>
+      <td>Warehouse</td>
+      <td><input type="text" id="initial35" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current35" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh35" readonly /></td>
+    </tr>
+    <tr>
+      <td>RVAC (220V)</td>
+      <td><input type="text" id="initial36" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current36" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh36" readonly /></td>
+    </tr>
+    <tr>
+      <td>WWTP (220V)</td>
+      <td><input type="text" id="initial37" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current37" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh37" readonly /></td>
+    </tr>
+    <tr>
+      <td>DP-WM</td>
+      <td><input type="text" id="initial38" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current38" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh38" readonly /></td>
+    </tr>
+    <tr>
+      <td>Sump Pit Pump 2</td>
+      <td><input type="text" id="initial39" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current39" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh39" readonly /></td>
+    </tr>
+    <tr>
+      <td>Accumulation Table</td>
+      <td><input type="text" id="initial40" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="current40" onclick="openPopup(this)" /></td>
+      <td><input type="text" id="kwh40" readonly /></td>
+    </tr>
+  </table>
+
+  <label><strong>Supervisor:</strong> <input type="text" /></label>
+  <label><strong>Remarks:</strong><textarea></textarea></label>
+
+  <div class="popup-overlay" id="popup" onclick="closePopup(event)">
+    <div class="popup" onclick="event.stopPropagation()">
+      <p>Select input method:</p>
+      <button onclick="manualInput()">Manual</button>
+      <button onclick="uploadImage()">Upload Image</button>
+    </div>
+  </div>
+
+  <input type="file" id="imageUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />
+
+  <script>
+    let activeInput = null;
+
+    function openPopup(input) {
+      activeInput = input;
+      document.getElementById('popup').style.display = 'flex';
+    }
+
+    function closePopup(e) {
+      document.getElementById('popup').style.display = 'none';
+    }
+
+    function manualInput() {
+      closePopup();
+      if (activeInput) activeInput.focus();
+    }
+
+    function uploadImage() {
+      closePopup();
+      document.getElementById('imageUpload').click();
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file && activeInput) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          Tesseract.recognize(reader.result, 'eng').then(result => {
+            activeInput.value = result.data.text.trim();
+            event.target.value = '';
+            computeKwh(activeInput);
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function computeKwh(input) {
+      const row = input.parentElement.parentElement;
+      const fields = row.querySelectorAll("input[type='text']");
+      const initial = parseFloat(fields[0].value);
+      const current = parseFloat(fields[1].value);
+      if (!isNaN(initial) && !isNaN(current)) {
+        fields[2].value = (current - initial).toFixed(2);
+      }
+    }
+
+    document.querySelectorAll("input[type='text']").forEach(input => {
+      input.addEventListener("input", () => computeKwh(input));
+    });
+  </script>
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button onclick="window.print()">Print</button>
+    <button onclick="alert('Export to Excel feature coming soon!')">Export to Excel</button>
+    <button onclick="alert('Data sent to Admin! (temporary simulation)')">Send to Admin</button>
+  </div>
+
+</body>
+</html>
