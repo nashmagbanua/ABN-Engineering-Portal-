@@ -181,16 +181,6 @@
         alert("Maling password. Subukan ulit.");
     }
 }
-        } else {
-            loginAttempts++;
-
-            if (loginAttempts >= 3) {
-                document.getElementById("abn-alert").classList.remove("hidden");
-            } else {
-                alert("Maling password. Subukan ulit.");
-            }
-        }
-    }
 
     function closeAbnAlert() {
         document.getElementById("abn-alert").classList.add("hidden");
