@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coal Logs / Reports Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      margin: 0;
+      background-color: #f3f4f6; /* Tailwind gray-100 */
+      padding: 1.25rem; /* p-5 */
+      color: #1f2937; /* Tailwind gray-800 */
+    }
+    .app-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background-color: #ffffff;
+      border-radius: 0.5rem; /* rounded-lg */
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+    }
+    .modal-container, .main-content-container, .edit-modal-content {
+      background: #fff;
+      border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+      border-radius: 0.5rem; /* rounded-lg */
+      padding: 1.25rem; /* p-5 */
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-md */
+      margin-bottom: 1.25rem; /* mb-5 */
+    }
+    .form-row {
+      margin-bottom: 1rem; /* mb-4 */
+    }
+    label {
+      font-weight: 600; /* font-semibold */
+      display: block;
+      margin-bottom: 0.25rem; /* mb-1 */
+      color: #374151; /* Tailwind gray-700 */
+    }
+    input[type="text"], input[type="time"], textarea, select {
+      width: 100%;
+      padding: 0.5rem 0.75rem; /* py-2 px-3 */
+      border: 1px solid #d1d5db; /* Tailwind gray-300 */
+      border-radius: 0.375rem; /* rounded-md */
+      box-sizing: border-box;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    input[type="text"]:focus, input[type="time"]:focus, textarea:focus, select:focus {
+      border-color: #2563eb; /* Tailwind blue-600 */
+      outline: none;
+      box-shadow: 0 0 0 0.125em rgba(37, 99, 235, 0.25);
+    }
+    textarea {
+      min-height: 80px;
+    }
+    #autoLogReportDisplay {
+      min-height: 100px;
+      background-color: #f9fafb; /* Tailwind gray-50 */
+      border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+      border-radius: 0.375rem; /* rounded-md */
+      padding: 0.75rem; /* p-3 */
+      font-family: monospace;
+      font-size: 0.875rem; /* text-sm */
+      white-space: pre-wrap; /* Allows line breaks */
+      overflow-y: auto;
+    }
+    select[multiple] {
+      height: auto;
+      min-height: 120px;
+    }
+    .styled-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-top: 1.25rem; /* mt-5 */
+      border-radius: 0.375rem; /* rounded-md */
+      overflow: hidden; /* For rounded corners on table */
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .styled-table th, .styled-table td {
+      border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+      padding: 0.75rem; /* p-3 */
+      text-align: center;
+      word-wrap: break-word;
+    }
+    .styled-table th {
+      background-color: #f9fafb; /* Tailwind gray-50 */
+      color: #374151; /* Tailwind gray-700 */
+      font-weight: 600; /* font-semibold */
+    }
+    .styled-table td input[type="text"] {
+      width: 100%;
+      padding: 0.375rem; /* p-1.5 */
+      font-size: 0.875rem; /* text-sm */
+    }
+    .button-group {
+      margin-top: 1.25rem; /* mt-5 */
+      text-align: right;
+    }
+    .button-group button, .custom-button {
+      padding: 0.625rem 1.25rem; /* py-2.5 px-5 */
+      margin-left: 0.5rem; /* ml-2 */
+      border: none;
+      border-radius: 0.375rem; /* rounded-md */
+      font-weight: 500; /* font-medium */
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+    }
+    .button-group button:hover, .custom-button:hover {
+        transform: translateY(-1px);
+    }
+    .button-primary {
+      background-color: #2563eb; /* Tailwind blue-600 */
+      color: white;
+    }
+    .button-primary:hover {
+      background-color: #1d4ed8; /* Tailwind blue-700 */
+    }
+    .button-secondary {
+      background-color: #e5e7eb; /* Tailwind gray-200 */
+      color: #374151; /* Tailwind gray-700 */
+    }
+    .button-secondary:hover {
+      background-color: #d1d5db; /* Tailwind gray-300 */
+    }
+    .hidden {
+      display: none;
+    }
+
+    /* Custom Modal Styles (for messages and editing) */
+    .generic-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .message-modal-content, .edit-modal-content { /* edit-modal-content shares some styling */
+      background-color: white;
+      padding: 1.5rem; /* p-6 */
+      border-radius: 0.5rem; /* rounded-lg */
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+      min-width: 300px;
+      max-width: 90%;
+    }
+    .message-modal-content p {
+      margin-bottom: 1rem; /* mb-4 */
+      font-size: 1rem; /* text-base */
+      text-align: center;
+    }
+    .user-id-display {
+        font-size: 0.75rem; /* text-xs */
+        color: #6b7280; /* Tailwind gray-500 */
+        margin-top: 1rem;
+        text-align: center;
+    }
+    .log-action-buttons button { margin-top: 0.5rem; margin-right: 0.5rem;}
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div id="userIdContainer" class="user-id-display">User ID: Not signed in</div>
+
+  <div id="initialInfoModal" class="modal-container">
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">Coal Logs - Team Info</h2>
+    <div class="form-row">
+      <label for="teamName">Team Name (Opscrew)</label>
+      <select id="teamName" multiple class="h-auto min-h-[120px]">
+        <option>Ruzzel Arenas</option><option>Jhamir Paul Madamba</option><option>Mike Garcia</option>
+        <option>Enrique Austria</option><option>Jhondel Nimes</option><option>Genesis Mendez</option>
+        <option>Jeremy Alinsunurin</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Shift</label>
+      <div class="flex items-center space-x-4">
+        <label class="font-normal"><input type="radio" name="shift" value="Day" class="mr-1"> Day Shift</label>
+        <label class="font-normal"><input type="radio" name="shift" value="Night" class="mr-1"> Night Shift</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label for="operatorName">Operator Name</label>
+      <select id="operatorName" multiple class="h-auto min-h-[120px]">
+        <option>Oliver Alcosaba</option><option>Adonis Millianes</option><option>Jerome Saludes</option>
+        <option>Ayman Liao</option><option>Nick Lodor</option><option>Alvin Capacete</option>
+        <option>Jhonas Magbanua</option><option>Joselito Vargas</option><option>Jhenrize Dacillo</option>
+        <option>Junald Abadilla</option><option>Lhon Litiza</option><option>Ronald Villasis</option>
+        <option>Jomar Edillo</option>
+      </select>
+    </div>
+    <div class="form-row"><label for="boilerMain">Boiler Main</label><input type="text" id="boilerMain"></div>
+    <div class="form-row"><label for="boilerBackup">Boiler Backup</label><input type="text" id="boilerBackup"></div>
+    <div class="form-row"><label for="coalYard">Coal Yard Used</label><input type="text" id="coalYard"></div>
+    <div class="form-row"><label for="maxwork">Maxwork (e.g., Person's Name, Optional)</label><input type="text" id="maxwork"></div>
+    <div class="button-group">
+      <button onclick="submitInitialInfo()" class="custom-button button-primary">Continue</button>
+      <button onclick="loadExistingRecord()" class="custom-button button-secondary">Use Existing Record</button>
+    </div>
+  </div>
+
+  <div id="mainContent" class="main-content-container hidden">
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">Coal Logs / Reports</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
+      <div><strong>Date:</strong> <span id="dateNowDisplay"></span></div>
+      <div><strong>Shift:</strong> <span id="shiftDisplay"></span></div>
+      <div><strong>Team:</strong> <span id="teamDisplay" class="break-all"></span></div>
+      <div><strong>Operator:</strong> <span id="operatorDisplay" class="break-all"></span></div>
+      <div><strong>Boiler Main:</strong> <span id="boilerMainDisplay"></span></div>
+      <div><strong>Boiler Backup:</strong> <span id="boilerBackupDisplay"></span></div>
+      <div><strong>Coal Yard:</strong> <span id="coalYardDisplay"></span> <button onclick="openEditCoalYardModal()" class="text-xs text-blue-600 hover:underline ml-2">(Edit)</button></div>
+      <div><strong>Maxwork:</strong> <span id="maxworkDisplay"></span></div>
+    </div>
+
+    <div class="form-row">
+      <label for="reportBox">Manual Report / Notes:</label>
+      <textarea id="reportBox"></textarea>
+    </div>
+
+    <div class="form-row">
+        <label for="autoLogReportDisplay">Automated Log Report:</label>
+        <div id="autoLogReportDisplay" class="h-32 overflow-y-auto border p-2 bg-gray-50"></div>
+    </div>
+    
+    <div class="form-row log-action-buttons">
+        <label>Log Actions:</label>
+        <button onclick="recordMaxworkDeparture()" class="custom-button button-secondary text-sm">Record Maxwork Departure</button>
+        </div>
+
+
+    <h3 class="text-lg font-semibold my-3 text-gray-700">Hourly Coal Activity Log</h3>
+    <p class="text-xs text-gray-500 mb-2">Entries in 'Bucket' and 'Coal Switch' will be added to the Automated Log Report when you move out of the input field.</p>
+    <div class="overflow-x-auto">
+      <table id="hourlyLogTable" class="styled-table">
+        <thead>
+          <tr><th>Time</th><th>Bucket (#)</th><th>Tapon</th><th>Coal Switch (e.g., "Yard 1 to Yard 4")</th></tr>
+        </thead>
+        <tbody>
+          </tbody>
+      </table>
+    </div>
+    <div class="button-group">
+      <button onclick="saveLogToFirestore()" class="custom-button button-primary">Send to Admin</button>
+      <button onclick="showInitialModal()" class="custom-button button-secondary">Back to Initial Info</button>
+    </div>
+  </div>
+</div>
+
+<div id="messageModal" class="generic-modal-overlay hidden">
+  <div class="message-modal-content">
+    <p id="messageText"></p>
+    <button onclick="closeMessageModal()" class="custom-button button-primary mt-2">OK</button>
+  </div>
+</div>
+
+<div id="editCoalYardModal" class="generic-modal-overlay hidden">
+  <div class="edit-modal-content">
+    <h3 class="text-lg font-semibold mb-3">Edit Coal Yard</h3>
+    <div class="form-row">
+      <label for="newCoalYardInput">New Coal Yard Value:</label>
+      <input type="text" id="newCoalYardInput" placeholder="e.g., Coal Yard 5/7">
+    </div>
+    <div class="button-group">
+      <button onclick="saveCoalYardChange()" class="custom-button button-primary">Save Change</button>
+      <button onclick="closeEditCoalYardModal()" class="custom-button button-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<script type="module">
+  // Firebase imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+  // --- Global Variables & Firebase Setup ---
+  let db, auth;
+  let currentUserId = null;
+  let currentLogData = { // Initialize with structure for new features
+    automatedLog: [] // Array to store automated log entries
+  }; 
+
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+  const firebaseConfig = {
+  apiKey: "AIzaSyB0-PNkHDcLW356892joz-8KDVYRXQbShg",
+  authDomain: "abnportal-fb070.firebaseapp.com",
+  projectId: "abnportal-fb070",
+  storageBucket: "abnportal-fb070.appspot.com",
+  messagingSenderId: "124537892733",
+  appId: "1:124537892733:web:82725bb557f8521348a614",
+  measurementId: "G-WJ1YXXGB1C"
+};
+
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+    console.log("Firebase initialized successfully.");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        document.getElementById('userIdContainer').textContent = `User ID: ${currentUserId.substring(0,12)}...`;
+      } else {
+        document.getElementById('userIdContainer').textContent = "User ID: Signing in...";
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch (authError) {
+            console.error("Auth error:", authError);
+            document.getElementById('userIdContainer').textContent = "User ID: Auth failed";
+            showMessageModal("Authentication failed. Some features might not work correctly.");
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Firebase initialization failed:", error);
+    showMessageModal("Error: Could not connect. Check Firebase config and internet.");
+  }
+
+  // --- UI Helper Functions ---
+  function showMessageModal(message) {
+    document.getElementById('messageText').textContent = message;
+    document.getElementById('messageModal').classList.remove('hidden');
+  }
+  window.closeMessageModal = () => document.getElementById('messageModal').classList.add('hidden');
+  
+  window.showInitialModal = () => {
+    document.getElementById('initialInfoModal').classList.remove('hidden');
+    document.getElementById('mainContent').classList.add('hidden');
+    // Reset currentLogData if going back to start fresh, unless you want to preserve some parts
+    currentLogData = { automatedLog: [] }; 
+    document.getElementById('autoLogReportDisplay').innerHTML = ''; // Clear auto log
+  }
+
+  // --- Automated Log Functions ---
+  function addLogEntry(message, type = "INFO") {
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const logEntry = `${timestamp} - ${message}`;
+    currentLogData.automatedLog.push({ time: timestamp, message: message, type: type });
+    
+    const logDisplay = document.getElementById('autoLogReportDisplay');
+    const entryDiv = document.createElement('div');
+    entryDiv.textContent = logEntry;
+    logDisplay.appendChild(entryDiv);
+    logDisplay.scrollTop = logDisplay.scrollHeight; // Auto-scroll to bottom
+    console.log("Auto Log:", logEntry);
+  }
+
+  // --- Coal Yard Edit Modal ---
+  window.openEditCoalYardModal = function() {
+    document.getElementById('newCoalYardInput').value = currentLogData.coalYard || '';
+    document.getElementById('editCoalYardModal').classList.remove('hidden');
+  }
+  window.closeEditCoalYardModal = function() {
+    document.getElementById('editCoalYardModal').classList.add('hidden');
+  }
+  window.saveCoalYardChange = function() {
+    const newCoalYard = document.getElementById('newCoalYardInput').value.trim();
+    if (newCoalYard && newCoalYard !== currentLogData.coalYard) {
+      const oldCoalYard = currentLogData.coalYard || "N/A";
+      currentLogData.coalYard = newCoalYard;
+      document.getElementById('coalYardDisplay').textContent = newCoalYard;
+      addLogEntry(`Main coal yard changed from "${oldCoalYard}" to "${newCoalYard}".`, "UPDATE");
+      closeEditCoalYardModal();
+      showMessageModal("Coal Yard updated.");
+    } else if (newCoalYard === currentLogData.coalYard) {
+      showMessageModal("No change made to Coal Yard.");
+      closeEditCoalYardModal();
+    } else {
+      showMessageModal("New Coal Yard value cannot be empty.");
+    }
+  }
+
+  // --- Maxwork Departure ---
+  window.recordMaxworkDeparture = function() {
+    const maxworkName = currentLogData.maxwork || "Maxwork personnel"; // Use entered name or generic
+    if (currentLogData.maxworkLeft) {
+        addLogEntry(`${maxworkName} departure already logged at ${currentLogData.maxworkDepartureTime}.`, "WARN");
+        showMessageModal(`${maxworkName} departure already logged.`);
+        return;
+    }
+    const departureTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    currentLogData.maxworkLeft = true;
+    currentLogData.maxworkDepartureTime = departureTime;
+    addLogEntry(`${maxworkName} left duty.`, "EVENT");
+    showMessageModal(`${maxworkName} departure recorded at ${departureTime}.`);
+  }
+
+
+  // --- Core Logic Functions ---
+  window.submitInitialInfo = function() {
+    const teamMembers = Array.from(document.getElementById('teamName').selectedOptions).map(opt => opt.value);
+    const operators = Array.from(document.getElementById('operatorName').selectedOptions).map(opt => opt.value);
+    const shift = document.querySelector('input[name="shift"]:checked')?.value;
+    const boilerMain = document.getElementById('boilerMain').value.trim();
+    const boilerBackup = document.getElementById('boilerBackup').value.trim();
+    const coalYard = document.getElementById('coalYard').value.trim();
+    const maxwork = document.getElementById('maxwork').value.trim() || "None";
+
+    if (teamMembers.length === 0 || operators.length === 0 || !shift || !boilerMain || !coalYard) {
+      showMessageModal("Please fill all required fields: Team, Operator, Shift, Boiler Main, Coal Yard.");
+      return;
+    }
+    
+    currentLogData = { // Reset and populate
+      team: teamMembers.join(' | '), operator: operators.join(' | '),
+      shift, boilerMain, boilerBackup, coalYard, maxwork,
+      date: new Date().toLocaleDateString('en-CA'), // YYYY-MM-DD
+      automatedLog: [] // Initialize fresh automated log
+    };
+    document.getElementById('autoLogReportDisplay').innerHTML = ''; // Clear display
+
+    addLogEntry(`Initial information submitted. Shift: ${shift}, Coal Yard: ${coalYard}.`, "SETUP");
+
+    document.getElementById('dateNowDisplay').textContent = currentLogData.date;
+    document.getElementById('shiftDisplay').textContent = currentLogData.shift;
+    document.getElementById('teamDisplay').textContent = currentLogData.team;
+    document.getElementById('operatorDisplay').textContent = currentLogData.operator;
+    document.getElementById('boilerMainDisplay').textContent = currentLogData.boilerMain;
+    document.getElementById('boilerBackupDisplay').textContent = currentLogData.boilerBackup;
+    document.getElementById('coalYardDisplay').textContent = currentLogData.coalYard;
+    document.getElementById('maxworkDisplay').textContent = currentLogData.maxwork;
+
+    document.getElementById('initialInfoModal').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('hidden');
+    generateHourlyLogTable(currentLogData.shift);
+  }
+
+  function generateHourlyLogTable(shift, existingLogs = {}) {
+    const tableBody = document.getElementById('hourlyLogTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = ''; 
+
+    const isNightShift = shift === "Night";
+    const hours = [];
+    if (isNightShift) { for (let i = 19; i <= 23; i++) hours.push(i); for (let i = 0; i <= 6; i++) hours.push(i); } 
+    else { for (let i = 7; i <= 18; i++) hours.push(i); }
+
+    hours.forEach(hourValue => {
+      const hourString = hourValue.toString().padStart(2, '0') + ":00";
+      const logEntry = existingLogs[hourString] || { bucket: '', tapon: '', switch: '' };
+      const row = tableBody.insertRow();
+      
+      // Bucket Input Cell
+      const bucketCell = row.insertCell();
+      bucketCell.innerHTML = `<input type="text" class="w-full p-1 border rounded" value="${logEntry.bucket}" placeholder="e.g., 5">`;
+      bucketCell.querySelector('input').addEventListener('blur', (event) => {
+          const bucketValue = event.target.value.trim();
+          if (bucketValue) {
+              addLogEntry(`Hour ${hourString}: Dumped coal ${bucketValue} buckets.`, "HOURLY_ACTION");
+          }
+      });
+
+      // Tapon Input Cell
+      const taponCell = row.insertCell();
+      taponCell.innerHTML = `<input type="text" class="w-full p-1 border rounded" value="${logEntry.tapon}">`;
+      // No specific auto-log for tapon unless requested
+
+      // Coal Switch Input Cell
+      const switchCell = row.insertCell();
+      switchCell.innerHTML = `<input type="text" class="w-full p-1 border rounded" value="${logEntry.switch}" placeholder="e.g., Yard 1 to Yard 4">`;
+      switchCell.querySelector('input').addEventListener('blur', (event) => {
+          const switchValue = event.target.value.trim();
+          if (switchValue) {
+              addLogEntry(`Hour ${hourString}: Coal switch activity: "${switchValue}".`, "HOURLY_ACTION");
+          }
+      });
+      
+      // Prepend Time Cell
+      const timeCell = row.insertCell(0); // Insert as the first cell
+      timeCell.textContent = hourString;
+    });
+  }
+
+
+  window.saveLogToFirestore = async function() {
+    if (!currentUserId) { showMessageModal("User not authenticated."); return; }
+    if (!db) { showMessageModal("Database not initialized."); return; }
+
+    currentLogData.manualReport = document.getElementById('reportBox').value.trim();
+    currentLogData.hourlyLogs = {};
+    const rows = document.getElementById('hourlyLogTable').getElementsByTagName('tbody')[0].rows;
+
+    for (let i = 0; i < rows.length; i++) {
+      const cells = rows[i].cells; // time, bucket, tapon, switch
+      const time = cells[0].textContent;
+      currentLogData.hourlyLogs[time] = {
+        bucket: cells[1].querySelector("input").value.trim(),
+        tapon: cells[2].querySelector("input").value.trim(),
+        switch: cells[3].querySelector("input").value.trim()
+      };
+    }
+    
+    // Ensure all parts of currentLogData are included
+    const logPayload = {
+      ...currentLogData, // This now includes automatedLog, maxworkLeft, etc.
+      lastUpdatedBy: currentUserId,
+      updatedAt: new Date().toISOString()
+    };
+
+    const docId = `${currentLogData.date}_shift-${currentLogData.shift.toLowerCase()}`;
+    try {
+      const docRef = doc(db, "artifacts", appId, "public", "data", "coal_logs", docId);
+      await setDoc(docRef, logPayload, { merge: true });
+      addLogEntry("Log submitted to Admin.", "SYSTEM");
+      showMessageModal("✅ Log submitted/updated successfully!");
+    } catch (error) {
+      console.error("Error saving log to Firestore:", error);
+      addLogEntry(`Failed to submit log: ${error.message}`, "ERROR");
+      showMessageModal(`Error saving log: ${error.message}.`);
+    }
+  }
+
+  window.loadExistingRecord = async function() {
+    if (!currentUserId) { showMessageModal("User not authenticated."); return; }
+    if (!db) { showMessageModal("Database not initialized."); return; }
+
+    const shift = document.querySelector('input[name="shift"]:checked')?.value;
+    if (!shift) { showMessageModal("Please select a shift to load."); return; }
+
+    const todayDate = new Date().toLocaleDateString('en-CA');
+    const docId = `${todayDate}_shift-${shift.toLowerCase()}`;
+
+    try {
+      const docRef = doc(db, "artifacts", appId, "public", "data", "coal_logs", docId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        currentLogData = { ...data }; // Load all data, including automatedLog
+
+        // Populate initial info form fields (can be hidden if directly going to main)
+        document.getElementById('teamName').value = data.team; 
+        const teamSelect = document.getElementById('teamName');
+        const teamValues = data.team.split(' | ');
+        Array.from(teamSelect.options).forEach(opt => { opt.selected = teamValues.includes(opt.value); });
+        
+        const operatorSelect = document.getElementById('operatorName');
+        const operatorValues = data.operator.split(' | ');
+        Array.from(operatorSelect.options).forEach(opt => { opt.selected = operatorValues.includes(opt.value); });
+
+        document.querySelector(`input[name="shift"][value="${data.shift}"]`).checked = true;
+        document.getElementById('boilerMain').value = data.boilerMain || '';
+        document.getElementById('boilerBackup').value = data.boilerBackup || '';
+        document.getElementById('coalYard').value = data.coalYard || '';
+        document.getElementById('maxwork').value = data.maxwork || 'None';
+
+        // Populate main display fields
+        document.getElementById('dateNowDisplay').textContent = data.date;
+        document.getElementById('shiftDisplay').textContent = data.shift;
+        document.getElementById('teamDisplay').textContent = data.team;
+        document.getElementById('operatorDisplay').textContent = data.operator;
+        document.getElementById('boilerMainDisplay').textContent = data.boilerMain;
+        document.getElementById('boilerBackupDisplay').textContent = data.boilerBackup;
+        document.getElementById('coalYardDisplay').textContent = data.coalYard;
+        document.getElementById('maxworkDisplay').textContent = data.maxwork;
+        document.getElementById('reportBox').value = data.manualReport || "";
+
+        // Populate Automated Log Report Display
+        const logDisplay = document.getElementById('autoLogReportDisplay');
+        logDisplay.innerHTML = ''; // Clear previous
+        if (data.automatedLog && Array.isArray(data.automatedLog)) {
+            data.automatedLog.forEach(entry => {
+                const entryDiv = document.createElement('div');
+                entryDiv.textContent = `${entry.time} - ${entry.message}`;
+                logDisplay.appendChild(entryDiv);
+            });
+            logDisplay.scrollTop = logDisplay.scrollHeight;
+        } else {
+            currentLogData.automatedLog = []; // Ensure it's an array if missing
+        }
+
+
+        generateHourlyLogTable(data.shift, data.hourlyLogs || {});
+        document.getElementById('initialInfoModal').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        addLogEntry("Loaded existing record.", "SYSTEM_LOAD");
+        showMessageModal("✅ Loaded existing record for today's " + shift + " shift.");
+      } else {
+        showMessageModal(`No existing record found for today's ${shift} shift. Create a new one.`);
+      }
+    } catch (error) {
+      console.error("Error fetching existing record:", error);
+      showMessageModal(`Failed to fetch record: ${error.message}.`);
+    }
+  }
+</script>
+
+</body>
+</html>
