@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coal Logs / Reports Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .banner img {
+      max-width: 100%;
+      width: 300px;
+      display: block;
+      margin: 0 auto 20px;
+    }
+    .modal, .main-content {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    .hidden { display: none; }
+    .row { margin-bottom: 10px; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    textarea { height: 60px; }
+    select[multiple] { height: auto; min-height: 100px; }
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: center;
+      word-wrap: break-word;
+    }
+    td input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .buttons {
+      margin-top: 10px;
+      text-align: right;
+    }
+    .buttons button {
+      padding: 5px 10px;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="banner">
+  <img src="AEF3C18D-C5EF-42D9-A71E-C01EFE4589C0.jpeg" alt="Coal Logs Banner">
+</div>
+
+<div id="modal" class="modal">
+  <h2>Coal Logs - Team Info</h2>
+  <div class="row">
+    <label>Team Name (Opscrew)</label>
+    <select id="teamName" multiple>
+      <option>Ruzzel Arenas</option>
+      <option>Jhamir Paul Madamba</option>
+      <option>Mike Garcia</option>
+      <option>Enrique Austria</option>
+      <option>Jhondel Nimes</option>
+      <option>Genesis Mendez</option>
+      <option>Jeremy Alinsunurin</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Shift</label>
+    <label><input type="radio" name="shift" value="Day"> Day Shift</label>
+    <label><input type="radio" name="shift" value="Night"> Night Shift</label>
+  </div>
+  <div class="row">
+    <label>Operator Name</label>
+    <select id="operatorName" multiple>
+      <option>Oliver Alcosaba</option>
+      <option>Adonis Millianes</option>
+      <option>Jerome Saludes</option>
+      <option>Ayman Liao</option>
+      <option>Nick Lodor</option>
+      <option>Alvin Capacete</option>
+      <option>Jhonas Magbanua</option>
+      <option>Joselito Vargas</option>
+      <option>Jhenrize Dacillo</option>
+      <option>Junald Abadilla</option>
+      <option>Lhon Litiza</option>
+      <option>Ronald Villasis</option>
+      <option>Jomar Edillo</option>
+    </select>
+  </div>
+  <div class="row"><label>Boiler Main</label><input type="text" id="boilerMain"></div>
+  <div class="row"><label>Boiler Backup</label><input type="text" id="boilerBackup"></div>
+  <div class="row"><label>Coal Yard Used</label><input type="text" id="coalYard"></div>
+  <div class="row"><label>Maxwork</label><input type="text" id="maxwork"></div>
+  <div class="buttons"><button onclick="startLogging()">Continue</button></div>
+</div>
+
+<div id="main" class="main-content hidden">
+  <h2>Coal Logs / Reports</h2>
+  <div class="row"><strong>Date:</strong> <span id="dateNow"></span></div>
+  <div class="row"><strong>Shift:</strong> <span id="shiftDisplay"></span></div>
+  <div class="row"><strong>Team:</strong> <span id="teamDisplay"></span></div>
+  <div class="row"><strong>Operator:</strong> <span id="operatorDisplay"></span></div>
+  <div class="row"><strong>Boiler Main:</strong> <span id="boilerMainDisplay"></span></div>
+  <div class="row"><strong>Boiler Backup:</strong> <span id="boilerBackupDisplay"></span></div>
+  <div class="row"><strong>Coal Yard:</strong> <span id="coalYardDisplay" style="font-weight:bold;"></span></div>
+  <div class="row">
+    <strong>Maxwork:</strong> <span id="maxworkDisplay" style="font-weight:bold;"></span>
+    <button onclick="enableEdit()" style="float:right;padding:3px 10px;margin-left:10px;">Edit</button>
+  </div>
+  <div id="editFields" class="hidden">
+    <div class="row">
+      <label>Edit Team Name</label>
+      <select id="editTeam" multiple>
+        <option>Ruzzel Arenas</option>
+        <option>Jhamir Paul Madamba</option>
+        <option>Mike Garcia</option>
+        <option>Enrique Austria</option>
+        <option>Jhondel Nimes</option>
+        <option>Genesis Mendez</option>
+        <option>Jeremy Alinsunurin</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Edit Maxwork</label>
+      <input type="text" id="editMaxwork" placeholder="Enter Maxwork name or leave blank">
+    </div>
+    <div class="row">
+      <label>Edit Coal Yard</label>
+      <input type="text" id="editCoalYard" placeholder="New Coal Yard number">
+    </div>
+    <button onclick="saveEdit()" style="margin-top:10px;">Save</button>
+  </div>
+  <label for="reportBox">Report:</label>
+  <textarea id="reportBox"></textarea>
+  <div class="buttons">
+    <button onclick="saveReport()">Save</button>
+    <button onclick="clearReport()">Clear</button>
+  </div>
+
+  <h3>Hourly Coal Activity Log</h3>
+  <table id="logTable">
+    <tr><th>Time</th><th>Bucket</th><th>Tapon</th><th>Coal Switch</th></tr>
+  </table>
+</div>
+
+<script>
+function startLogging() {
+  const team = Array.from(document.getElementById('teamName').selectedOptions).map(opt => opt.value).join(' | ');
+  const operator = Array.from(document.getElementById('operatorName').selectedOptions).map(opt => opt.value).join(' | ');
+  const main = document.getElementById('boilerMain').value;
+  const backup = document.getElementById('boilerBackup').value;
+  const yard = document.getElementById('coalYard').value;
+  const maxwork = document.getElementById('maxwork').value || "None";
+  const shift = document.querySelector('input[name="shift"]:checked')?.value;
+
+  if (!team || !operator || !main || !yard || !shift) {
+    alert('Please fill all required fields.');
+    return;
+  }
+
+  document.getElementById('modal').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+
+  document.getElementById('dateNow').textContent = new Date().toLocaleDateString();
+  document.getElementById('shiftDisplay').textContent = shift;
+  document.getElementById('teamDisplay').textContent = team;
+  document.getElementById('operatorDisplay').textContent = operator;
+  document.getElementById('boilerMainDisplay').textContent = main;
+  document.getElementById('boilerBackupDisplay').textContent = backup;
+  document.getElementById('coalYardDisplay').textContent = yard;
+  document.getElementById('maxworkDisplay').textContent = maxwork;
+
+  const table = document.getElementById('logTable');
+  const start = shift === "Night" ? 0 : 6;
+  const end = shift === "Night" ? 6 : 19;
+  for (let i = start; i < end; i++) {
+    const hour = i.toString().padStart(2, '0') + ":00";
+    table.innerHTML += `<tr><td>${hour}</td><td><input></td><td><input></td><td><input></td></tr>`;
+  }
+}
+
+function enableEdit() {
+  document.getElementById('editFields').classList.remove('hidden');
+}
+
+function saveEdit() {
+  const team = Array.from(document.getElementById('editTeam').selectedOptions).map(opt => opt.value).join(' | ');
+  const maxwork = document.getElementById('editMaxwork').value.trim();
+  const newCoal = document.getElementById('editCoalYard').value.trim();
+  const coalDisplay = document.getElementById('coalYardDisplay');
+
+  if (team) document.getElementById('teamDisplay').textContent = team;
+  document.getElementById('maxworkDisplay').textContent = maxwork || "None";
+
+  if (newCoal) {
+    const oldVal = coalDisplay.textContent;
+    coalDisplay.innerHTML = `<span style="color:red">${oldVal}</span> / <span style="color:green">${newCoal}</span>`;
+  }
+
+  document.getElementById('editFields').classList.add('hidden');
+}
+
+function saveReport() {
+  const text = document.getElementById('reportBox').value.trim();
+  if (!text) {
+    alert("Report is empty!");
+    return;
+  }
+  alert("Report saved (preview only)");
+}
+
+function clearReport() {
+  document.getElementById('reportBox').value = '';
+}
+</script>
+
+</body>
+</html>
