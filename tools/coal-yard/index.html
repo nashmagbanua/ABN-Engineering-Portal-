@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coal Logs / Reports Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', Arial, sans-serif; background-color: #f3f4f6; padding: 1rem; }
+    .app-container {
+      max-width: 800px; margin: auto; background: white; padding: 1.5rem;
+      border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .styled-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .styled-table th, .styled-table td {
+      border: 1px solid #ddd; padding: 0.5rem; text-align: center;
+    }
+    .styled-table th { background-color: #f9fafb; }
+    input[type="text"] { width: 100%; padding: 0.25rem; }
+    textarea { width: 100%; min-height: 80px; margin-top: 0.5rem; }
+    #autoLogReportDisplay {
+      font-family: monospace; font-size: 0.875rem;
+      background: #f9fafb; padding: 0.75rem; border-radius: 0.25rem;
+      border: 1px solid #ccc; margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1 class="text-xl font-bold mb-4">Coal Logs / Reports</h1>
+
+    <div><strong>Coal Yard:</strong> 1/7 <button onclick="editField('coalYard')">(Edit)</button></div>
+    <div><strong>Maxwork:</strong> Aurelio Magbanua <button onclick="editField('maxwork')">(Edit)</button></div>
+    <div><strong>Team:</strong> Team A <button onclick="editField('team')">(Edit)</button></div>
+    <div><strong>Operator:</strong> Operator X <button onclick="editField('operator')">(Edit)</button></div>
+    <div><strong>Boiler Main:</strong> A <button onclick="editField('boilerMain')">(Edit)</button></div>
+    <div><strong>Boiler Backup:</strong> B <button onclick="editField('boilerBackup')">(Edit)</button></div>
+
+    <label for="manualReport" class="block mt-4 font-semibold">Manual Report / Notes:</label>
+    <textarea id="manualReport" placeholder="Enter your notes here..."></textarea>
+
+    <div class="mt-4">
+      <label for="autoLogReportDisplay" class="font-semibold">Automated Log Report:</label>
+      <div id="autoLogReportDisplay"></div>
+    </div>
+
+    <h2 class="text-lg font-bold mt-6">Hourly Coal Activity Log</h2>
+    <table class="styled-table">
+      <thead><tr><th>Time</th><th>Bucket (#)</th><th>Tapon</th><th>Coal Switch</th></tr></thead>
+      <tbody id="logTableBody"></tbody>
+    </table>
+
+    <button onclick="submitLog()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Send to Admin</button>
+  </div>
+
+  <script>
+    const autoLog = document.getElementById('autoLogReportDisplay');
+    const logTableBody = document.getElementById('logTableBody');
+
+    const times = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00"];
+    times.forEach(t => {
+      const row = document.createElement('tr');
+      row.innerHTML = \`
+        <td>\${t}</td>
+        <td><input type="text" onblur="logBucket('\${t}', this.value)"></td>
+        <td><input type="text" onblur="logTapon('\${t}', this.value)"></td>
+        <td><input type="text" onblur="logSwitch('\${t}', this.value)"></td>
+      \`;
+      logTableBody.appendChild(row);
+    });
+
+    function logEntry(text) {
+      const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      autoLog.innerText += \`\${time} – \${text}\n\`;
+    }
+
+    function logBucket(time, val) {
+      if(val) logEntry(\`Hour \${time}: Dumped coal \${val} buckets.\`);
+    }
+
+    function logTapon(time, val) {
+      if(val) logEntry(\`Hour \${time}: Tapon activity: \${val}.\`);
+    }
+
+    function logSwitch(time, val) {
+      if(val) logEntry(\`Hour \${time}: Coal switch activity: "\${val}".\`);
+    }
+
+    function submitLog() {
+      const note = document.getElementById('manualReport').value.trim();
+      if(note) logEntry(\`Manual Note: \${note}\`);
+      alert("✅ Log submitted with auto-generated entries.");
+    }
+
+    function editField(field) {
+      const oldVal = prompt(\`Enter new value for \${field}:\`);
+      if(oldVal) logEntry(\`\${field.charAt(0).toUpperCase() + field.slice(1)} updated to "\${oldVal}".\`);
+    }
+  </script>
+</body>
+</html>
