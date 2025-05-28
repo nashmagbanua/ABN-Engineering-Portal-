@@ -1,0 +1,508 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Power Consumption Log</title>
+  <style>
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      border: 1px solid #aaa;
+      background-color: transparent;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button.clicked {
+      background-color: #007BFF;
+      color: white;
+    }
+    .remarks-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    textarea {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <h2>Power Consumption Log</h2>
+  
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+      <label>Date:</label>
+      <input type="date" id="logDate" />
+      <label>Operator:</label>
+      <input type="text" id="operatorName" placeholder="Enter your name" />
+      <button id="saveBtn" onclick="saveToFirebase()">Save</button>
+      <button onclick="alert('Coming soon! Upload feature is still under construction.')">Upload Image</button>
+      <button id="sendBtn" onclick="sendToAdmin()">Send to Admin</button>
+    </div>
+    <br>
+    
+  <p>Operator: <input type="text" id="operatorName" placeholder="Enter your name" /></p>
+
+  <table border="1" cellpadding="8" id="powerTable">
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Initial (12AM)</th>
+        <th>Current (12AM)</th>
+        <th>Total kWh</th>
+      </tr>
+    </thead>
+    <tbody id="powerBody"><tr><th colspan="4" style="background:#e0eaff;text-align:left;">Utilities</th></tr>
+
+    <tr>
+      <td>Refrigeration System</td>
+      <td><input type="number" id="initial0" /></td>
+      <td><input type="number" id="current0" /></td>
+      <td><input type="text" id="kwh0" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Clean Steam Generator</td>
+      <td><input type="number" id="initial1" /></td>
+      <td><input type="number" id="current1" /></td>
+      <td><input type="text" id="kwh1" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Bulk Chemical System</td>
+      <td><input type="number" id="initial2" /></td>
+      <td><input type="number" id="current2" /></td>
+      <td><input type="text" id="kwh2" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Condensate Return System</td>
+      <td><input type="number" id="initial3" /></td>
+      <td><input type="number" id="current3" /></td>
+      <td><input type="text" id="kwh3" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>RVAC</td>
+      <td><input type="number" id="initial4" /></td>
+      <td><input type="number" id="current4" /></td>
+      <td><input type="text" id="kwh4" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>BOILER</td>
+      <td><input type="number" id="initial5" /></td>
+      <td><input type="number" id="current5" /></td>
+      <td><input type="text" id="kwh5" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Compressed Dry Air (CDA)</td>
+      <td><input type="number" id="initial6" /></td>
+      <td><input type="number" id="current6" /></td>
+      <td><input type="text" id="kwh6" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Waste Water Treatment Plant (WWTP)</td>
+      <td><input type="number" id="initial7" /></td>
+      <td><input type="number" id="current7" /></td>
+      <td><input type="text" id="kwh7" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Water Treatment Plant (WTP)</td>
+      <td><input type="number" id="initial8" /></td>
+      <td><input type="number" id="current8" /></td>
+      <td><input type="text" id="kwh8" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Combined Water Storage (CWS)</td>
+      <td><input type="number" id="initial9" /></td>
+      <td><input type="number" id="current9" /></td>
+      <td><input type="text" id="kwh9" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Sump Pit Pump 1</td>
+      <td><input type="number" id="initial10" /></td>
+      <td><input type="number" id="current10" /></td>
+      <td><input type="text" id="kwh10" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Freezer & Cold Storage</td>
+      <td><input type="number" id="initial11" /></td>
+      <td><input type="number" id="current11" /></td>
+      <td><input type="text" id="kwh11" readonly /></td>
+    </tr>
+    <tr><th colspan="4" style="background:#e0eaff;text-align:left;">Process</th></tr>
+
+    <tr>
+      <td>CIP Line (E7)</td>
+      <td><input type="number" id="initial12" /></td>
+      <td><input type="number" id="current12" /></td>
+      <td><input type="text" id="kwh12" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Bottle Washer (E8)</td>
+      <td><input type="number" id="initial13" /></td>
+      <td><input type="number" id="current13" /></td>
+      <td><input type="text" id="kwh13" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Modular Labeller (E9)</td>
+      <td><input type="number" id="initial14" /></td>
+      <td><input type="number" id="current14" /></td>
+      <td><input type="text" id="kwh14" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Container Conveyor (E10)</td>
+      <td><input type="number" id="initial15" /></td>
+      <td><input type="number" id="current15" /></td>
+      <td><input type="text" id="kwh15" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Conveyor Lubrication (E11)</td>
+      <td><input type="number" id="initial16" /></td>
+      <td><input type="number" id="current16" /></td>
+      <td><input type="text" id="kwh16" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Alwin Soy</td>
+      <td><input type="number" id="initial17" /></td>
+      <td><input type="number" id="current17" /></td>
+      <td><input type="text" id="kwh17" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Process MCC</td>
+      <td><input type="number" id="initial18" /></td>
+      <td><input type="number" id="current18" /></td>
+      <td><input type="text" id="kwh18" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Homogenizer</td>
+      <td><input type="number" id="initial19" /></td>
+      <td><input type="number" id="current19" /></td>
+      <td><input type="text" id="kwh19" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Soya Bean Pre-treatment & Handling</td>
+      <td><input type="number" id="initial20" /></td>
+      <td><input type="number" id="current20" /></td>
+      <td><input type="text" id="kwh20" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Sugar Dissolving</td>
+      <td><input type="number" id="initial21" /></td>
+      <td><input type="number" id="current21" /></td>
+      <td><input type="text" id="kwh21" readonly /></td>
+    </tr>
+    <tr><th colspan="4" style="background:#e0eaff;text-align:left;">Bottling</th></tr>
+
+    <tr>
+      <td>Container Dryer (E1)</td>
+      <td><input type="number" id="initial22" /></td>
+      <td><input type="number" id="current22" /></td>
+      <td><input type="text" id="kwh22" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Packer (E2)</td>
+      <td><input type="number" id="initial23" /></td>
+      <td><input type="number" id="current23" /></td>
+      <td><input type="text" id="kwh23" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Unpacker (E3)</td>
+      <td><input type="number" id="initial24" /></td>
+      <td><input type="number" id="current24" /></td>
+      <td><input type="text" id="kwh24" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Container Depalettiser (E4)</td>
+      <td><input type="number" id="initial25" /></td>
+      <td><input type="number" id="current25" /></td>
+      <td><input type="text" id="kwh25" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Pack Washing (E5)</td>
+      <td><input type="number" id="initial26" /></td>
+      <td><input type="number" id="current26" /></td>
+      <td><input type="text" id="kwh26" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Inspector (E6)</td>
+      <td><input type="number" id="initial27" /></td>
+      <td><input type="number" id="current27" /></td>
+      <td><input type="text" id="kwh27" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Pack Conveyor (E12)</td>
+      <td><input type="number" id="initial28" /></td>
+      <td><input type="number" id="current28" /></td>
+      <td><input type="text" id="kwh28" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>LIPS (E13)</td>
+      <td><input type="number" id="initial29" /></td>
+      <td><input type="number" id="current29" /></td>
+      <td><input type="text" id="kwh29" readonly /></td>
+    </tr>
+    <tr><th colspan="4" style="background:#e0eaff;text-align:left;">LVSG 5 Loads</th></tr>
+
+    <tr>
+      <td>Wrap Around</td>
+      <td><input type="number" id="initial30" /></td>
+      <td><input type="number" id="current30" /></td>
+      <td><input type="text" id="kwh30" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Hydro Sterilizer</td>
+      <td><input type="number" id="initial31" /></td>
+      <td><input type="number" id="current31" /></td>
+      <td><input type="text" id="kwh31" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Filler</td>
+      <td><input type="number" id="initial32" /></td>
+      <td><input type="number" id="current32" /></td>
+      <td><input type="text" id="kwh32" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>DPP</td>
+      <td><input type="number" id="initial33" /></td>
+      <td><input type="number" id="current33" /></td>
+      <td><input type="text" id="kwh33" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>DLP</td>
+      <td><input type="number" id="initial34" /></td>
+      <td><input type="number" id="current34" /></td>
+      <td><input type="text" id="kwh34" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Warehouse</td>
+      <td><input type="number" id="initial35" /></td>
+      <td><input type="number" id="current35" /></td>
+      <td><input type="text" id="kwh35" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>RVAC (220V)</td>
+      <td><input type="number" id="initial36" /></td>
+      <td><input type="number" id="current36" /></td>
+      <td><input type="text" id="kwh36" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>WWTP (220V)</td>
+      <td><input type="number" id="initial37" /></td>
+      <td><input type="number" id="current37" /></td>
+      <td><input type="text" id="kwh37" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>DP-WM</td>
+      <td><input type="number" id="initial38" /></td>
+      <td><input type="number" id="current38" /></td>
+      <td><input type="text" id="kwh38" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Sump Pit Pump 2</td>
+      <td><input type="number" id="initial39" /></td>
+      <td><input type="number" id="current39" /></td>
+      <td><input type="text" id="kwh39" readonly /></td>
+    </tr>
+    
+    <tr>
+      <td>Accumulation Table</td>
+      <td><input type="number" id="initial40" /></td>
+      <td><input type="number" id="current40" /></td>
+      <td><input type="text" id="kwh40" readonly /></td>
+    </tr>
+    </tbody>
+  </table>
+
+  
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0-PNkHDcLW356892joz-8KDVYRXQbShg",
+    authDomain: "abnportal-fb070.firebaseapp.com",
+    projectId: "abnportal-fb070",
+    storageBucket: "abnportal-fb070.appspot.com",
+    messagingSenderId: "124537892733",
+    appId: "1:124537892733:web:82725bb557f8521348a614",
+    measurementId: "G-WJ1YXXGB1C"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const equipmentList = [
+    "Refrigeration System", "Clean Steam Generator", "Bulk Chemical System",
+    "Condensate Return System", "RVAC", "BOILER", "Compressed Dry Air (CDA)",
+    "Waste Water Treatment Plant (WWTP)", "Water Treatment Plant (WTP)", "Combined Water Storage (CWS)",
+    "Sump Pit Pump 1", "Freezer & Cold Storage", "CIP Line (E7)", "Bottle Washer (E8)",
+    "Modular Labeller (E9)", "Container Conveyor (E10)", "Conveyor Lubrication (E11)",
+    "Alwin Soy", "Process MCC", "Homogenizer", "Soya Bean Pre-treatment & Handling",
+    "Sugar Dissolving", "Container Dryer (E1)", "Packer (E2)", "Unpacker (E3)",
+    "Container Depalettiser (E4)", "Pack Washing (E5)", "Inspector (E6)", "Pack Conveyor (E12)",
+    "LIPS (E13)", "Wrap Around", "Hydro Sterilizer", "Filler", "DPP", "DLP", "Warehouse",
+    "RVAC (220V)", "WWTP (220V)", "DP-WM", "Sump Pit Pump 2", "Accumulation Table"
+  ];
+
+  const tbody = document.getElementById("powerBody");
+
+  equipmentList.forEach((eq, i) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${eq}</td>
+      <td><input type="number" id="initial${i}" /></td>
+      <td><input type="number" id="current${i}" /></td>
+      <td><input type="text" id="kwh${i}" readonly /></td>
+    `;
+    tbody.appendChild(row);
+
+    setTimeout(() => {
+      document.getElementById("initial" + i).addEventListener("input", compute);
+      document.getElementById("current" + i).addEventListener("input", compute);
+    }, 50);
+  });
+
+  function compute() {
+    for (let i = 0; i < equipmentList.length; i++) {
+      const ini = parseFloat(document.getElementById("initial" + i).value) || 0;
+      const cur = parseFloat(document.getElementById("current" + i).value) || 0;
+      const kwh = document.getElementById("kwh" + i);
+      if (cur > 0 && ini > 0) {
+        kwh.value = (cur - ini).toFixed(2);
+      } else {
+        kwh.value = "";
+      }
+    }
+  }
+
+  window.saveToFirebase = async function () {
+    const date = document.getElementById("logDate").value;
+    if (!date) return alert("Please select a date.");
+    const data = getReadings();
+    const docRef = doc(db, "power_logs", date);
+    
+    const empty = Object.values(readings).some(r => !r.initial || !r.current);
+    if (empty) return alert("Please fill in all readings before submitting.");
+
+    if (!remarks.trim()) {
+      const proceed = confirm("No remarks provided. Do you want to continue?");
+      if (!proceed) return;
+    }
+
+    await setDoc(docRef, data);
+    
+    document.getElementById("saveBtn").classList.add("clicked");
+    alert("Saved locally in Firebase for next user.");
+  };
+
+  window.sendToAdmin = async function () {
+    const date = document.getElementById("logDate").value;
+    const operator = document.getElementById("operatorName").value || "unknown";
+    if (!date || !operator) return alert("Please fill in date and operator name.");
+    const remarks = document.getElementById("remarks").value;
+    const readings = getReadings();
+    const data = {
+      operator,
+      date,
+      remarks,
+      status: "pending",
+      submitted_at: new Date().toISOString(),
+      readings
+    };
+    const docRef = doc(db, "admin_review_logs", date + "_" + operator);
+    
+    const empty = Object.values(readings).some(r => !r.initial || !r.current);
+    if (empty) return alert("Please fill in all readings before submitting.");
+
+    if (!remarks.trim()) {
+      const proceed = confirm("No remarks provided. Do you want to continue?");
+      if (!proceed) return;
+    }
+
+    await setDoc(docRef, data);
+    
+    document.getElementById("sendBtn").classList.add("clicked");
+    alert("Sent to admin for review.");
+  };
+
+  function getReadings() {
+    const readings = {};
+    for (let i = 0; i < equipmentList.length; i++) {
+      const equipment = equipmentList[i];
+      readings[equipment] = {
+        initial: document.getElementById("initial" + i).value,
+        current: document.getElementById("current" + i).value,
+        kwh: document.getElementById("kwh" + i).value
+      };
+    }
+    return readings;
+  }
+
+  async function loadPreviousDayData() {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yDateStr = yesterday.toISOString().split('T')[0];
+    const logDate = today.toISOString().split('T')[0];
+    document.getElementById("logDate").value = logDate;
+
+    const yRef = doc(db, "power_logs", yDateStr);
+    const ySnap = await getDoc(yRef);
+    if (ySnap.exists()) {
+      const data = ySnap.data();
+      for (let i = 0; i < equipmentList.length; i++) {
+        const eq = equipmentList[i];
+        if (data[eq]) {
+          document.getElementById("initial" + i).value = data[eq].current || "";
+        }
+      }
+      compute();
+      alert("Auto-filled initial readings from: " + yDateStr);
+    } else {
+      alert("No previous data found for " + yDateStr);
+    }
+  }
+
+  window.addEventListener("load", loadPreviousDayData);
+</script>
+
+  <p style="margin-top:20px;"><strong>Remarks:</strong></p>
+  <textarea id="remarks" rows="3" style="width:100%;" placeholder="Shared remarks here..."></textarea>
+
+</body>
+</html>
