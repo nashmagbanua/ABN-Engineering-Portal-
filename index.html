@@ -167,21 +167,20 @@
         const password = document.getElementById('password').value;
 
         if (role === 'admin' && password === '1111') {
-    window.location.href = 'admin-panel.html';
+  window.location.href = 'admin-panel.html';
 } else if (role === 'mantech' && password === '2222') {
-    window.location.href = 'dashboard.html';
+  window.location.href = 'dashboard.html';
 } else if (role === 'opscrew' && password === '3333') {
-    window.location.href = 'dashboard.html';
+  window.location.href = 'dashboard.html';
 } else {
-    loginAttempts++;
+  loginAttempts++;
 
-    if (loginAttempts >= 3) {
-        document.getElementById("abn-alert").classList.remove("hidden");
-    } else {
-        alert("Maling password. Subukan ulit.");
-    }
+  if (loginAttempts >= 3) {
+    document.getElementById("abn-alert").classList.remove("hidden");
+  } else {
+    alert("Maling password. Subukan ulit.");
+  }
 }
-
     function closeAbnAlert() {
         document.getElementById("abn-alert").classList.add("hidden");
     }
