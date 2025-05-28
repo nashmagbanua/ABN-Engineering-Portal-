@@ -163,7 +163,7 @@
     let loginAttempts = 0;
 
     function validateLogin() {
-        const role = document.getElementById('role').value;
+        const role = document.getElementById('role').value.toLowerCase();
         const password = document.getElementById('password').value;
 
         if (role === 'admin' && password === '1111') {
