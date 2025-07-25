@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Utilities Admin Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome (for optional icons) -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="icon" href="abnlogo.png" type="image/png" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0fdf4;
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+    body.loaded {
+      opacity: 1;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- Message Modal -->
+  <div id="messageModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeModal()">&times;</span>
+      <p id="modalMessage" class="text-lg text-gray-800"></p>
+      <button onclick="closeModal()" class="mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md">
+        OK
+      </button>
+    </div>
+  </div>
+
+  <!-- Login Page -->
+  <div id="login-page" class="flex flex-col items-center justify-center flex-grow p-4 sm:p-6 lg:p-8">
+    <div class="bg-white p-8 rounded-xl shadow-lg border border-green-100 max-w-md w-full text-center">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
+      <p class="text-lg text-green-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
+
+      <div class="mb-6">
+        <label for="auth-code-input" class="sr-only">Authentication Code</label>
+        <input type="password" id="auth-code-input" placeholder="Enter authentication code"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
+      </div>
+      <button type="button" id="login-button"
+              class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md text-lg font-semibold">
+        Login
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Page -->
+  <div id="dashboard-page" class="hidden flex-col flex-grow">
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-6 px-4 sm:px-6 lg:px-8 rounded-b-lg flex justify-between items-center">
+      <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">Utilities Admin Dashboard</h1>
+          <p class="mt-2 text-lg text-green-700">Centralized Monitoring for Smarter Plant Operations</p>
+        </div>
+        <button id="logout-button"
+                class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-300 shadow-md text-base font-medium">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-grow p-4 sm:p-6 lg:p-8">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1: Dashboard Links -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-green-100 hover:shadow-lg hover:scale-105 transition duration-300">
+          <h2 class="text-2xl font-semibold text-green-800 mb-4"><i class="fas fa-tachometer-alt mr-2"></i>Report Viewer</h2>
+          <ul class="space-y-3 text-gray-700">
+            <li class="p-2 bg-green-50 rounded-md hover:bg-green-100 cursor-pointer transition">
+              <a href="https://coaldelivery.vercel.app/" target="_blank" class="block">Coal Delivery Logs</a>
+            </li>
+            <li class="p-2 bg-green-50 rounded-md hover:bg-green-100 cursor-pointer transition">
+              <a href="https://gpmcalculatorv2.vercel.app/login.html" target="_blank" class="block">GPM Result Logs</a>
+            </li>
+            <li class="p-2 bg-green-50 rounded-md hover:bg-green-100 cursor-pointer transition">
+              <a href="https://powercon-logsheet.vercel.app/" target="_blank" class="block">Power Consumption Logs</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card 2: Power -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-green-100 hover:shadow-lg hover:scale-105 transition duration-300">
+          <h2 class="text-2xl font-semibold text-green-800 mb-4"><i class="fas fa-bolt mr-2"></i> Power Consumption</h2>
+          <p class="text-gray-600">View detailed power consumption metrics and analytics.</p>
+          <button onclick="window.open('https://powercon-logsheet.vercel.app/', '_blank')"
+                  class="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md">
+            Go to Power Consumption
+          </button>
+        </div>
+
+        <!-- Card 3: Coal -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-green-100 hover:shadow-lg hover:scale-105 transition duration-300">
+          <h2 class="text-2xl font-semibold text-green-800 mb-4"><i class="fas fa-truck-loading mr-2"></i> Coal Delivery</h2>
+          <p class="text-gray-600">Track and manage coal delivery schedules and inventory.</p>
+          <button onclick="window.open('https://coaldelivery.vercel.app/', '_blank')"
+                  class="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md">
+            Go to Coal Delivery
+          </button>
+        </div>
+
+        <!-- Card 4: GPM -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-green-100 hover:shadow-lg hover:scale-105 transition duration-300">
+          <h2 class="text-2xl font-semibold text-green-800 mb-4"><i class="fas fa-water mr-2"></i> GPM Calculator</h2>
+          <p class="text-gray-600">Calculate Gallons Per Minute (GPM) for various operations.</p>
+          <button onclick="window.open('https://gpmcalculatorv2.vercel.app/login.html', '_blank')"
+                  class="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md">
+            Open GPM Calculator
+          </button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-green-800 text-white py-4 px-4 sm:px-6 lg:px-8 text-center rounded-t-lg">
+    <p id="footer-text"></p>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const loginPage = document.getElementById('login-page');
+    const dashboardPage = document.getElementById('dashboard-page');
+    const authCodeInput = document.getElementById('auth-code-input');
+    const loginButton = document.getElementById('login-button');
+    const logoutButton = document.getElementById('logout-button');
+    const messageModal = document.getElementById('messageModal');
+    const modalMessage = document.getElementById('modalMessage');
+
+    function showModal(message) {
+      modalMessage.textContent = message;
+      messageModal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      messageModal.style.display = 'none';
+    }
+
+    function getCurrentMMDD() {
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${month}${day}`;
+    }
+
+    const authorizedLastNames = ['ortega', 'apuang', 'calisay', 'reyes', 'admin'];
+
+    function handleLogin() {
+      const enteredCode = authCodeInput.value.trim().toLowerCase();
+      const currentMMDD = getCurrentMMDD();
+      let isAuthenticated = false;
+
+      for (const lastName of authorizedLastNames) {
+        if (enteredCode === lastName + currentMMDD) {
+          isAuthenticated = true;
+          break;
+        }
+      }
+
+      if (isAuthenticated) {
+        localStorage.setItem('isLoggedIn', 'true');
+        loginPage.classList.add('hidden');
+        dashboardPage.classList.remove('hidden');
+      } else {
+        showModal('Invalid authentication code. Please try again.');
+        authCodeInput.value = '';
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('isLoggedIn');
+      dashboardPage.classList.add('hidden');
+      loginPage.classList.remove('hidden');
+      authCodeInput.value = '';
+    }
+    loginButton.addEventListener('click', handleLogin);
+    logoutButton.addEventListener('click', handleLogout);
+    authCodeInput.addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') handleLogin();
+    });
+    authCodeInput.onpaste = (e) => e.preventDefault();
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const year = new Date().getFullYear();
+      document.getElementById('footer-text').textContent = `© ${year} abn-engineering dept. - utilities | all rights reserved`;
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (isLoggedIn) {
+        loginPage.classList.add('hidden');
+        dashboardPage.classList.remove('hidden');
+      }
+      document.body.classList.add('loaded');
+    });
+  </script>
+</body>
+</html>
