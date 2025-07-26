@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utilities Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .blurred {
+      filter: blur(5px);
+      pointer-events: none;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #2e7d32;
+      color: white;
+      padding: 1rem;
+      z-index: 10;
+    }
+    .container {
+      display: flex;
+      margin-top: 60px;
+    }
+    .sidebar {
+      width: 240px;
+      background-color: #f1f1f1;
+      height: calc(100vh - 60px);
+      padding: 1rem;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      overflow-y: auto;
+    }
+    .content {
+      margin-left: 260px;
+      padding: 1rem;
+      flex: 1;
+    }
+    .card {
+      background-color: #e8f5e9;
+      border-left: 6px solid #43a047;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+    .card h3 {
+      margin: 0 0 0.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.875rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <h2>Enter Access Code</h2>
+    <input type="password" id="codeInput" placeholder="e.g. delaCruz0726" />
+    <br /><br />
+    <button onclick="validateCode()">Enter</button>
+    <p id="loginMessage" style="color:red;"></p>
+  </div>
+</div>
+
+<header>
+  <h2>Utilities Admin Dashboard</h2>
+</header>
+
+<div class="container blurred" id="mainContainer">
+  <div class="sidebar">
+    <h4>📁 Main Logs</h4>
+    <ul>
+      <li><a href="https://coaldelivery.vercel.app/" target="_blank">Coal Delivery Logs</a></li>
+      <li><a href="https://gpmcalculatorv2.vercel.app/login.html" target="_blank">GpM Calculator Logs</a></li>
+      <li><a href="https://powercon-logsheet.vercel.app/" target="_blank">Power Consumption Logs</a></li>
+    </ul>
+    <h4>🛠 Tools</h4>
+    <ul>
+      <li><a href="https://gpmcalculatorv2.vercel.app/" target="_blank">GpM Calculator Tools</a></li>
+      <li><a href="https://powercon-logsheet.vercel.app/" target="_blank">Power Consumption Tools</a></li>
+      <li><a href="https://coaldelivery.vercel.app/" target="_blank">Digital Coal Delivery</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <div class="card">
+      <h3>Coal Delivery Summary (Today)</h3>
+      <p><strong>Used Coal Yard:</strong> South Yard</p>
+      <p><strong>Supplier:</strong> ABN Coal Corp</p>
+      <p><strong>Kilos:</strong> 3,500 kg</p>
+    </div>
+
+    <div class="card">
+      <h3>GpM Calculator Summary</h3>
+      <p><strong>Latest GpM:</strong> 5.82</p>
+      <p><strong>Night Shift Avg:</strong> 5.67</p>
+      <p><strong>Day Shift Avg:</strong> 5.90</p>
+      <p><strong>Monthly Avg:</strong> 5.79</p>
+    </div>
+
+    <div class="card">
+      <h3>Power Consumption Summary</h3>
+      <p><strong>Yesterday's kWh:</strong> 980 kWh</p>
+      <p><strong>Monthly Total:</strong> 25,400 kWh</p>
+      <p><strong>Highest Reading Equipment:</strong> Pasteurizer #3</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; <span id="year"></span> Nutribev Utilities Dashboard
+</footer>
+
+<script>
+  const validSupervisors = ["delacruz", "lopez", "santos"];
+  const today = new Date();
+  const mmdd = ("0" + (today.getMonth()+1)).slice(-2) + ("0" + today.getDate()).slice(-2);
+  const todayKey = "access_" + mmdd;
+
+  function validateCode() {
+    const input = document.getElementById("codeInput").value.toLowerCase();
+    const loginMsg = document.getElementById("loginMessage");
+    if (validSupervisors.some(name => input === name + mmdd)) {
+      localStorage.setItem(todayKey, "granted");
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("mainContainer").classList.remove("blurred");
+    } else {
+      loginMsg.textContent = "Invalid code. Try again.";
+    }
+  }
+
+  window.onload = function () {
+    document.getElementById("year").textContent = new Date().getFullYear();
+    if (localStorage.getItem(todayKey) === "granted") {
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("mainContainer").classList.remove("blurred");
+    }
+  };
+</script>
+
+</body>
+</html>
