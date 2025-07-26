@@ -1,14 +1,20 @@
 {
-  "name": "ABN-Enginnering Dept.",
+  "name": "ABN Engineering Dept.",
   "short_name": "Utilities Portal",
-  "start_url": ".",
+  "description": "Centralized Monitoring for Smarter Plant Operations",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#10b981",
   "icons": [
     {
       "src": "abnlogo.png",
       "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "abnlogo.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
