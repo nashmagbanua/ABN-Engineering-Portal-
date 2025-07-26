@@ -1,170 +1,342 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utilities Admin Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    .blurred {
-      filter: blur(5px);
-      pointer-events: none;
-    }
-    .modal {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0,0,0,0.6);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      text-align: center;
-    }
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background-color: #2e7d32;
-      color: white;
-      padding: 1rem;
-      z-index: 10;
-    }
-    .container {
-      display: flex;
-      margin-top: 60px;
-    }
-    .sidebar {
-      width: 240px;
-      background-color: #f1f1f1;
-      height: calc(100vh - 60px);
-      padding: 1rem;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      overflow-y: auto;
-    }
-    .content {
-      margin-left: 260px;
-      padding: 1rem;
-      flex: 1;
-    }
-    .card {
-      background-color: #e8f5e9;
-      border-left: 6px solid #43a047;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 4px;
-    }
-    .card h3 {
-      margin: 0 0 0.5rem;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.875rem;
-      color: #555;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilities Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .gauge {
+            --percentage: 0;
+            --fill: #4f46e5;
+            position: relative;
+            width: 120px;
+            height: 60px;
+            border-radius: 60px 60px 0 0;
+            overflow: hidden;
+        }
+        .gauge::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                var(--fill) calc(var(--percentage) * 1%),
+                #e0e7ff calc(var(--percentage) * 1%)
+            );
+            transform-origin: 50% 100%;
+            transform: rotate(0.5turn);
+            transition: all 0.5s ease;
+        }
+        .gauge::after {
+            content: "";
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            background: white;
+            border-radius: inherit;
+            transform: rotate(0.5turn);
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-screen">
+        <!-- Sidebar -->
+        <div class="fixed inset-y-0 left-0 w-64 bg-indigo-700 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-50">
+            <div class="flex items-center justify-center h-16 px-4 bg-indigo-800">
+                <h1 class="text-xl font-bold">Utilities Dashboard</h1>
+            </div>
+            <nav class="mt-6">
+                <a href="#" class="flex items-center px-6 py-3 text-white bg-indigo-800">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                    <i class="fas fa-fire mr-3"></i>
+                    Coal Delivery
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                    <i class="fas fa-bolt mr-3"></i>
+                    Power Consumption
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                    <i class="fas fa-chart-line mr-3"></i>
+                    Analytics
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                    <i class="fas fa-cog mr-3"></i>
+                    Settings
+                </a>
+            </nav>
+        </div>
 
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <h2>Enter Access Code</h2>
-    <input type="password" id="codeInput" placeholder="e.g. delaCruz0726" />
-    <br /><br />
-    <button onclick="validateCode()">Enter</button>
-    <p id="loginMessage" style="color:red;"></p>
-  </div>
-</div>
+        <!-- Mobile sidebar toggle -->
+        <div class="md:hidden fixed top-4 left-4 z-50">
+            <button id="sidebarToggle" class="p-2 rounded-md bg-indigo-600 text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
 
-<header>
-  <h2>Utilities Admin Dashboard</h2>
-</header>
+        <!-- Main Content -->
+        <div class="md:ml-64">
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="flex justify-between items-center px-6 py-4">
+                    <h1 class="text-2xl font-bold text-gray-800">Utilities Admin Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i class="fas fa-bell text-gray-500"></i>
+                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                        </div>
+                        <div class="flex items-center">
+                            <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-8 w-8 rounded-full">
+                            <span class="ml-2 text-gray-700">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-<div class="container blurred" id="mainContainer">
-  <div class="sidebar">
-    <h4>📁 Main Logs</h4>
-    <ul>
-      <li><a href="https://coaldelivery.vercel.app/" target="_blank">Coal Delivery Logs</a></li>
-      <li><a href="https://gpmcalculatorv2.vercel.app/login.html" target="_blank">GpM Calculator Logs</a></li>
-      <li><a href="https://powercon-logsheet.vercel.app/" target="_blank">Power Consumption Logs</a></li>
-    </ul>
-    <h4>🛠 Tools</h4>
-    <ul>
-      <li><a href="https://gpmcalculatorv2.vercel.app/" target="_blank">GpM Calculator Tools</a></li>
-      <li><a href="https://powercon-logsheet.vercel.app/" target="_blank">Power Consumption Tools</a></li>
-      <li><a href="https://coaldelivery.vercel.app/" target="_blank">Digital Coal Delivery</a></li>
-    </ul>
-  </div>
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <!-- Date and Time -->
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-700">Today's Overview</h2>
+                        <p class="text-gray-500" id="currentDateTime">Loading date...</p>
+                    </div>
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-download mr-2"></i> Export Report
+                    </button>
+                </div>
 
-  <div class="content">
-    <div class="card">
-      <h3>Coal Delivery Summary (Today)</h3>
-      <p><strong>Used Coal Yard:</strong> South Yard</p>
-      <p><strong>Supplier:</strong> ABN Coal Corp</p>
-      <p><strong>Kilos:</strong> 3,500 kg</p>
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Coal Delivery Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                        <div class="bg-indigo-600 p-4 text-white">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
+                                <i class="fas fa-fire text-xl"></i>
+                            </div>
+                            <p class="text-indigo-100 text-sm">Today's delivery</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Used Coal Yard:</span>
+                                    <span class="font-medium">South Yard</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Supplier:</span>
+                                    <span class="font-medium">ABN Coal Corp</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Kilos:</span>
+                                    <span class="font-medium text-indigo-600">3,500 kg</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <button class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2 rounded-lg font-medium">
+                                    View Full Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GpM Calculator Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                        <div class="bg-emerald-600 p-4 text-white">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">GpM Calculator</h3>
+                                <i class="fas fa-calculator text-xl"></i>
+                            </div>
+                            <p class="text-emerald-100 text-sm">Performance metrics</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <p class="text-gray-500">Latest GpM</p>
+                                    <p class="text-3xl font-bold text-emerald-600">5.82</p>
+                                </div>
+                                <div class="gauge" style="--percentage: 58.2; --fill: #10b981;"></div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Night Shift Avg:</span>
+                                    <span class="font-medium">5.67</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Day Shift Avg:</span>
+                                    <span class="font-medium">5.90</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Monthly Avg:</span>
+                                    <span class="font-medium text-emerald-600">5.79</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <button class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-600 py-2 rounded-lg font-medium">
+                                    Analyze Trends
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Power Consumption Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                        <div class="bg-amber-600 p-4 text-white">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">Power Consumption</h3>
+                                <i class="fas fa-bolt text-xl"></i>
+                            </div>
+                            <p class="text-amber-100 text-sm">Energy usage</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Yesterday's kWh:</span>
+                                    <span class="font-medium">980 kWh</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Monthly Total:</span>
+                                    <span class="font-medium text-amber-600">25,400 kWh</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Highest Consumption:</span>
+                                    <span class="font-medium">Pasteurizer #3</span>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-amber-500 rounded-full" style="width: 65%;"></div>
+                                </div>
+                                <div class="flex justify-between text-sm text-gray-500 mt-1">
+                                    <span>0 kWh</span>
+                                    <span>30,000 kWh</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <button class="w-full bg-amber-50 hover:bg-amber-100 text-amber-600 py-2 rounded-lg font-medium">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Coal Delivery Trend -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Coal Delivery Trend</h3>
+                            <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                <option>Last 7 Days</option>
+                                <option>Last 30 Days</option>
+                                <option selected>This Month</option>
+                            </select>
+                        </div>
+                        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                            <p class="text-gray-400">Chart visualization would appear here</p>
+                        </div>
+                    </div>
+
+                    <!-- Power Consumption Comparison -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Equipment Power Consumption</h3>
+                            <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                <option>Daily</option>
+                                <option selected>Weekly</option>
+                                <option>Monthly</option>
+                            </select>
+                        </div>
+                        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                            <p class="text-gray-400">Chart visualization would appear here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-fire text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">New coal delivery received</p>
+                                <p class="text-sm text-gray-500">3,500 kg from ABN Coal Corp at South Yard</p>
+                                <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-emerald-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-calculator text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">GpM calculation updated</p>
+                                <p class="text-sm text-gray-500">Latest GpM is 5.82, showing 2% improvement</p>
+                                <p class="text-xs text-gray-400 mt-1">4 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-amber-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-bolt text-amber-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Power consumption alert</p>
+                                <p class="text-sm text-gray-500">Pasteurizer #3 exceeded expected consumption by 15%</p>
+                                <p class="text-xs text-gray-400 mt-1">Yesterday</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <div class="card">
-      <h3>GpM Calculator Summary</h3>
-      <p><strong>Latest GpM:</strong> 5.82</p>
-      <p><strong>Night Shift Avg:</strong> 5.67</p>
-      <p><strong>Day Shift Avg:</strong> 5.90</p>
-      <p><strong>Monthly Avg:</strong> 5.79</p>
-    </div>
+    <script>
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // Update immediately and then every minute
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
 
-    <div class="card">
-      <h3>Power Consumption Summary</h3>
-      <p><strong>Yesterday's kWh:</strong> 980 kWh</p>
-      <p><strong>Monthly Total:</strong> 25,400 kWh</p>
-      <p><strong>Highest Reading Equipment:</strong> Pasteurizer #3</p>
-    </div>
-  </div>
-</div>
+        // Mobile sidebar toggle
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('md:translate-x-0');
+        });
 
-<footer>
-  &copy; <span id="year"></span> Nutribev Utilities Dashboard
-</footer>
-
-<script>
-  const validSupervisors = ["admin", "ortega", "apuang", "calisay", "reyes"];
-  const today = new Date();
-  const mmdd = ("0" + (today.getMonth()+1)).slice(-2) + ("0" + today.getDate()).slice(-2);
-  const todayKey = "access_" + mmdd;
-
-  function validateCode() {
-    const input = document.getElementById("codeInput").value.toLowerCase();
-    const loginMsg = document.getElementById("loginMessage");
-    if (validSupervisors.some(name => input === name + mmdd)) {
-      localStorage.setItem(todayKey, "granted");
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("mainContainer").classList.remove("blurred");
-    } else {
-      loginMsg.textContent = "Invalid code. Try again.";
-    }
-  }
-
-  window.onload = function () {
-    document.getElementById("year").textContent = new Date().getFullYear();
-    if (localStorage.getItem(todayKey) === "granted") {
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("mainContainer").classList.remove("blurred");
-    }
-  };
-</script>
-
+        // Simulate loading data
+        setTimeout(() => {
+            // This would be replaced with actual data fetching in a real app
+            console.log('Data loaded');
+        }, 1000);
+    </script>
 </body>
 </html>
