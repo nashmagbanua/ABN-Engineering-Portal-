@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Base styles for the dashboard */
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -46,10 +47,78 @@
             border-radius: inherit;
             transform: rotate(0.5turn);
         }
+
+        /* Custom modal for messages */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 80%; /* Could be more responsive */
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
-    <div class="min-h-screen">
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <p id="modalMessage" class="text-lg text-gray-800"></p>
+            <button onclick="closeModal()" class="mt-4 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8 bg-gray-100">
+        <div class="bg-white p-8 rounded-xl shadow-lg border border-indigo-100 max-w-md w-full text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
+            <p class="text-lg text-indigo-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
+
+            <div class="mb-6">
+                <input type="password" id="auth-code-input" placeholder="Enter authentication code"
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center text-lg">
+            </div>
+            <button id="login-button"
+                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md text-lg font-semibold">
+                Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content (Hidden by default) -->
+    <div id="dashboard-container" class="hidden min-h-screen">
         <!-- Sidebar -->
         <div class="fixed inset-y-0 left-0 w-64 bg-indigo-700 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-50">
             <div class="flex items-center justify-center h-16 px-4 bg-indigo-800">
@@ -60,15 +129,15 @@
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     Dashboard
                 </a>
-                <a href="https://coaldelivery.vercel.app/" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="https://coaldelivery.vercel.app" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
                     <i class="fas fa-fire mr-3"></i>
                     Coal Delivery
                 </a>
-                <a href="https://powercon-logsheet.vercel.app/" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="https://powerconsumption.vercel.app" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
                     <i class="fas fa-bolt mr-3"></i>
                     Power Consumption
                 </a>
-                <a href="https://gpmcalculatorv2.vercel.app/" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="https://gpmcalculator-v2.vercel.app" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
                     <i class="fas fa-dashboard mr-3"></i>
                     GPM Calculator
                 </a>
@@ -76,9 +145,10 @@
                     <i class="fas fa-chart-line mr-3"></i>
                     Analytics
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
-                    <i class="fas fa-cog mr-3"></i>
-                    Settings
+                <!-- Logout button -->
+                <a href="#" id="logout-button-sidebar" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Logout
                 </a>
             </nav>
         </div>
@@ -90,7 +160,7 @@
             </button>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Content Area -->
         <div class="md:ml-64">
             <!-- Header -->
             <header class="bg-white shadow-sm">
@@ -311,7 +381,84 @@
     </div>
 
     <script>
-        // Update current date and time
+        // DOM Elements
+        const loginPage = document.getElementById('login-page');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const authCodeInput = document.getElementById('auth-code-input');
+        const loginButton = document.getElementById('login-button');
+        const logoutButtonSidebar = document.getElementById('logout-button-sidebar');
+        const messageModal = document.getElementById('messageModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
+
+        // Function to show the modal with a message
+        function showModal(message) {
+            modalMessage.textContent = message;
+            messageModal.style.display = 'flex'; // Use flex to center content
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            messageModal.style.display = 'none';
+        }
+
+        // Function to get current MMDD in 'MMDD' format
+        function getCurrentMMDD() {
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${month}${day}`;
+        }
+
+        // Authorized last names
+        const authorizedLastNames = ['admin', 'ortega', 'apuang', 'calisay', 'reyes'];
+
+        // Login function
+        function handleLogin() {
+            const enteredCode = authCodeInput.value.trim().toLowerCase();
+            const currentMMDD = getCurrentMMDD();
+            let isAuthenticated = false;
+
+            for (const lastName of authorizedLastNames) {
+                const expectedCode = lastName + currentMMDD;
+                if (enteredCode === expectedCode) {
+                    isAuthenticated = true;
+                    break;
+                }
+            }
+
+            if (isAuthenticated) {
+                loginPage.classList.add('hidden');
+                dashboardContainer.classList.remove('hidden');
+            } else {
+                showModal('Invalid authentication code. Please try again.');
+                authCodeInput.value = ''; // Clear input on failure
+            }
+        }
+
+        // Logout function
+        function handleLogout() {
+            dashboardContainer.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            authCodeInput.value = ''; // Clear input on logout
+            // Optionally, hide sidebar on logout for mobile
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('md:translate-x-0');
+        }
+
+        // Event Listeners for Login/Logout
+        loginButton.addEventListener('click', handleLogin);
+        logoutButtonSidebar.addEventListener('click', handleLogout);
+
+        // Allow pressing Enter key to login
+        authCodeInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                handleLogin();
+            }
+        });
+
+        // Update current date and time for the dashboard
         function updateDateTime() {
             const now = new Date();
             const options = { 
@@ -322,7 +469,10 @@
                 hour: '2-digit',
                 minute: '2-digit'
             };
-            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+            const dateTimeElement = document.getElementById('currentDateTime');
+            if (dateTimeElement) { // Check if element exists (only on dashboard page)
+                dateTimeElement.textContent = now.toLocaleDateString('en-US', options);
+            }
         }
         
         // Update immediately and then every minute
@@ -330,15 +480,13 @@
         setInterval(updateDateTime, 60000);
 
         // Mobile sidebar toggle
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
+        sidebarToggle.addEventListener('click', function() {
             sidebar.classList.toggle('-translate-x-full');
             sidebar.classList.toggle('md:translate-x-0');
         });
 
-        // Simulate loading data
+        // Simulate loading data (this part is from your original script)
         setTimeout(() => {
-            // This would be replaced with actual data fetching in a real app
             console.log('Data loaded');
         }, 1000);
     </script>
