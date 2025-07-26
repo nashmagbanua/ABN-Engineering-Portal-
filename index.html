@@ -10,6 +10,12 @@
         /* Base styles for the dashboard */
         body {
             font-family: 'Inter', sans-serif; /* Gumamit ng Inter font para sa malinis na hitsura */
+            display: flex; /* Gamitin ang flexbox para sa buong page layout */
+            flex-direction: column; /* I-stack ang mga child elements nang patayo */
+            min-height: 100vh; /* Siguraduhin na ang body ay sumasakop sa buong viewport height */
+        }
+        main {
+            flex-grow: 1; /* Payagan ang main content na lumaki at sumakop ng available space */
         }
         .card-hover:hover {
             transform: translateY(-5px);
@@ -131,7 +137,7 @@
     </div>
 
     <!-- Login Page -->
-    <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8 login-bg">
+    <div id="login-page" class="flex flex-col items-center justify-center flex-grow p-4 sm:p-6 lg:p-8 login-bg">
         <div class="bg-white p-8 rounded-xl shadow-lg border border-green-100 max-w-md w-full text-center">
             <!-- Logo -->
             <img src="abnlogo.png" alt="ABN Logo" class="mx-auto mb-6 w-32 h-auto">
@@ -151,7 +157,7 @@
     </div>
 
     <!-- Main Dashboard Content (Hidden by default) -->
-    <div id="dashboard-container" class="hidden min-h-screen">
+    <div id="dashboard-container" class="hidden flex-grow">
         <!-- Sidebar -->
         <div class="fixed inset-y-0 left-0 w-64 bg-green-700 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-50">
             <div class="flex items-center justify-center h-16 px-4 bg-green-800">
@@ -166,11 +172,11 @@
                     <i class="fas fa-fire mr-3"></i>
                     Coal Delivery
                 </a>
-                <a href="https://powercon-logsheet.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
+                <a href="https://powerconsumption.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-bolt mr-3"></i>
                     Power Consumption
                 </a>
-                <a href="https://gpmcalculatorv2.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
+                <a href="https://gpmcalculator-v2.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-dashboard mr-3"></i>
                     GPM Calculator
                 </a>
@@ -209,8 +215,7 @@
                             <span class="ml-2 text-gray-700">Admin</span>
                         </div>
                     </div>
-                </div>
-            </header>
+                </header>
 
             <!-- Dashboard Content -->
             <main class="p-6">
@@ -413,6 +418,15 @@
         </div>
     </div>
 
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-4 text-center w-full">
+        <p>
+            <i class="far fa-copyright mr-1"></i> 
+            <span id="current-year"></span> 
+            <a href="https://my-portfolio-psi-azure-45.vercel.app/" target="_blank" class="text-green-400 hover:text-green-300 font-semibold">vibecoding inc.</a> | all rights reserved
+        </p>
+    </footer>
+
     <script>
         // DOM Elements
         const loginPage = document.getElementById('login-page');
@@ -424,6 +438,8 @@
         const modalMessage = document.getElementById('modalMessage');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
+        const currentYearSpan = document.getElementById('current-year');
+
 
         // Function para ipakita ang modal na may mensahe
         function showModal(message) {
@@ -475,6 +491,9 @@
         function showDashboard() {
             loginPage.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
+            // Siguraduhin na ang login page ay hindi na mag-flex-grow kapag nakatago
+            loginPage.style.flexGrow = '0'; 
+            dashboardContainer.style.flexGrow = '1';
         }
 
         // Logout function
@@ -486,6 +505,9 @@
             // Opsyonal: itago ang sidebar sa pag-logout para sa mobile
             sidebar.classList.add('-translate-x-full');
             sidebar.classList.remove('md:translate-x-0');
+            // Ibalik ang flex-grow sa login page
+            loginPage.style.flexGrow = '1'; 
+            dashboardContainer.style.flexGrow = '0';
         }
 
         // Event Listeners para sa Login/Logout
@@ -533,8 +555,15 @@
 
         // I-check ang login status sa paglo-load ng page
         document.addEventListener('DOMContentLoaded', () => {
+            // I-set ang taon sa footer
+            currentYearSpan.textContent = new Date().getFullYear();
+
             if (sessionStorage.getItem('loggedIn') === 'true') {
                 showDashboard();
+            } else {
+                // Siguraduhin na ang login page ay sumasakop sa buong available space kung hindi naka-login
+                loginPage.style.flexGrow = '1';
+                dashboardContainer.style.flexGrow = '0';
             }
         });
     </script>
