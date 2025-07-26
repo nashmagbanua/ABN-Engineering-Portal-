@@ -1,1 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>DIGITAL COAL DELIVERY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease; /* Smooth transition for theme change */
+        }
 
+        /* Glass effect for cards */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px); /* Slightly increased blur for more depth */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        /* Gradient background for light theme */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Dark theme background */
+        html.dark .gradient-bg {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        }
+
+        /* Hover scale effect */
+        .hover-scale:hover {
+            transform: scale(1.02);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        /* Fade-in animation for sections */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom scrollbar for logs table */
+        .log-table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .log-table-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .log-table-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        .log-table-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Specific styles for dark mode inputs */
+        html.dark input, html.dark select {
+            background-color: rgba(45, 55, 72, 0.5); /* Darker input background */
+            border-color: rgba(255, 255, 255, 0.1); /* Subtler border */
+            color: #e2e8f0; /* Lighter text color */
+        }
+        html.dark input::placeholder {
+            color: rgba(226, 232, 240, 0.6); /* Lighter placeholder */
+        }
+        html.dark .text-white {
+            color: #e2e8f0; /* Adjust general white text for dark mode */
+        }
+        html.dark .text-purple-200 {
+            color: #a78bfa; /* Adjust purple text for dark mode */
+        }
+        html.dark .bg-white\/20, html.dark .bg-white\/10 {
+            background-color: rgba(255, 255, 255, 0.1); /* Keep glass effect consistent */
+        }
+        html.dark .bg-white\/30 {
+            background-color: rgba(255, 255, 255, 0.15); /* Slightly more opaque for active */
+        }
+        html.dark .text-purple-600 {
+            color: #8b5cf6; /* Adjust truck icon color */
+        }
+        html.dark .bg-white {
+            background-color: #cbd5e0; /* Adjust white circle in dark mode */
+        }
+        /* Custom style for remarks cell to allow flexbox for date/time inputs */
+        .remarks-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 4px; /* Space between remarks select and date/time inputs */
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen p-4 flex flex-col items-center">
+    <div class="max-w-7xl w-full mx-auto">
+        <!-- Header -->
+        <header class="glass-effect rounded-2xl p-6 mb-6 text-center animate-fade-in relative">
+            <button id="themeToggle" class="absolute top-4 right-4 text-white text-2xl p-2 rounded-full hover:bg-white/10 transition-colors">
+                <i id="themeIcon" class="fas fa-moon"></i>
+            </button>
+            <div class="flex flex-col md:flex-row items-center justify-center mb-4">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mr-0 md:mr-4 mb-4 md:mb-0 shadow-lg">
+                    <i class="fas fa-truck text-3xl text-purple-600"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight">DIGITAL COAL DELIVERY</h1>
+            </div>
+            <p class="text-purple-200 text-lg">Track and manage coal deliveries efficiently</p>
+        </header>
+
+        <!-- Message Container -->
+        <div id="messageContainer" class="hidden p-4 rounded-lg mb-6 text-white text-center font-medium shadow-md animate-fade-in">
+            <!-- Messages will be injected here -->
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-center gap-4 mb-6 animate-fade-in">
+            <button id="tab1Btn" class="tab-btn bg-white/20 text-white px-6 py-3 rounded-xl transition-all duration-300 hover:bg-white/30 font-semibold shadow-md" data-tab="tab1">
+                <i class="fas fa-file-alt mr-2"></i> Form
+            </button>
+            <button id="tab2Btn" class="tab-btn bg-white/10 text-white px-6 py-3 rounded-xl transition-all duration-300 hover:bg-white/20 font-semibold shadow-md" data-tab="tab2">
+                <i class="fas fa-clipboard-list mr-2"></i> Logs
+            </button>
+        </div>
+
+        <!-- Tab 1: Form Section -->
+        <div id="tab1" class="glass-effect rounded-2xl p-6 mb-6 animate-fade-in w-full">
+            <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                <i class="fas fa-plus-circle mr-3 text-purple-300"></i> New Delivery Entry
+            </h2>
+            <form id="deliveryForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="form-group">
+                    <label for="date" class="block text-white text-sm font-medium mb-2">Date:</label>
+                    <input type="date" id="date" required class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="dateError" class="text-red-300 text-sm mt-1 hidden">Date is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="time" class="block text-white text-sm font-medium mb-2">Time Arrived:</label>
+                    <input type="time" id="time" required class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="timeError" class="text-red-300 text-sm mt-1 hidden">Time is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="driver" class="block text-white text-sm font-medium mb-2">Driver's Name:</label>
+                    <input type="text" id="driver" required placeholder="Enter driver's name" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="driverError" class="text-red-300 text-sm mt-1 hidden">Driver's name is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="plate" class="block text-white text-sm font-medium mb-2">Plate No.:</label>
+                    <input type="text" id="plate" required placeholder="e.g., ABC-123" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="plateError" class="text-red-300 text-sm mt-1 hidden">Plate number is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="kg" class="block text-white text-sm font-medium mb-2">Coal kg:</label>
+                    <input type="number" id="kg" required placeholder="0" min="0" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="kgError" class="text-red-300 text-sm mt-1 hidden">Coal kg is required and must be a positive number.</p>
+                </div>
+                <div class="form-group">
+                    <label for="ctp" class="block text-white text-sm font-medium mb-2">CTP No.:</label>
+                    <input type="text" id="ctp" required placeholder="Enter CTP number" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="ctpError" class="text-red-300 text-sm mt-1 hidden">CTP number is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="dr" class="block text-white text-sm font-medium mb-2">DR No.:</label>
+                    <input type="text" id="dr" required placeholder="Enter DR number" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="drError" class="text-red-300 text-sm mt-1 hidden">DR number is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="supplier" class="block text-white text-sm font-medium mb-2">Supplier Name:</label>
+                    <input type="text" id="supplier" required placeholder="Enter supplier name" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="supplierError" class="text-red-300 text-sm mt-1 hidden">Supplier name is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="yard" class="block text-white text-sm font-medium mb-2">Coal Yard No.:</label>
+                    <select id="yard" required class="w-full px-4 py-2 rounded-lg bg-white/20 text-white border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                        <option value="">Select Yard</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                    </select>
+                    <p id="yardError" class="text-red-300 text-sm mt-1 hidden">Coal Yard No. is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="operator" class="block text-white text-sm font-medium mb-2">Operator's Name:</label>
+                    <input type="text" id="operator" required placeholder="Enter operator name" class="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                    <p id="operatorError" class="text-red-300 text-sm mt-1 hidden">Operator's name is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="remarks" class="block text-white text-sm font-medium mb-2">Remarks:</label>
+                    <select id="remarks" required class="w-full px-4 py-2 rounded-lg bg-white/20 text-white border border-white/30 focus:ring-2 focus:ring-white/50 focus:border-transparent outline-none transition-colors">
+                        <option value="✅ In Use">✅ In Use</option>
+                        <option value="❌ Used Up">❌ Used Up</option>
+                        <option value="🔔Standby">🔔 Standby</option>
+                    </select>
+                    <p id="remarksError" class="text-red-300 text-sm mt-1 hidden">Remarks is required.</p>
+                </div>
+                <div class="form-group md:col-span-2 lg:col-span-3 flex gap-4 mt-4">
+                    <button type="submit" id="addEntryBtn" class="w-full flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
+                        <i class="fas fa-plus mr-2"></i> Add Entry
+                    </button>
+                    <button type="button" id="clearFormBtn" class="w-auto bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
+                        <i class="fas fa-eraser mr-2"></i> Clear Form
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tab 2: Logs Section -->
+        <div id="tab2" class="glass-effect rounded-2xl p-6 mb-6 animate-fade-in hidden w-full">
+            <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                <i class="fas fa-clipboard-list mr-3 text-purple-300"></i> Delivery Logs
+            </h2>
+            <div class="log-table-container overflow-x-auto max-h-[60vh] rounded-lg shadow-inner">
+                <table class="min-w-full bg-white/10 rounded-lg overflow-hidden">
+                    <thead class="bg-white/20 sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Date</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Time</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Driver</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Plate No.</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Coal (kg)</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">CTP No.</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">DR No.</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Supplier</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Yard No.</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Operator</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Remarks</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody" class="divide-y divide-white/10">
+                        <!-- Log entries will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noLogsMessage" class="text-white/70 text-center py-8 hidden">
+                No delivery logs yet. Add an entry using the form!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tab1 = document.getElementById('tab1');
+        const tab2 = document.getElementById('tab2');
+        const deliveryForm = document.getElementById('deliveryForm');
+        const addEntryBtn = document.getElementById('addEntryBtn');
+        const clearFormBtn = document.getElementById('clearFormBtn');
+        const logTableBody = document.getElementById('logTableBody');
+        const noLogsMessage = document.getElementById('noLogsMessage');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // --- Form Input Elements for Validation ---
+        const formInputs = {
+            date: document.getElementById('date'),
+            time: document.getElementById('time'),
+            driver: document.getElementById('driver'),
+            plate: document.getElementById('plate'),
+            kg: document.getElementById('kg'),
+            ctp: document.getElementById('ctp'),
+            dr: document.getElementById('dr'),
+            supplier: document.getElementById('supplier'),
+            yard: document.getElementById('yard'),
+            operator: document.getElementById('operator'),
+            remarks: document.getElementById('remarks')
+        };
+
+        // --- Utility Functions ---
+
+        /**
+         * Generates a unique ID (simple timestamp + random string).
+         * @returns {string} A unique ID.
+         */
+        function generateUniqueId() {
+            return Date.now().toString(36) + Math.random().toString(36).substring(2);
+        }
+
+        /**
+         * Displays a temporary message to the user.
+         * @param {string} type - 'success' or 'error' or 'info'.
+         * @param {string} message - The message text.
+         */
+        function showMessage(type, message) {
+            messageContainer.textContent = message;
+            messageContainer.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-blue-500');
+            if (type === 'success') {
+                messageContainer.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                messageContainer.classList.add('bg-red-500');
+            } else if (type === 'info') {
+                messageContainer.classList.add('bg-blue-500');
+            }
+            messageContainer.classList.add('animate-fade-in'); // Re-trigger animation
+            setTimeout(() => {
+                messageContainer.classList.add('hidden');
+            }, 5000); // Message disappears after 5 seconds
+        }
+
+        // --- Theme Toggling Logic ---
+
+        /**
+         * Applies the theme based on the 'dark' class on the html element.
+         * Updates the theme icon.
+         */
+        function applyTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+
+        /**
+         * Initializes the theme on page load from localStorage or system preference.
+         */
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            applyTheme();
+        }
+
+        // Event listener for theme toggle button
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+            applyTheme();
+        });
+
+        // --- Tab Switching Logic ---
+
+        /**
+         * Activates a specific tab and deactivates others.
+         * @param {string} tabId - The ID of the tab to activate (e.g., 'tab1', 'tab2').
+         */
+        function activateTab(tabId) {
+            // Hide all tab contents
+            tab1.classList.add('hidden');
+            tab2.classList.add('hidden');
+
+            // Deactivate all tab buttons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('bg-white/20', 'font-semibold');
+                btn.classList.add('bg-white/10');
+            });
+
+            // Show the selected tab content
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('animate-fade-in'); // Re-trigger animation
+
+            // Activate the corresponding tab button
+            const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-white/10');
+                activeBtn.classList.add('bg-white/20', 'font-semibold');
+            }
+
+            // If switching to logs tab, render logs
+            if (tabId === 'tab2') {
+                renderLogs();
+            }
+        }
+
+        // Event listeners for tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                activateTab(tabId);
+            });
+        });
+
+        // --- Form Validation Logic ---
+
+        /**
+         * Shows an error message for a specific input field.
+         * @param {HTMLElement} inputElement - The input element.
+         * @param {string} message - The error message to display.
+         */
+        function showError(inputElement, message) {
+            inputElement.classList.add('border-red-500');
+            inputElement.classList.remove('border-white/30');
+            const errorElement = document.getElementById(inputElement.id + 'Error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+            }
+        }
+
+        /**
+         * Hides the error message for a specific input field.
+         * @param {HTMLElement} inputElement - The input element.
+         */
+        function hideError(inputElement) {
+            inputElement.classList.remove('border-red-500');
+            inputElement.classList.add('border-white/30');
+            const errorElement = document.getElementById(inputElement.id + 'Error');
+            if (errorElement) {
+                errorElement.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Validates all form fields.
+         * @param {Object} data - The data object to validate (can be from form or table row).
+         * @param {HTMLElement} [rowElement] - Optional: The table row element for specific error display.
+         * @returns {boolean} True if the form/data is valid, false otherwise.
+         */
+        function validateEntryData(data, rowElement = null) {
+            let isValid = true;
+
+            const fieldsToValidate = [
+                { key: 'date', type: 'date', message: 'Date is required.' },
+                { key: 'time', type: 'time', message: 'Time is required.' },
+                { key: 'driver', type: 'text', message: "Driver's name is required." },
+                { key: 'plate', type: 'text', message: "Plate number is required." },
+                { key: 'kg', type: 'number', message: "Coal kg is required and must be a positive number." },
+                { key: 'ctp', type: 'text', message: "CTP number is required." },
+                { key: 'dr', type: 'text', message: "DR number is required." },
+                { key: 'supplier', type: 'text', message: "Supplier name is required." },
+                { key: 'yard', type: 'select', message: "Coal Yard No. is required." },
+                { key: 'operator', type: 'text', message: "Operator's name is required." },
+                { key: 'remarks', type: 'select', message: "Remarks is required." }
+            ];
+
+            for (const field of fieldsToValidate) {
+                const value = data[field.key];
+                let fieldIsValid = true;
+
+                if (field.type === 'number') {
+                    if (isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
+                        fieldIsValid = false;
+                    }
+                } else if (typeof value === 'string' && value.trim() === '') {
+                    fieldIsValid = false;
+                } else if (value === null || value === undefined) { // For select options not chosen
+                    fieldIsValid = false;
+                }
+
+                if (!fieldIsValid) {
+                    isValid = false;
+                    if (rowElement) {
+                        // For table rows, we'll rely on the main message container for now
+                    } else {
+                        // For form, use existing showError mechanism
+                        showError(formInputs[field.key], field.message);
+                    }
+                } else {
+                    if (!rowElement) {
+                        hideError(formInputs[field.key]);
+                    }
+                }
+            }
+
+            // Specific validation for date/time fields based on remarks
+            if (data.remarks === '✅ In Use') {
+                if (!data.dateInUse || data.dateInUse.trim() === '') {
+                    isValid = false;
+                    showMessage('error', 'Date In Use is required when Remarks is "In Use".');
+                }
+                if (!data.timeInUse || data.timeInUse.trim() === '') {
+                    isValid = false;
+                    showMessage('error', 'Time In Use is required when Remarks is "In Use".');
+                }
+            } else if (data.remarks === '❌ Used Up') {
+                if (!data.dateUsedUp || data.dateUsedUp.trim() === '') {
+                    isValid = false;
+                    showMessage('error', 'Date Used Up is required when Remarks is "Used Up".');
+                }
+                if (!data.timeUsedUp || data.timeUsedUp.trim() === '') {
+                    isValid = false;
+                    showMessage('error', 'Time Used Up is required when Remarks is "Used Up".');
+                }
+            }
+
+            return isValid;
+        }
+
+        // Add blur event listeners for real-time validation feedback on the form
+        for (const key in formInputs) {
+            const input = formInputs[key];
+            input.addEventListener('blur', () => {
+                // Create a temporary object to pass to validateEntryData for individual field validation
+                const tempEntry = {};
+                tempEntry[key] = input.value;
+                // For remarks, also include date/time if they exist (though they don't for initial form)
+                if (key === 'remarks') {
+                    // This part is more complex for form, as conditional inputs don't exist yet.
+                    // For now, form validation only happens on submit.
+                }
+                // validateEntryData(tempEntry); // Disabling individual blur validation for now to avoid premature errors on complex remarks logic
+            });
+        }
+
+
+        // --- Form Submission Logic ---
+
+        /**
+         * Clears all input fields in the form.
+         */
+        function clearForm() {
+            deliveryForm.reset(); // Resets all form fields to their initial state
+            for (const key in formInputs) {
+                hideError(formInputs[key]); // Also hide any validation errors
+            }
+            showMessage('success', 'Form cleared!');
+        }
+
+        // Event listener for clear form button
+        clearFormBtn.addEventListener('click', clearForm);
+
+        // Event listener for form submission
+        deliveryForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const newEntry = {
+                date: formInputs.date.value,
+                time: formInputs.time.value,
+                driver: formInputs.driver.value,
+                plate: formInputs.plate.value,
+                kg: parseFloat(formInputs.kg.value),
+                ctp: formInputs.ctp.value,
+                dr: formInputs.dr.value,
+                supplier: formInputs.supplier.value,
+                yard: formInputs.yard.value,
+                operator: formInputs.operator.value,
+                remarks: formInputs.remarks.value,
+                dateInUse: null, // Initialize
+                timeInUse: null, // Initialize
+                dateUsedUp: null, // Initialize
+                timeUsedUp: null // Initialize
+            };
+
+            if (!validateEntryData(newEntry)) {
+                showMessage('error', 'Please fill in all required fields correctly.');
+                return; // Stop if validation fails
+            }
+
+            // Show loading state
+            addEntryBtn.disabled = true;
+            addEntryBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Adding...';
+            addEntryBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            // Simulate API call or processing time
+            setTimeout(() => {
+                newEntry.id = generateUniqueId();
+                newEntry.timestamp = new Date().toISOString(); // Add a timestamp for sorting/tracking
+
+                // Retrieve existing entries or initialize an empty array
+                const existingEntries = JSON.parse(localStorage.getItem('coalDeliveries')) || [];
+                existingEntries.push(newEntry);
+                localStorage.setItem('coalDeliveries', JSON.stringify(existingEntries));
+
+                showMessage('success', 'Delivery entry added successfully!');
+                clearForm(); // Clear the form after successful submission
+                renderLogs(); // Update the logs table
+
+                // Reset button state
+                addEntryBtn.disabled = false;
+                addEntryBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Add Entry';
+                addEntryBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+
+            }, 1000); // 1 second delay to simulate work
+        });
+
+        // --- Logs Display & Management Logic ---
+
+        let editingRowId = null; // To keep track of which row is currently being edited
+
+        /**
+         * Enables editing for a specific log entry row.
+         * @param {string} idToEdit - The unique ID of the entry to edit.
+         */
+        function editEntry(idToEdit) {
+            if (editingRowId && editingRowId !== idToEdit) {
+                showMessage('error', 'Please save or cancel the current edit before editing another row.');
+                return; // Prevent editing multiple rows at once
+            }
+
+            editingRowId = idToEdit;
+            const row = document.querySelector(`tr[data-id="${idToEdit}"]`);
+            if (!row) return;
+
+            // Get the current entry data from localStorage to pre-fill inputs
+            const entries = JSON.parse(localStorage.getItem('coalDeliveries')) || [];
+            const entry = entries.find(e => e.id === idToEdit);
+            if (!entry) return;
+
+            // Define the order and type of fields for easy iteration
+            const fields = [
+                { key: 'date', type: 'date' },
+                { key: 'time', type: 'time' },
+                { key: 'driver', type: 'text' },
+                { key: 'plate', type: 'text' },
+                { key: 'kg', type: 'number' },
+                { key: 'ctp', type: 'text' },
+                { key: 'dr', type: 'text' },
+                { key: 'supplier', type: 'text' },
+                { key: 'yard', type: 'select', options: ['1', '2', '3', '4', '5', '6', '7', '8', '9'] },
+                { key: 'operator', type: 'text' },
+                { key: 'remarks', type: 'select', options: ['✅ In Use', '❌ Used Up', '🔔Standby'] }
+            ];
+
+            // Loop through each cell (td) and replace content with input fields
+            row.querySelectorAll('td:not(:last-child)').forEach((td, index) => {
+                const field = fields[index];
+                if (!field) return; // Skip if no corresponding field definition
+
+                const originalValue = entry[field.key];
+                let inputElement;
+
+                if (field.key === 'remarks') {
+                    // Handle Remarks with conditional Date and Time inputs
+                    td.classList.add('remarks-cell'); // Add class for flex styling
+                    inputElement = document.createElement('select');
+                    inputElement.className = 'w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none';
+                    inputElement.dataset.fieldKey = field.key; // Store key for easy access during save
+
+                    field.options.forEach(optionValue => {
+                        const option = document.createElement('option');
+                        option.value = optionValue;
+                        option.textContent = optionValue;
+                        if (optionValue === originalValue) {
+                            option.selected = true;
+                        }
+                        inputElement.appendChild(option);
+                    });
+
+                    // Create "In Use" date/time input container
+                    const inUseContainer = document.createElement('div');
+                    inUseContainer.className = 'in-use-container flex flex-col gap-1 mt-2 hidden';
+                    inUseContainer.innerHTML = `
+                        <label class="block text-white text-xs font-medium">Date In Use:</label>
+                        <input type="date" class="w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none" data-field-key="dateInUse" data-original-value="${entry.dateInUse || ''}">
+                        <label class="block text-white text-xs font-medium">Time In Use:</label>
+                        <input type="time" class="w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none" data-field-key="timeInUse" data-original-value="${entry.timeInUse || ''}">
+                    `;
+                    const dateInUseInput = inUseContainer.querySelector('[data-field-key="dateInUse"]');
+                    const timeInUseInput = inUseContainer.querySelector('[data-field-key="timeInUse"]');
+                    dateInUseInput.value = entry.dateInUse || '';
+                    timeInUseInput.value = entry.timeInUse || '';
+
+
+                    // Create "Used Up" date/time input container
+                    const usedUpContainer = document.createElement('div');
+                    usedUpContainer.className = 'used-up-container flex flex-col gap-1 mt-2 hidden';
+                    usedUpContainer.innerHTML = `
+                        <label class="block text-white text-xs font-medium">Date Used Up:</label>
+                        <input type="date" class="w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none" data-field-key="dateUsedUp" data-original-value="${entry.dateUsedUp || ''}">
+                        <label class="block text-white text-xs font-medium">Time Used Up:</label>
+                        <input type="time" class="w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none" data-field-key="timeUsedUp" data-original-value="${entry.timeUsedUp || ''}">
+                    `;
+                    const dateUsedUpInput = usedUpContainer.querySelector('[data-field-key="dateUsedUp"]');
+                    const timeUsedUpInput = usedUpContainer.querySelector('[data-field-key="timeUsedUp"]');
+                    dateUsedUpInput.value = entry.dateUsedUp || '';
+                    timeUsedUpInput.value = entry.timeUsedUp || '';
+
+
+                    // Function to toggle date/time inputs visibility and requirement
+                    const toggleDateTimeInputs = () => {
+                        inUseContainer.classList.add('hidden');
+                        dateInUseInput.required = false;
+                        timeInUseInput.required = false;
+
+                        usedUpContainer.classList.add('hidden');
+                        dateUsedUpInput.required = false;
+                        timeUsedUpInput.required = false;
+
+                        if (inputElement.value === '✅ In Use') {
+                            inUseContainer.classList.remove('hidden');
+                            dateInUseInput.required = true;
+                            timeInUseInput.required = true;
+                        } else if (inputElement.value === '❌ Used Up') {
+                            usedUpContainer.classList.remove('hidden');
+                            dateUsedUpInput.required = true;
+                            timeUsedUpInput.required = true;
+                        }
+                    };
+
+                    inputElement.addEventListener('change', toggleDateTimeInputs);
+
+                    td.innerHTML = ''; // Clear current content
+                    td.appendChild(inputElement);
+                    td.appendChild(inUseContainer);
+                    td.appendChild(usedUpContainer);
+
+                    // Initial call to set visibility based on current remarks value
+                    toggleDateTimeInputs();
+
+                } else if (field.type === 'select') {
+                    inputElement = document.createElement('select');
+                    inputElement.className = 'w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none';
+                    field.options.forEach(optionValue => {
+                        const option = document.createElement('option');
+                        option.value = optionValue;
+                        option.textContent = optionValue;
+                        if (optionValue === originalValue) {
+                            option.selected = true;
+                        }
+                        inputElement.appendChild(option);
+                    });
+                } else {
+                    inputElement = document.createElement('input');
+                    inputElement.type = field.type;
+                    inputElement.value = originalValue;
+                    inputElement.className = 'w-full px-2 py-1 rounded bg-white/30 text-white border border-white/40 focus:ring-1 focus:ring-white/60 outline-none';
+                    if (field.type === 'number') {
+                        inputElement.min = "0";
+                    }
+                }
+                if (field.key !== 'remarks') { // Remarks has its own data-fieldKey set above
+                    inputElement.dataset.originalValue = originalValue; // Store original value for cancel
+                    inputElement.dataset.fieldKey = field.key; // Store key for easy access during save
+                }
+
+                if (field.key !== 'remarks') { // Remarks cell is handled separately
+                    td.innerHTML = ''; // Clear current content
+                    td.appendChild(inputElement);
+                }
+            });
+
+            // Change action buttons
+            const actionsCell = row.querySelector('td:last-child');
+            actionsCell.innerHTML = `
+                <button class="text-green-400 hover:text-green-600 transition-colors save-btn mr-2" data-id="${idToEdit}">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="text-red-400 hover:text-red-600 transition-colors cancel-btn" data-id="${idToEdit}">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            `;
+
+            // Re-attach event listeners for save and cancel buttons
+            actionsCell.querySelector('.save-btn').addEventListener('click', (event) => saveEntry(event.currentTarget.dataset.id));
+            actionsCell.querySelector('.cancel-btn').addEventListener('click', (event) => cancelEdit(event.currentTarget.dataset.id));
+        }
+
+        /**
+         * Saves changes for an edited log entry.
+         * @param {string} idToSave - The unique ID of the entry to save.
+         */
+        function saveEntry(idToSave) {
+            const row = document.querySelector(`tr[data-id="${idToSave}"]`);
+            if (!row) return;
+
+            const updatedData = {};
+            let isValid = true;
+
+            // Collect updated data from input fields
+            row.querySelectorAll('td:not(:last-child) input, td:not(:last-child) select').forEach(input => {
+                const fieldKey = input.dataset.fieldKey;
+                if (fieldKey) { // Ensure fieldKey exists
+                    let value = input.value;
+                    if (input.type === 'number') {
+                        value = parseFloat(value);
+                    }
+                    updatedData[fieldKey] = value;
+                }
+            });
+
+            // Handle conditional date/time fields specifically
+            const remarksSelect = row.querySelector('[data-field-key="remarks"]');
+            const currentRemarks = remarksSelect ? remarksSelect.value : '';
+
+            // Reset all conditional date/time fields first
+            updatedData.dateInUse = null;
+            updatedData.timeInUse = null;
+            updatedData.dateUsedUp = null;
+            updatedData.timeUsedUp = null;
+
+            if (currentRemarks === '✅ In Use') {
+                const dateInUseInput = row.querySelector('[data-field-key="dateInUse"]');
+                const timeInUseInput = row.querySelector('[data-field-key="timeInUse"]');
+                updatedData.dateInUse = dateInUseInput ? dateInUseInput.value : null;
+                updatedData.timeInUse = timeInUseInput ? timeInUseInput.value : null;
+            } else if (currentRemarks === '❌ Used Up') {
+                const dateUsedUpInput = row.querySelector('[data-field-key="dateUsedUp"]');
+                const timeUsedUpInput = row.querySelector('[data-field-key="timeUsedUp"]');
+                updatedData.dateUsedUp = dateUsedUpInput ? dateUsedUpInput.value : null;
+                updatedData.timeUsedUp = timeUsedUpInput ? timeUsedUpInput.value : null;
+            }
+
+            // Validate the collected data
+            if (!validateEntryData(updatedData, row)) {
+                return;
+            }
+
+            // Update the entry in localStorage
+            let existingEntries = JSON.parse(localStorage.getItem('coalDeliveries')) || [];
+            const entryIndex = existingEntries.findIndex(entry => entry.id === idToSave);
+
+            if (entryIndex !== -1) {
+                // Merge updated data with existing entry, preserving original timestamp/id
+                existingEntries[entryIndex] = { ...existingEntries[entryIndex], ...updatedData };
+                localStorage.setItem('coalDeliveries', JSON.stringify(existingEntries));
+                showMessage('success', 'Entry updated successfully!');
+                editingRowId = null; // Clear editing state
+                renderLogs(); // Re-render the logs table to show updated values and normal buttons
+            } else {
+                showMessage('error', 'Error: Entry not found for saving.');
+            }
+        }
+
+        /**
+         * Cancels editing for a specific log entry row, reverting changes.
+         * @param {string} idToCancel - The unique ID of the entry to cancel editing for.
+         */
+        function cancelEdit(idToCancel) {
+            editingRowId = null; // Clear editing state
+            showMessage('info', 'Edit cancelled. Changes discarded.');
+            renderLogs(); // Re-render the logs table to revert to original values
+        }
+
+        /**
+         * Renders all stored delivery logs into the table.
+         */
+        function renderLogs() {
+            logTableBody.innerHTML = ''; // Clear existing rows
+            const entries = JSON.parse(localStorage.getItem('coalDeliveries')) || [];
+
+            if (entries.length === 0) {
+                noLogsMessage.classList.remove('hidden');
+                logTableBody.classList.add('hidden');
+            } else {
+                noLogsMessage.classList.add('hidden');
+                logTableBody.classList.remove('hidden');
+                // Sort entries by timestamp, newest first
+                entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                entries.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.classList.add('hover:bg-white/5', 'transition-colors');
+                    row.dataset.id = entry.id; // Store ID on the row element
+
+                    // Determine remarks display
+                    let remarksDisplay = entry.remarks;
+                    if (entry.remarks === '✅ In Use' && entry.dateInUse && entry.timeInUse) {
+                        remarksDisplay += ` (In Use: ${entry.dateInUse} ${entry.timeInUse})`;
+                    } else if (entry.remarks === '❌ Used Up' && entry.dateUsedUp && entry.timeUsedUp) {
+                        remarksDisplay += ` (Used Up: ${entry.dateUsedUp} ${entry.timeUsedUp})`;
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.date}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.time}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.driver}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.plate}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.kg}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.ctp}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.dr}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.supplier}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.yard}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${entry.operator}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-white/80">${remarksDisplay}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-400 hover:text-blue-600 transition-colors edit-btn mr-2" data-id="${entry.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="text-red-400 hover:text-red-600 transition-colors delete-btn" data-id="${entry.id}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                    logTableBody.appendChild(row);
+                });
+
+                // Attach event listeners to newly created buttons
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const idToEdit = event.currentTarget.dataset.id;
+                        editEntry(idToEdit);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const idToDelete = event.currentTarget.dataset.id;
+                        // For a real app, you'd add a confirmation dialog here
+                        if (confirm('Are you sure you want to delete this entry?')) {
+                             deleteEntry(idToDelete);
+                        }
+                    });
+                });
+            }
+        }
+
+        /**
+         * Deletes a log entry by its ID.
+         * @param {string} idToDelete - The unique ID of the entry to delete.
+         */
+        function deleteEntry(idToDelete) {
+            let existingEntries = JSON.parse(localStorage.getItem('coalDeliveries')) || [];
+            const updatedEntries = existingEntries.filter(entry => entry.id !== idToDelete);
+            localStorage.setItem('coalDeliveries', JSON.stringify(updatedEntries));
+            showMessage('success', 'Entry deleted successfully!');
+            renderLogs(); // Re-render the logs table
+        }
+
+
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // --- Initializations on Load ---
+        window.addEventListener('load', () => {
+            initTheme(); // Apply saved theme
+            activateTab('tab1'); // Show the form tab by default
+            renderLogs(); // Render logs if any exist
+        });
+    </script>
+</body>
+</html>
