@@ -6,7 +6,18 @@
     <title>Utilities Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="manifest" href="manifest.json" />
+    
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5"> <!-- Optional, if you have this file -->
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c"> <!-- Optional, for Windows tiles -->
+    <meta name="theme-color" content="#ffffff">
+    <!-- End Favicon Links -->
+
     <style>
         /* Base styles for the dashboard */
         body {
@@ -15,6 +26,33 @@
             flex-direction: column; /* I-stack ang mga child elements nang patayo */
             min-height: 100vh; /* Siguraduhin na ang body ay sumasakop sa buong viewport height */
         }
+        /* Gawing fixed ang header */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10; /* Siguraduhin na nasa ibabaw ng ibang content */
+            /* Added for responsive width when sidebar is open/closed */
+            width: 100%; 
+        }
+        @media (min-width: 768px) {
+            .fixed-header {
+                left: 256px; /* Adjust for sidebar width */
+                width: calc(100% - 256px); /* Adjust width to fill remaining space */
+            }
+        }
+        /* I-adjust ang padding ng main content area para hindi matakpan ng fixed header */
+        .main-content-with-fixed-header {
+            padding-top: 64px; /* Default padding-top para sa header na may taas na ~64px (py-4) */
+            /* No padding-left here, it's handled by md:ml-64 on the div itself */
+        }
+        @media (min-width: 768px) { /* Para sa desktop, kasama ang sidebar margin */
+            .main-content-with-fixed-header {
+                /* No padding-left here, md:ml-64 handles it on the parent div */
+            }
+        }
+
         main {
             flex-grow: 1; /* Payagan ang main content na lumaki at sumakop ng available space */
         }
@@ -146,9 +184,12 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
             <p class="text-lg text-green-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
 
-            <div class="mb-6">
+            <div class="mb-6 relative"> <!-- Added relative positioning for the icon -->
                 <input type="password" id="auth-code-input" placeholder="Enter authentication code"
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
+                       class="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
+                <span id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                    <i class="fas fa-eye text-gray-500"></i> <!-- Eye icon -->
+                </span>
             </div>
             <button id="login-button"
                     class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md text-lg font-semibold">
@@ -165,23 +206,23 @@
                 <h1 class="text-xl font-bold">Utilities Dashboard</h1>
             </div>
             <nav class="mt-6">
-                <a href="#" class="flex items-center px-6 py-3 text-white bg-green-800">
+                <a href="#" class="flex items-center px-6 py-3 text-white bg-green-800 active-tab-link" data-tab-target="dashboard-main">
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     Dashboard
                 </a>
                 <a href="https://coaldelivery.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-fire mr-3"></i>
-                    Coal Delivery
+                    Coal Management
                 </a>
-                <a href="https://powercon-logsheet.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
+                <a href="https://powerconsumption.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-bolt mr-3"></i>
                     Power Consumption
                 </a>
-                <a href="https://gpmcalculatorv2.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
-                    <i class="fas fa-dashboard mr-3"></i>
+                <a href="https://gpmcalculator-v2.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
+                    <i class="fas fa-calculator mr-3"></i>
                     GPM Calculator
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
+                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600" data-tab-target="analytics-section">
                     <i class="fas fa-chart-line mr-3"></i>
                     Analytics
                 </a>
@@ -200,178 +241,180 @@
             </button>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="md:ml-64">
-            <!-- Header -->
-            <header class="bg-white shadow-sm">
-                <div class="flex justify-between items-center px-6 py-4">
-                    <h1 class="text-2xl font-bold text-gray-800">Utilities Admin Dashboard</h1>
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <i class="fas fa-bell text-gray-500"></i>
-                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-                        </div>
-                        <div class="flex items-center">
-                            <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-8 w-8 rounded-full">
-                            <span id="loggedInUserName" class="ml-2 text-gray-700 capitalize">Admin</span> <!-- Added ID and capitalize class -->
-                        </div>
+        <!-- Header (Moved outside the main content div) -->
+        <header class="bg-white shadow-sm fixed-header">
+            <div class="flex justify-between items-center px-6 py-4">
+                <h1 class="text-2xl font-bold text-gray-800">Utilities Admin Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-gray-500"></i>
+                        <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                    </div>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-8 w-8 rounded-full">
+                        <span id="loggedInUserName" class="ml-2 text-gray-700 capitalize">Guest</span> <!-- Default to Guest -->
                     </div>
                 </div>
-            </header>
+            </div>
+        </header>
 
-            <!-- Dashboard Content -->
-            <main class="p-6">
-                <!-- Date and Time -->
-                <div class="mb-6 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-700">Today's Overview</h2>
-                        <p class="text-gray-500" id="currentDateTime">Loading date...</p>
-                    </div>
-                    <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-download mr-2"></i> Export Report
-                    </button>
-                </div>
-
-                <!-- Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Coal Delivery Card -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                        <div class="bg-green-600 p-4 text-white">
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
-                                <i class="fas fa-fire text-xl"></i>
-                            </div>
-                            <p class="text-green-100 text-sm">Today's delivery</p>
+        <!-- Main Content Area (Adjusted to accommodate fixed header and sidebar) -->
+        <div class="md:ml-64 flex-grow flex flex-col main-content-with-fixed-header">
+            <!-- Main Content Container for Tabs -->
+            <div id="main-content-tabs" class="flex-grow p-6">
+                <!-- Dashboard Main Section (remains in index.html) -->
+                <section id="dashboard-main" class="tab-content">
+                    <!-- Date and Time -->
+                    <div class="mb-6 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-700">Today's Overview</h2>
+                            <p class="text-gray-500" id="currentDateTime">Loading date...</p>
                         </div>
-                        <div class="p-6">
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Used Coal Yard:</span>
-                                    <span class="font-medium">Coal Yard #9</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Supplier:</span>
-                                    <span class="font-medium">Luzon Black Mountain Corp. (LBMC)</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Kilos:</span>
-                                    <span class="font-medium text-green-600">36,500 kg</span>
-                                </div>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-gray-100">
-                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
-                                    View Full Report
-                                </button>
-                            </div>
-                        </div>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                            <i class="fas fa-download mr-2"></i> Export Report
+                        </button>
                     </div>
 
-                    <!-- GpM Calculator Card -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                        <div class="bg-green-600 p-4 text-white">
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">GpM Calculator</h3>
-                                <i class="fas fa-calculator text-xl"></i>
-                            </div>
-                            <p class="text-green-100 text-sm">Performance metrics</p>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <div>
-                                    <p class="text-gray-500">Latest GpM</p>
-                                    <p class="text-3xl font-bold text-green-600">305.82</p>
-                                </div>
-                                <div class="gauge" style="--percentage: 58.2; --fill: #10b981;"></div>
-                            </div>
-                            <div class="space-y-3">
+                    <!-- Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Coal Delivery Card -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                            <div class="bg-green-600 p-4 text-white">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Night Shift Avg:</span>
-                                    <span class="font-medium">267.4</span>
+                                    <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
+                                    <i class="fas fa-fire text-xl"></i>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Day Shift Avg:</span>
-                                    <span class="font-medium">465.90</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Monthly Avg:</span>
-                                    <span class="font-medium text-green-600">375.79</span>
-                                </div>
+                                <p class="text-green-100 text-sm">Today's delivery</p>
                             </div>
-                            <div class="mt-6 pt-4 border-t border-gray-100">
-                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
-                                    Analyze Trends
-                                </button>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Used Coal Yard:</span>
+                                        <span class="font-medium">Coal Yard #9</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Supplier:</span>
+                                        <span class="font-medium">Luzon Black Mountain Corp. (LBMC)</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Kilos:</span>
+                                        <span class="font-medium text-green-600">36,500 kg</span>
+                                    </div>
+                                </div>
+                                <div class="mt-6 pt-4 border-t border-gray-100">
+                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="window.open('https://coaldelivery.vercel.app', '_blank')">
+                                        View Full Report
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Power Consumption Card -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                        <div class="bg-green-600 p-4 text-white">
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-semibold">Power Consumption</h3>
-                                <i class="fas fa-bolt text-xl"></i>
+                        <!-- GpM Calculator Card -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                            <div class="bg-green-600 p-4 text-white">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-lg font-semibold">GpM Calculator</h3>
+                                    <i class="fas fa-calculator text-xl"></i>
+                                </div>
+                                <p class="text-green-100 text-sm">Performance metrics</p>
                             </div>
-                            <p class="text-green-100 text-sm">Energy usage</p>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div>
+                                        <p class="text-gray-500">Latest GpM</p>
+                                        <p class="text-3xl font-bold text-green-600">305.82</p>
+                                    </div>
+                                    <div class="gauge" style="--percentage: 58.2; --fill: #10b981;"></div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Night Shift Avg:</span>
+                                        <span class="font-medium">267.4</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Day Shift Avg:</span>
+                                        <span class="font-medium">465.90</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Monthly Avg:</span>
+                                        <span class="font-medium text-green-600">375.79</span>
+                                    </div>
+                                </div>
+                                <div class="mt-6 pt-4 border-t border-gray-100">
+                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="window.open('https://gpmcalculator-v2.vercel.app', '_blank')">
+                                        Analyze Trends
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-6">
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Yesterday's kWh:</span>
-                                    <span class="font-medium">980 kWh</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Monthly Total:</span>
-                                    <span class="font-medium text-green-600">25,400 kWh</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Highest Consumption:</span>
-                                    <span class="font-medium">Refregiration</span>
-                                </div>
-                            </div>
-                            <div class="mt-6">
-                                <div class="h-2 bg-gray-200 rounded-full">
-                                    <div class="h-2 bg-green-500 rounded-full" style="width: 65%;"></div>
-                                </div>
-                                <div class="flex justify-between text-sm text-gray-500 mt-1">
-                                    <span>0 kWh</span>
-                                    <span>30,000 kWh</span>
-                                </div>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-gray-100">
-                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Charts Section -->
-                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Coal Delivery Trend -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Coal Delivery Trend</h3>
-                            <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                                <option>Last 7 Days</option>
-                                <option>Last 30 Days</option>
-                                <option selected>This Month</option>
-                            </select>
-                        </div>
-                        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                            <p class="text-gray-400">Chart visualization would appear here</p>
+                        <!-- Power Consumption Card -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                            <div class="bg-green-600 p-4 text-white">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-lg font-semibold">Power Consumption</h3>
+                                    <i class="fas fa-bolt text-xl"></i>
+                                </div>
+                                <p class="text-green-100 text-sm">Energy usage</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Yesterday's kWh:</span>
+                                        <span class="font-medium">980 kWh</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Monthly Total:</span>
+                                        <span class="font-medium text-green-600">25,400 kWh</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Highest Consumption:</span>
+                                        <span class="font-medium">Refregiration</span>
+                                    </div>
+                                </div>
+                                <div class="mt-6">
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-green-500 rounded-full" style="width: 65%;"></div>
+                                    </div>
+                                    <div class="flex justify-between text-sm text-gray-500 mt-1">
+                                        <span>0 kWh</span>
+                                        <span>30,000 kWh</span>
+                                    </div>
+                                </div>
+                                <div class="mt-6 pt-4 border-t border-gray-100">
+                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="window.open('https://powerconsumption.vercel.app', '_blank')">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Power Consumption Comparison -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Equipment Power Consumption</h3>
-                            <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                                <option>Daily</option>
-                                <option selected>Weekly</option>
-                                <option>Monthly</option>
+                    <!-- Charts Section -->
+                    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Coal Delivery Trend -->
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Coal Delivery Trend</h3>
+                                <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option>Last 7 Days</option>
+                                    <option>Last 30 Days</option>
+                                    <option selected>This Month</option>
+                                </select>
+                            </div>
+                            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                                <p class="text-gray-400">Chart visualization would appear here</p>
+                            </div>
+                        </div>
+
+                        <!-- Power Consumption Comparison -->
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Equipment Power Consumption</h3>
+                                <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option>Daily</option>
+                                    <option selected>Weekly</option>
+                                    <option>Monthly</option>
                             </select>
                         </div>
                         <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
@@ -441,12 +484,15 @@
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
         const currentYearSpan = document.getElementById('current-year');
-        const loggedInUserNameSpan = document.getElementById('loggedInUserName'); // New: Element for displaying username
+        const loggedInUserNameSpan = document.getElementById('loggedInUserName');
+        const togglePassword = document.getElementById('togglePassword');
+
+        // --- Utility Functions ---
 
         // Function para ipakita ang modal na may mensahe
         function showModal(message) {
             modalMessage.textContent = message;
-            messageModal.style.display = 'flex'; // Gamitin ang flex para i-center ang content
+            messageModal.style.display = 'flex';
         }
 
         // Function para isara ang modal
@@ -457,7 +503,7 @@
         // Function para makuha ang kasalukuyang MMDD sa 'MMDD' format
         function getCurrentMMDD() {
             const today = new Date();
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // Ang buwan ay 0-indexed
+            const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
             return `${month}${day}`;
         }
@@ -465,96 +511,107 @@
         // Mga pinapayagang apelyido ng supervisors
         const authorizedLastNames = ['admin', 'ortega', 'apuang', 'calisay', 'reyes'];
 
-        // Login function
+        // --- Authentication Logic ---
+
+        // Login function (local validation)
         function handleLogin() {
             const enteredCode = authCodeInput.value.trim().toLowerCase();
             const currentMMDD = getCurrentMMDD();
-            let isAuthenticated = false;
-            let authenticatedLastName = ''; // To store the successful last name
+            let isAuthenticatedLocally = false;
+            let authenticatedLastName = '';
 
             for (const lastName of authorizedLastNames) {
                 const expectedCode = lastName + currentMMDD;
                 if (enteredCode === expectedCode) {
-                    isAuthenticated = true;
-                    authenticatedLastName = lastName; // Store the matched last name
+                    isAuthenticatedLocally = true;
+                    authenticatedLastName = lastName;
                     break;
                 }
             }
 
-            if (isAuthenticated) {
-                // I-set ang session storage flag
+            if (isAuthenticatedLocally) {
+                sessionStorage.setItem('loggedInUserLastName', authenticatedLastName);
                 sessionStorage.setItem('loggedIn', 'true');
-                sessionStorage.setItem('loggedInUserLastName', authenticatedLastName); // Store the last name
                 showDashboard();
             } else {
                 showModal('Invalid authentication code. Please try again.');
-                authCodeInput.value = ''; // I-clear ang input sa pagkabigo
+                authCodeInput.value = '';
             }
         }
 
-        // Function para ipakita ang dashboard at itago ang login
+        // Function to show dashboard and hide login
         function showDashboard() {
             loginPage.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
-            // Siguraduhin na ang login page ay hindi na mag-flex-grow kapag nakatago
-            loginPage.style.flexGrow = '0'; 
+            loginPage.style.flexGrow = '0';
             dashboardContainer.style.flexGrow = '1';
 
-            // Update the displayed username
             const storedLastName = sessionStorage.getItem('loggedInUserLastName');
             if (loggedInUserNameSpan && storedLastName) {
                 loggedInUserNameSpan.textContent = storedLastName;
+            }
+            // Activate dashboard tab by default
+            activateDashboardTab('dashboard-main'); 
+        }
+
+        // Function to handle UI updates on logout
+        function handleLogoutUI() {
+            sessionStorage.removeItem('loggedIn');
+            sessionStorage.removeItem('loggedInUserLastName');
+            dashboardContainer.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            authCodeInput.value = '';
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('md:translate-x-0');
+            loginPage.style.flexGrow = '1';
+            dashboardContainer.style.flexGrow = '0';
+            if (loggedInUserNameSpan) {
+                loggedInUserNameSpan.textContent = 'Guest'; // Reset to default
             }
         }
 
         // Logout function
         function handleLogout() {
-            sessionStorage.removeItem('loggedIn'); // I-clear ang session storage flag
-            sessionStorage.removeItem('loggedInUserLastName'); // Clear the stored last name
-            dashboardContainer.classList.add('hidden');
-            loginPage.classList.remove('hidden');
-            authCodeInput.value = ''; // I-clear ang input sa pag-logout
-            // Opsyonal: itago ang sidebar sa pag-logout para sa mobile
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('md:translate-x-0');
-            // Ibalik ang flex-grow sa login page
-            loginPage.style.flexGrow = '1'; 
-            dashboardContainer.style.flexGrow = '0';
-            // Reset the displayed username
-            if (loggedInUserNameSpan) {
-                loggedInUserNameSpan.textContent = 'Admin'; // Default text or empty
-            }
+            handleLogoutUI();
         }
 
-        // Event Listeners para sa Login/Logout
+        // Event Listeners for Login/Logout
         loginButton.addEventListener('click', handleLogin);
         logoutButtonSidebar.addEventListener('click', handleLogout);
-
-        // Payagan ang pagpindot ng Enter key para mag-login
         authCodeInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 handleLogin();
             }
         });
 
-        // I-update ang kasalukuyang petsa at oras para sa dashboard
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function () {
+            const type = authCodeInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            authCodeInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        // --- Dashboard UI Updates ---
+
+        // Update current date and time for the dashboard
         function updateDateTime() {
             const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
             };
             const dateTimeElement = document.getElementById('currentDateTime');
-            if (dateTimeElement) { // I-check kung may element (nasa dashboard page lang)
+            if (dateTimeElement) {
                 dateTimeElement.textContent = now.toLocaleDateString('en-US', options);
             }
         }
-        
-        // I-update agad at pagkatapos ay kada minuto
+
+        // Update immediately and then every minute
         updateDateTime();
         setInterval(updateDateTime, 60000);
 
@@ -564,20 +621,62 @@
             sidebar.classList.toggle('md:translate-x-0');
         });
 
-        // I-simulate ang paglo-load ng data (galing ito sa orihinal mong script)
-        setTimeout(() => {
-            console.log('Data loaded');
-        }, 1000);
+        // --- Tab Switching Logic for Dashboard Sections ---
+        const tabContents = document.querySelectorAll('.tab-content'); // For dashboard-main and analytics
+        const sidebarLinks = document.querySelectorAll('.fixed.inset-y-0.left-0 nav a'); // All sidebar navigation links
 
-        // I-check ang login status sa paglo-load ng page
+        function activateDashboardTab(tabId) {
+            // Hide all local sections
+            tabContents.forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Show the selected local tab content
+            if (tabId === 'dashboard-main' || tabId === 'analytics-section') {
+                document.getElementById(tabId).classList.remove('hidden');
+            } 
+
+            // Update active sidebar link styling
+            sidebarLinks.forEach(link => {
+                link.classList.remove('bg-green-800', 'active-tab-link');
+                link.classList.add('text-green-200', 'hover:bg-green-600');
+            });
+
+            const activeLink = document.querySelector(`[data-tab-target="${tabId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('bg-green-800', 'active-tab-link');
+                activeLink.classList.remove('text-green-200', 'hover:bg-green-600');
+            }
+        }
+
+        // Attach event listeners to sidebar links for tab switching or external navigation
+        sidebarLinks.forEach(link => {
+            if (link.dataset.tabTarget) { // For local tabs (Dashboard, Analytics)
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    activateDashboardTab(link.dataset.tabTarget);
+                    // Close sidebar on mobile after clicking a link
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('md:translate-x-0');
+                });
+            } else if (link.href && link.href.startsWith('http')) { // For external links
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default navigation
+                    window.open(link.href, '_blank'); // Open in new tab
+                    // Close sidebar on mobile after clicking a link
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('md:translate-x-0');
+                });
+            }
+        });
+
+        // --- Initializations on Load ---
         document.addEventListener('DOMContentLoaded', () => {
-            // I-set ang taon sa footer
             currentYearSpan.textContent = new Date().getFullYear();
 
-            if (sessionStorage.getItem('loggedIn') === 'true') {
+            if (sessionStorage.getItem('loggedIn') === 'true' && sessionStorage.getItem('loggedInUserLastName')) {
                 showDashboard();
             } else {
-                // Siguraduhin na ang login page ay sumasakop sa buong available space kung hindi naka-login
                 loginPage.style.flexGrow = '1';
                 dashboardContainer.style.flexGrow = '0';
             }
