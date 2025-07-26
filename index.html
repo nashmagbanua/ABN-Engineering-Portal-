@@ -8,13 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Base styles for the dashboard */
+        body {
+            font-family: 'Inter', sans-serif; /* Gumamit ng Inter font para sa malinis na hitsura */
+        }
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         .gauge {
             --percentage: 0;
-            --fill: #4f46e5;
+            --fill: #10b981; /* Green shade for gauge fill */
             position: relative;
             width: 120px;
             height: 60px;
@@ -30,7 +33,7 @@
             height: 100%;
             background: conic-gradient(
                 var(--fill) calc(var(--percentage) * 1%),
-                #e0e7ff calc(var(--percentage) * 1%)
+                #d1fae5 calc(var(--percentage) * 1%) /* Lighter green for gauge background */
             );
             transform-origin: 50% 100%;
             transform: rotate(0.5turn);
@@ -50,15 +53,15 @@
 
         /* Custom modal for messages */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
+            display: none; /* Nakatago sa simula */
+            position: fixed; /* Manatili sa lugar */
+            z-index: 1000; /* Nasa ibabaw */
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%; /* Buong lapad */
+            height: 100%; /* Buong taas */
+            overflow: auto; /* Payagan ang scroll kung kinakailangan */
+            background-color: rgba(0,0,0,0.4); /* Itim na may opacity */
             justify-content: center;
             align-items: center;
         }
@@ -67,7 +70,7 @@
             margin: auto;
             padding: 20px;
             border-radius: 12px;
-            width: 80%; /* Could be more responsive */
+            width: 80%; /* Maaaring mas responsive */
             max-width: 400px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -85,6 +88,33 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* Background image for login page */
+        .login-bg {
+            background-image: url('08398BA4-586D-4BB1-B02C-BD3833DA329F.png'); /* Background image ng login page */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative; /* Kailangan para sa overlay */
+        }
+
+        /* Overlay for readability */
+        .login-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+            z-index: 1;
+        }
+
+        /* Ensure login content is above overlay */
+        #login-page > div {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -94,24 +124,27 @@
         <div class="modal-content">
             <span class="close-button" onclick="closeModal()">&times;</span>
             <p id="modalMessage" class="text-lg text-gray-800"></p>
-            <button onclick="closeModal()" class="mt-4 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md">
+            <button onclick="closeModal()" class="mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md">
                 OK
             </button>
         </div>
     </div>
 
     <!-- Login Page -->
-    <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8 bg-gray-100">
-        <div class="bg-white p-8 rounded-xl shadow-lg border border-indigo-100 max-w-md w-full text-center">
+    <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8 login-bg">
+        <div class="bg-white p-8 rounded-xl shadow-lg border border-green-100 max-w-md w-full text-center">
+            <!-- Logo -->
+            <img src="abnlogo.png" alt="ABN Logo" class="mx-auto mb-6 w-32 h-auto">
+            
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
-            <p class="text-lg text-indigo-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
+            <p class="text-lg text-green-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
 
             <div class="mb-6">
                 <input type="password" id="auth-code-input" placeholder="Enter authentication code"
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center text-lg">
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
             </div>
             <button id="login-button"
-                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md text-lg font-semibold">
+                    class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md text-lg font-semibold">
                 Login
             </button>
         </div>
@@ -120,33 +153,33 @@
     <!-- Main Dashboard Content (Hidden by default) -->
     <div id="dashboard-container" class="hidden min-h-screen">
         <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 w-64 bg-indigo-700 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-50">
-            <div class="flex items-center justify-center h-16 px-4 bg-indigo-800">
+        <div class="fixed inset-y-0 left-0 w-64 bg-green-700 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out z-50">
+            <div class="flex items-center justify-center h-16 px-4 bg-green-800">
                 <h1 class="text-xl font-bold">Utilities Dashboard</h1>
             </div>
             <nav class="mt-6">
-                <a href="#" class="flex items-center px-6 py-3 text-white bg-indigo-800">
+                <a href="#" class="flex items-center px-6 py-3 text-white bg-green-800">
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     Dashboard
                 </a>
-                <a href="https://coaldelivery.vercel.app" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="https://coaldelivery.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-fire mr-3"></i>
                     Coal Delivery
                 </a>
-                <a href="https://powercon-logsheet.vercel.app" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="https://powerconsumption.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-bolt mr-3"></i>
                     Power Consumption
                 </a>
-                <a href="https://gpmcalculatorv2.vercel.app" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="https://gpmcalculator-v2.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-dashboard mr-3"></i>
                     GPM Calculator
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-chart-line mr-3"></i>
                     Analytics
                 </a>
                 <!-- Logout button -->
-                <a href="#" id="logout-button-sidebar" class="flex items-center px-6 py-3 text-indigo-200 hover:bg-indigo-600">
+                <a href="#" id="logout-button-sidebar" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-sign-out-alt mr-3"></i>
                     Logout
                 </a>
@@ -155,7 +188,7 @@
 
         <!-- Mobile sidebar toggle -->
         <div class="md:hidden fixed top-4 left-4 z-50">
-            <button id="sidebarToggle" class="p-2 rounded-md bg-indigo-600 text-white">
+            <button id="sidebarToggle" class="p-2 rounded-md bg-green-600 text-white">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
@@ -187,7 +220,7 @@
                         <h2 class="text-xl font-semibold text-gray-700">Today's Overview</h2>
                         <p class="text-gray-500" id="currentDateTime">Loading date...</p>
                     </div>
-                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
                         <i class="fas fa-download mr-2"></i> Export Report
                     </button>
                 </div>
@@ -196,12 +229,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Coal Delivery Card -->
                     <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                        <div class="bg-indigo-600 p-4 text-white">
+                        <div class="bg-green-600 p-4 text-white">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
                                 <i class="fas fa-fire text-xl"></i>
                             </div>
-                            <p class="text-indigo-100 text-sm">Today's delivery</p>
+                            <p class="text-green-100 text-sm">Today's delivery</p>
                         </div>
                         <div class="p-6">
                             <div class="space-y-4">
@@ -215,11 +248,11 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Kilos:</span>
-                                    <span class="font-medium text-indigo-600">36,500 kg</span>
+                                    <span class="font-medium text-green-600">36,500 kg</span>
                                 </div>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-100">
-                                <button class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2 rounded-lg font-medium">
+                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
                                     View Full Report
                                 </button>
                             </div>
@@ -228,18 +261,18 @@
 
                     <!-- GpM Calculator Card -->
                     <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                        <div class="bg-emerald-600 p-4 text-white">
+                        <div class="bg-green-600 p-4 text-white">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-semibold">GpM Calculator</h3>
                                 <i class="fas fa-calculator text-xl"></i>
                             </div>
-                            <p class="text-emerald-100 text-sm">Performance metrics</p>
+                            <p class="text-green-100 text-sm">Performance metrics</p>
                         </div>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <p class="text-gray-500">Latest GpM</p>
-                                    <p class="text-3xl font-bold text-emerald-600">305.82</p>
+                                    <p class="text-3xl font-bold text-green-600">305.82</p>
                                 </div>
                                 <div class="gauge" style="--percentage: 58.2; --fill: #10b981;"></div>
                             </div>
@@ -254,11 +287,11 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Monthly Avg:</span>
-                                    <span class="font-medium text-emerald-600">375.79</span>
+                                    <span class="font-medium text-green-600">375.79</span>
                                 </div>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-100">
-                                <button class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-600 py-2 rounded-lg font-medium">
+                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
                                     Analyze Trends
                                 </button>
                             </div>
@@ -267,12 +300,12 @@
 
                     <!-- Power Consumption Card -->
                     <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                        <div class="bg-amber-600 p-4 text-white">
+                        <div class="bg-green-600 p-4 text-white">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-semibold">Power Consumption</h3>
                                 <i class="fas fa-bolt text-xl"></i>
                             </div>
-                            <p class="text-amber-100 text-sm">Energy usage</p>
+                            <p class="text-green-100 text-sm">Energy usage</p>
                         </div>
                         <div class="p-6">
                             <div class="space-y-4">
@@ -282,7 +315,7 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Monthly Total:</span>
-                                    <span class="font-medium text-amber-600">25,400 kWh</span>
+                                    <span class="font-medium text-green-600">25,400 kWh</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Highest Consumption:</span>
@@ -291,7 +324,7 @@
                             </div>
                             <div class="mt-6">
                                 <div class="h-2 bg-gray-200 rounded-full">
-                                    <div class="h-2 bg-amber-500 rounded-full" style="width: 65%;"></div>
+                                    <div class="h-2 bg-green-500 rounded-full" style="width: 65%;"></div>
                                 </div>
                                 <div class="flex justify-between text-sm text-gray-500 mt-1">
                                     <span>0 kWh</span>
@@ -299,7 +332,7 @@
                                 </div>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-100">
-                                <button class="w-full bg-amber-50 hover:bg-amber-100 text-amber-600 py-2 rounded-lg font-medium">
+                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
                                     View Details
                                 </button>
                             </div>
@@ -345,8 +378,8 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
                     <div class="space-y-4">
                         <div class="flex items-start">
-                            <div class="bg-indigo-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-fire text-indigo-600"></i>
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-fire text-green-600"></i>
                             </div>
                             <div>
                                 <p class="font-medium">New coal delivery received</p>
@@ -355,8 +388,8 @@
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="bg-emerald-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-calculator text-emerald-600"></i>
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-calculator text-green-600"></i>
                             </div>
                             <div>
                                 <p class="font-medium">GpM calculation updated</p>
@@ -365,8 +398,8 @@
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="bg-amber-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-bolt text-amber-600"></i>
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-bolt text-green-600"></i>
                             </div>
                             <div>
                                 <p class="font-medium">Power consumption alert</p>
@@ -392,26 +425,26 @@
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
 
-        // Function to show the modal with a message
+        // Function para ipakita ang modal na may mensahe
         function showModal(message) {
             modalMessage.textContent = message;
-            messageModal.style.display = 'flex'; // Use flex to center content
+            messageModal.style.display = 'flex'; // Gamitin ang flex para i-center ang content
         }
 
-        // Function to close the modal
+        // Function para isara ang modal
         function closeModal() {
             messageModal.style.display = 'none';
         }
 
-        // Function to get current MMDD in 'MMDD' format
+        // Function para makuha ang kasalukuyang MMDD sa 'MMDD' format
         function getCurrentMMDD() {
             const today = new Date();
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Ang buwan ay 0-indexed
             const day = String(today.getDate()).padStart(2, '0');
             return `${month}${day}`;
         }
 
-        // Authorized last names
+        // Mga pinapayagang apelyido ng supervisors
         const authorizedLastNames = ['admin', 'ortega', 'apuang', 'calisay', 'reyes'];
 
         // Login function
@@ -429,36 +462,44 @@
             }
 
             if (isAuthenticated) {
-                loginPage.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
+                // I-set ang session storage flag
+                sessionStorage.setItem('loggedIn', 'true');
+                showDashboard();
             } else {
                 showModal('Invalid authentication code. Please try again.');
-                authCodeInput.value = ''; // Clear input on failure
+                authCodeInput.value = ''; // I-clear ang input sa pagkabigo
             }
+        }
+
+        // Function para ipakita ang dashboard at itago ang login
+        function showDashboard() {
+            loginPage.classList.add('hidden');
+            dashboardContainer.classList.remove('hidden');
         }
 
         // Logout function
         function handleLogout() {
+            sessionStorage.removeItem('loggedIn'); // I-clear ang session storage flag
             dashboardContainer.classList.add('hidden');
             loginPage.classList.remove('hidden');
-            authCodeInput.value = ''; // Clear input on logout
-            // Optionally, hide sidebar on logout for mobile
+            authCodeInput.value = ''; // I-clear ang input sa pag-logout
+            // Opsyonal: itago ang sidebar sa pag-logout para sa mobile
             sidebar.classList.add('-translate-x-full');
             sidebar.classList.remove('md:translate-x-0');
         }
 
-        // Event Listeners for Login/Logout
+        // Event Listeners para sa Login/Logout
         loginButton.addEventListener('click', handleLogin);
         logoutButtonSidebar.addEventListener('click', handleLogout);
 
-        // Allow pressing Enter key to login
+        // Payagan ang pagpindot ng Enter key para mag-login
         authCodeInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 handleLogin();
             }
         });
 
-        // Update current date and time for the dashboard
+        // I-update ang kasalukuyang petsa at oras para sa dashboard
         function updateDateTime() {
             const now = new Date();
             const options = { 
@@ -470,12 +511,12 @@
                 minute: '2-digit'
             };
             const dateTimeElement = document.getElementById('currentDateTime');
-            if (dateTimeElement) { // Check if element exists (only on dashboard page)
+            if (dateTimeElement) { // I-check kung may element (nasa dashboard page lang)
                 dateTimeElement.textContent = now.toLocaleDateString('en-US', options);
             }
         }
         
-        // Update immediately and then every minute
+        // I-update agad at pagkatapos ay kada minuto
         updateDateTime();
         setInterval(updateDateTime, 60000);
 
@@ -485,10 +526,17 @@
             sidebar.classList.toggle('md:translate-x-0');
         });
 
-        // Simulate loading data (this part is from your original script)
+        // I-simulate ang paglo-load ng data (galing ito sa orihinal mong script)
         setTimeout(() => {
             console.log('Data loaded');
         }, 1000);
+
+        // I-check ang login status sa paglo-load ng page
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('loggedIn') === 'true') {
+                showDashboard();
+            }
+        });
     </script>
 </body>
 </html>
