@@ -497,7 +497,7 @@
 
         // Function para isara ang modal
         function closeModal() {
-            messageModal.style.display = 'none';
+            modalMessage.style.display = 'none';
         }
 
         // Function para makuha ang kasalukuyang MMDD sa 'MMDD' format
@@ -656,16 +656,22 @@
                     e.preventDefault();
                     activateDashboardTab(link.dataset.tabTarget);
                     // Close sidebar on mobile after clicking a link
-                    sidebar.classList.add('-translate-x-full');
-                    sidebar.classList.remove('md:translate-x-0');
+                    // Check if the screen is NOT desktop size (md or larger)
+                    if (window.innerWidth < 768) { // Assuming 768px is the md breakpoint
+                        sidebar.classList.add('-translate-x-full');
+                        sidebar.classList.remove('md:translate-x-0');
+                    }
                 });
             } else if (link.href && link.href.startsWith('http')) { // For external links
                 link.addEventListener('click', (e) => {
                     e.preventDefault(); // Prevent default navigation
                     window.open(link.href, '_blank'); // Open in new tab
                     // Close sidebar on mobile after clicking a link
-                    sidebar.classList.add('-translate-x-full');
-                    sidebar.classList.remove('md:translate-x-0');
+                    // Check if the screen is NOT desktop size (md or larger)
+                    if (window.innerWidth < 768) { // Assuming 768px is the md breakpoint
+                        sidebar.classList.add('-translate-x-full');
+                        sidebar.classList.remove('md:translate-x-0');
+                    }
                 });
             }
         });
