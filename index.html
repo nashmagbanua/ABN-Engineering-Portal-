@@ -6,18 +6,6 @@
     <title>Utilities Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Favicon Links -->
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5"> <!-- Optional, if you have this file -->
-    <link rel="shortcut icon" href="favicon.ico">
-    <meta name="msapplication-TileColor" content="#da532c"> <!-- Optional, for Windows tiles -->
-    <meta name="theme-color" content="#ffffff">
-    <!-- End Favicon Links -->
-
     <style>
         /* Base styles for the dashboard */
         body {
@@ -26,24 +14,6 @@
             flex-direction: column; /* I-stack ang mga child elements nang patayo */
             min-height: 100vh; /* Siguraduhin na ang body ay sumasakop sa buong viewport height */
         }
-        /* Gawing fixed ang header */
-        .fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 10; /* Siguraduhin na nasa ibabaw ng ibang content */
-        }
-        /* I-adjust ang padding ng main content area para hindi matakpan ng fixed header */
-        .main-content-with-fixed-header {
-            padding-top: 64px; /* Default padding-top para sa header na may taas na ~64px (py-4) */
-        }
-        @media (min-width: 768px) { /* Para sa desktop, kasama ang sidebar margin */
-            .main-content-with-fixed-header {
-                padding-left: 256px; /* md:ml-64 */
-            }
-        }
-
         main {
             flex-grow: 1; /* Payagan ang main content na lumaki at sumakop ng available space */
         }
@@ -151,12 +121,6 @@
             position: relative;
             z-index: 2;
         }
-        /* Custom style for remarks cell to allow flexbox for date/time inputs */
-        .remarks-cell {
-            display: flex;
-            flex-direction: column;
-            gap: 4px; /* Space between remarks select and date/time inputs */
-        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -181,12 +145,9 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
             <p class="text-lg text-green-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
 
-            <div class="mb-6 relative"> <!-- Added relative positioning for the icon -->
+            <div class="mb-6">
                 <input type="password" id="auth-code-input" placeholder="Enter authentication code"
-                       class="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
-                <span id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                    <i class="fas fa-eye text-gray-500"></i> <!-- Eye icon -->
-                </span>
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
             </div>
             <button id="login-button"
                     class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md text-lg font-semibold">
@@ -203,23 +164,23 @@
                 <h1 class="text-xl font-bold">Utilities Dashboard</h1>
             </div>
             <nav class="mt-6">
-                <a href="#" class="flex items-center px-6 py-3 text-white bg-green-800 active-tab-link" data-tab-target="dashboard-main">
+                <a href="#" class="flex items-center px-6 py-3 text-white bg-green-800">
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     Dashboard
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600" data-tab-target="coal-management">
+                <a href="https://coaldelivery.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-fire mr-3"></i>
-                    Coal Management
+                    Coal Delivery
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600" data-tab-target="power-consumption">
+                <a href="https://powerconsumption.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-bolt mr-3"></i>
                     Power Consumption
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600" data-tab-target="gpm-calculator">
-                    <i class="fas fa-calculator mr-3"></i>
+                <a href="https://gpmcalculator-v2.vercel.app" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
+                    <i class="fas fa-dashboard mr-3"></i>
                     GPM Calculator
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600" data-tab-target="analytics-section">
+                <a href="#" class="flex items-center px-6 py-3 text-green-200 hover:bg-green-600">
                     <i class="fas fa-chart-line mr-3"></i>
                     Analytics
                 </a>
@@ -239,9 +200,9 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="md:ml-64 flex-grow flex flex-col main-content-with-fixed-header">
+        <div class="md:ml-64">
             <!-- Header -->
-            <header class="bg-white shadow-sm fixed-header">
+            <header class="bg-white shadow-sm">
                 <div class="flex justify-between items-center px-6 py-4">
                     <h1 class="text-2xl font-bold text-gray-800">Utilities Admin Dashboard</h1>
                     <div class="flex items-center space-x-4">
@@ -251,422 +212,210 @@
                         </div>
                         <div class="flex items-center">
                             <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-8 w-8 rounded-full">
-                            <span id="loggedInUserName" class="ml-2 text-gray-700 capitalize">Guest</span> <!-- Default to Guest -->
+                            <span id="loggedInUserName" class="ml-2 text-gray-700 capitalize">Admin</span> <!-- Added ID and capitalize class -->
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Main Content Container for Tabs -->
-            <div id="main-content-tabs" class="flex-grow p-6">
-                <!-- Dashboard Main Section -->
-                <section id="dashboard-main" class="tab-content">
-                    <!-- Date and Time -->
-                    <div class="mb-6 flex justify-between items-center">
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-700">Today's Overview</h2>
-                            <p class="text-gray-500" id="currentDateTime">Loading date...</p>
-                        </div>
-                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
-                            <i class="fas fa-download mr-2"></i> Export Report
-                        </button>
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <!-- Date and Time -->
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-700">Today's Overview</h2>
+                        <p class="text-gray-500" id="currentDateTime">Loading date...</p>
                     </div>
+                    <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-download mr-2"></i> Export Report
+                    </button>
+                </div>
 
-                    <!-- Cards Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Coal Delivery Card -->
-                        <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                            <div class="bg-green-600 p-4 text-white">
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Coal Delivery Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                        <div class="bg-green-600 p-4 text-white">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
+                                <i class="fas fa-fire text-xl"></i>
+                            </div>
+                            <p class="text-green-100 text-sm">Today's delivery</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
                                 <div class="flex justify-between items-center">
-                                    <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
-                                    <i class="fas fa-fire text-xl"></i>
+                                    <span class="text-gray-600">Used Coal Yard:</span>
+                                    <span class="font-medium">Coal Yard #9</span>
                                 </div>
-                                <p class="text-green-100 text-sm">Today's delivery</p>
-                            </div>
-                            <div class="p-6">
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Used Coal Yard:</span>
-                                        <span class="font-medium" id="dashboard-coal-yard">N/A</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Supplier:</span>
-                                        <span class="font-medium" id="dashboard-coal-supplier">N/A</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Kilos:</span>
-                                        <span class="font-medium text-green-600" id="dashboard-coal-kg">0 kg</span>
-                                    </div>
-                                </div>
-                                <div class="mt-6 pt-4 border-t border-gray-100">
-                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="activateDashboardTab('coal-management')">
-                                        View Full Report
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- GpM Calculator Card -->
-                        <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                            <div class="bg-green-600 p-4 text-white">
                                 <div class="flex justify-between items-center">
-                                    <h3 class="text-lg font-semibold">GpM Calculator</h3>
-                                    <i class="fas fa-calculator text-xl"></i>
+                                    <span class="text-gray-600">Supplier:</span>
+                                    <span class="font-medium">Luzon Black Mountain Corp. (LBMC)</span>
                                 </div>
-                                <p class="text-green-100 text-sm">Performance metrics</p>
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center justify-between mb-6">
-                                    <div>
-                                        <p class="text-gray-500">Latest GpM</p>
-                                        <p class="text-3xl font-bold text-green-600" id="dashboard-gpm-latest">0.00</p>
-                                    </div>
-                                    <div class="gauge" id="dashboard-gpm-gauge" style="--percentage: 0; --fill: #10b981;"></div>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Monthly Avg:</span>
-                                        <span class="font-medium text-green-600" id="dashboard-gpm-monthly-avg">0.00</span>
-                                    </div>
-                                </div>
-                                <div class="mt-6 pt-4 border-t border-gray-100">
-                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="activateDashboardTab('gpm-calculator')">
-                                        Analyze Trends
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Power Consumption Card -->
-                        <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
-                            <div class="bg-green-600 p-4 text-white">
                                 <div class="flex justify-between items-center">
-                                    <h3 class="text-lg font-semibold">Power Consumption</h3>
-                                    <i class="fas fa-bolt text-xl"></i>
-                                </div>
-                                <p class="text-green-100 text-sm">Energy usage</p>
-                            </div>
-                            <div class="p-6">
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Yesterday's kWh:</span>
-                                        <span class="font-medium" id="dashboard-power-yesterday">0 kWh</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Monthly Total:</span>
-                                        <span class="font-medium text-green-600" id="dashboard-power-monthly">0 kWh</span>
-                                    </div>
-                                </div>
-                                <div class="mt-6">
-                                    <div class="h-2 bg-gray-200 rounded-full">
-                                        <div class="h-2 bg-green-500 rounded-full" style="width: 0%;" id="dashboard-power-progress"></div>
-                                    </div>
-                                    <div class="flex justify-between text-sm text-gray-500 mt-1">
-                                        <span>0 kWh</span>
-                                        <span>30,000 kWh</span>
-                                    </div>
-                                </div>
-                                <div class="mt-6 pt-4 border-t border-gray-100">
-                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="activateDashboardTab('power-consumption')">
-                                        View Details
-                                    </button>
+                                    <span class="text-gray-600">Kilos:</span>
+                                    <span class="font-medium text-green-600">36,500 kg</span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Section -->
-                    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Coal Delivery Trend -->
-                        <div class="bg-white p-6 rounded-xl shadow-md">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Coal Delivery Trend</h3>
-                                <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                                    <option>Last 7 Days</option>
-                                    <option>Last 30 Days</option>
-                                    <option selected>This Month</option>
-                                </select>
-                            </div>
-                            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                                <p class="text-gray-400">Chart visualization would appear here</p>
-                            </div>
-                        </div>
-
-                        <!-- Power Consumption Comparison -->
-                        <div class="bg-white p-6 rounded-xl shadow-md">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Equipment Power Consumption</h3>
-                                <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
-                                    <option>Daily</option>
-                                    <option selected>Weekly</option>
-                                    <option>Monthly</option>
-                                </select>
-                            </div>
-                            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                                <p class="text-gray-400">Chart visualization would appear here</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
-                        <div class="space-y-4" id="dashboard-recent-activity">
-                            <!-- Activities will be populated here -->
-                            <p class="text-gray-400 text-center">Loading recent activities...</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Coal Management Section -->
-                <section id="coal-management" class="tab-content hidden">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-fire mr-3 text-green-600"></i> Coal Delivery Management
-                    </h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">New Delivery Entry</h3>
-                        <form id="coalDeliveryForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div class="form-group">
-                                <label for="coal-date" class="block text-gray-700 text-sm font-medium mb-2">Date:</label>
-                                <input type="date" id="coal-date" required class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-dateError" class="text-red-500 text-sm mt-1 hidden">Date is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-time" class="block text-gray-700 text-sm font-medium mb-2">Time Arrived:</label>
-                                <input type="time" id="coal-time" required class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-timeError" class="text-red-500 text-sm mt-1 hidden">Time is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-driver" class="block text-gray-700 text-sm font-medium mb-2">Driver's Name:</label>
-                                <input type="text" id="coal-driver" required placeholder="Enter driver's name" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-driverError" class="text-red-500 text-sm mt-1 hidden">Driver's name is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-plate" class="block text-gray-700 text-sm font-medium mb-2">Plate No.:</label>
-                                <input type="text" id="coal-plate" required placeholder="e.g., ABC-123" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-plateError" class="text-red-500 text-sm mt-1 hidden">Plate number is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-kg" class="block text-gray-700 text-sm font-medium mb-2">Coal kg:</label>
-                                <input type="number" id="coal-kg" required placeholder="0" min="0" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-kgError" class="text-red-500 text-sm mt-1 hidden">Coal kg is required and must be a positive number.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-ctp" class="block text-gray-700 text-sm font-medium mb-2">CTP No.:</label>
-                                <input type="text" id="coal-ctp" required placeholder="Enter CTP number" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-ctpError" class="text-red-500 text-sm mt-1 hidden">CTP number is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-dr" class="block text-gray-700 text-sm font-medium mb-2">DR No.:</label>
-                                <input type="text" id="coal-dr" required placeholder="Enter DR number" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-drError" class="text-red-500 text-sm mt-1 hidden">DR number is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-supplier" class="block text-gray-700 text-sm font-medium mb-2">Supplier Name:</label>
-                                <input type="text" id="coal-supplier" required placeholder="Enter supplier name" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-supplierError" class="text-red-500 text-sm mt-1 hidden">Supplier name is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-yard" class="block text-gray-700 text-sm font-medium mb-2">Coal Yard No.:</label>
-                                <select id="coal-yard" required class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                    <option value="">Select Yard</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                </select>
-                                <p id="coal-yardError" class="text-red-500 text-sm mt-1 hidden">Coal Yard No. is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-operator" class="block text-gray-700 text-sm font-medium mb-2">Operator's Name:</label>
-                                <input type="text" id="coal-operator" required placeholder="Enter operator name" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                <p id="coal-operatorError" class="text-red-500 text-sm mt-1 hidden">Operator's name is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="coal-remarks" class="block text-gray-700 text-sm font-medium mb-2">Remarks:</label>
-                                <select id="coal-remarks" required class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-colors">
-                                    <option value="✅ In Use">✅ In Use</option>
-                                    <option value="❌ Used Up">❌ Used Up</option>
-                                    <option value="🔔Standby">🔔 Standby</option>
-                                </select>
-                                <p id="coal-remarksError" class="text-red-500 text-sm mt-1 hidden">Remarks is required.</p>
-                            </div>
-                            <div class="form-group md:col-span-2 lg:col-span-3 flex gap-4 mt-4">
-                                <button type="submit" id="addCoalEntryBtn" class="w-full flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Add Entry
-                                </button>
-                                <button type="button" id="clearCoalFormBtn" class="w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
-                                    <i class="fas fa-eraser mr-2"></i> Clear Form
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
+                                    View Full Report
                                 </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
 
+                    <!-- GpM Calculator Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                        <div class="bg-green-600 p-4 text-white">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">GpM Calculator</h3>
+                                <i class="fas fa-calculator text-xl"></i>
+                            </div>
+                            <p class="text-green-100 text-sm">Performance metrics</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <p class="text-gray-500">Latest GpM</p>
+                                    <p class="text-3xl font-bold text-green-600">305.82</p>
+                                </div>
+                                <div class="gauge" style="--percentage: 58.2; --fill: #10b981;"></div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Night Shift Avg:</span>
+                                    <span class="font-medium">267.4</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Day Shift Avg:</span>
+                                    <span class="font-medium">465.90</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Monthly Avg:</span>
+                                    <span class="font-medium text-green-600">375.79</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
+                                    Analyze Trends
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Power Consumption Card -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 card-hover">
+                        <div class="bg-green-600 p-4 text-white">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">Power Consumption</h3>
+                                <i class="fas fa-bolt text-xl"></i>
+                            </div>
+                            <p class="text-green-100 text-sm">Energy usage</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Yesterday's kWh:</span>
+                                    <span class="font-medium">980 kWh</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Monthly Total:</span>
+                                    <span class="font-medium text-green-600">25,400 kWh</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Highest Consumption:</span>
+                                    <span class="font-medium">Refregiration</span>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-green-500 rounded-full" style="width: 65%;"></div>
+                                </div>
+                                <div class="flex justify-between text-sm text-gray-500 mt-1">
+                                    <span>0 kWh</span>
+                                    <span>30,000 kWh</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Coal Delivery Trend -->
                     <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Delivery Logs</h3>
-                        <div class="log-table-container overflow-x-auto max-h-[60vh] rounded-lg shadow-inner border border-gray-200">
-                            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                                <thead class="bg-gray-100 sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Time</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Driver</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Plate No.</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Coal (kg)</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">CTP No.</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">DR No.</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Yard No.</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Operator</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Remarks</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="coalLogTableBody" class="divide-y divide-gray-200">
-                                    <!-- Log entries will be populated here by JavaScript -->
-                                </tbody>
-                            </table>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Coal Delivery Trend</h3>
+                            <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                <option>Last 7 Days</option>
+                                <option>Last 30 Days</option>
+                                <option selected>This Month</option>
+                            </select>
                         </div>
-                        <div id="noCoalLogsMessage" class="text-gray-500 text-center py-8 hidden">
-                            No delivery logs yet. Add an entry using the form!
+                        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                            <p class="text-gray-400">Chart visualization would appear here</p>
                         </div>
                     </div>
-                </section>
 
-                <!-- Power Consumption Section -->
-                <section id="power-consumption" class="tab-content hidden">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-bolt mr-3 text-green-600"></i> Power Consumption Management
-                    </h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">New Power Consumption Entry</h3>
-                        <form id="powerConsumptionForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="form-group">
-                                <label for="power-date" class="block text-gray-700 text-sm font-medium mb-2">Date:</label>
-                                <input type="date" id="power-date" required class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="power-dateError" class="text-red-500 text-sm mt-1 hidden">Date is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="power-time" class="block text-gray-700 text-sm font-medium mb-2">Time:</label>
-                                <input type="time" id="power-time" required class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="power-timeError" class="text-red-500 text-sm mt-1 hidden">Time is required.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="power-kwh" class="block text-gray-700 text-sm font-medium mb-2">Consumption (kWh):</label>
-                                <input type="number" id="power-kwh" required min="0" step="0.01" placeholder="0.00" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="power-kwhError" class="text-red-500 text-sm mt-1 hidden">Consumption (kWh) is required and must be a positive number.</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="power-equipment" class="block text-gray-700 text-sm font-medium mb-2">Equipment:</label>
-                                <input type="text" id="power-equipment" required placeholder="e.g., Pasteurizer #1" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="power-equipmentError" class="text-red-500 text-sm mt-1 hidden">Equipment is required.</p>
-                            </div>
-                            <div class="form-group md:col-span-2 flex gap-4 mt-4">
-                                <button type="submit" id="addPowerEntryBtn" class="w-full flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Add Entry
-                                </button>
-                                <button type="button" id="clearPowerFormBtn" class="w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
-                                    <i class="fas fa-eraser mr-2"></i> Clear Form
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
+                    <!-- Power Consumption Comparison -->
                     <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Consumption Logs</h3>
-                        <div class="log-table-container overflow-x-auto max-h-[60vh] rounded-lg shadow-inner border border-gray-200">
-                            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                                <thead class="bg-gray-100 sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Time</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Consumption (kWh)</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Equipment</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="powerLogTableBody" class="divide-y divide-gray-200">
-                                    <!-- Power consumption logs will be populated here -->
-                                </tbody>
-                            </table>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Equipment Power Consumption</h3>
+                            <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                <option>Daily</option>
+                                <option selected>Weekly</option>
+                                <option>Monthly</option>
+                            </select>
                         </div>
-                        <div id="noPowerLogsMessage" class="text-gray-500 text-center py-8 hidden">
-                            No power consumption logs yet. Add an entry using the form!
+                        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                            <p class="text-gray-400">Chart visualization would appear here</p>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- GPM Calculator Section -->
-                <section id="gpm-calculator" class="tab-content hidden">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-calculator mr-3 text-green-600"></i> GPM Calculator
-                    </h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Calculate GPM</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="form-group">
-                                <label for="gpm-flow-rate" class="block text-gray-700 text-sm font-medium mb-2">Flow Rate (gallons/minute):</label>
-                                <input type="number" id="gpm-flow-rate" placeholder="e.g., 100" min="0" step="0.01" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="gpm-flow-rateError" class="text-red-500 text-sm mt-1 hidden">Flow Rate is required and must be a positive number.</p>
+                <!-- Recent Activity -->
+                <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-fire text-green-600"></i>
                             </div>
-                            <div class="form-group">
-                                <label for="gpm-pipe-diameter" class="block text-gray-700 text-sm font-medium mb-2">Pipe Diameter (inches):</label>
-                                <input type="number" id="gpm-pipe-diameter" placeholder="e.g., 2" min="0" step="0.01" class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="gpm-pipe-diameterError" class="text-red-500 text-sm mt-1 hidden">Pipe Diameter is required and must be a positive number.</p>
-                            </div>
-                            <div class="form-group md:col-span-2 flex gap-4 mt-4">
-                                <button type="button" id="calculateGpmBtn" class="w-full flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-scale flex items-center justify-center">
-                                    <i class="fas fa-cogs mr-2"></i> Calculate GPM
-                                </button>
+                            <div>
+                                <p class="font-medium">New coal delivery received</p>
+                                <p class="text-sm text-gray-500">3,500 kg from ABN Coal Corp at South Yard</p>
+                                <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
                             </div>
                         </div>
-                        <div class="mt-6 pt-4 border-t border-gray-100 text-center">
-                            <p class="text-gray-700 text-lg">Calculated GPM:</p>
-                            <p id="calculatedGpmResult" class="text-4xl font-bold text-green-600 mt-2">0.00</p>
+                        <div class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-calculator text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">GpM calculation updated</p>
+                                <p class="text-sm text-gray-500">Latest GpM is 5.82, showing 2% improvement</p>
+                                <p class="text-xs text-gray-400 mt-1">4 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-bolt text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Power consumption alert</p>
+                                <p class="text-sm text-gray-500">Pasteurizer #3 exceeded expected consumption by 15%</p>
+                                <p class="text-xs text-gray-400 mt-1">Yesterday</p>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">GPM Calculation History</h3>
-                        <div class="log-table-container overflow-x-auto max-h-[60vh] rounded-lg shadow-inner border border-gray-200">
-                            <table class="min-w-full bg-white rounded-lg overflow-hidden">
-                                <thead class="bg-gray-100 sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Time</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Flow Rate</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Pipe Diameter</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Calculated GPM</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="gpmLogTableBody" class="divide-y divide-gray-200">
-                                    <!-- GPM calculation logs will be populated here -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="noGpmLogsMessage" class="text-gray-500 text-center py-8 hidden">
-                            No GPM calculations yet.
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Analytics Section (Placeholder) -->
-                <section id="analytics-section" class="tab-content hidden">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-chart-line mr-3 text-green-600"></i> Analytics & Reports
-                    </h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md text-center py-12">
-                        <p class="text-gray-500 text-lg">This section is under development. Charts and detailed reports will appear here.</p>
-                        <i class="fas fa-cogs text-6xl text-gray-300 mt-6"></i>
-                    </div>
-                </section>
-            </div>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -691,21 +440,12 @@
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
         const currentYearSpan = document.getElementById('current-year');
-        const loggedInUserNameSpan = document.getElementById('loggedInUserName');
-        const sidebarLinks = document.querySelectorAll('.fixed.inset-y-0.left-0 nav a'); // All sidebar navigation links
-        const togglePassword = document.getElementById('togglePassword'); // New: Eye icon for password field
-
-        // Global data stores (populated from localStorage)
-        window.coalData = [];
-        window.powerData = [];
-        window.gpmData = [];
-
-        // --- Utility Functions ---
+        const loggedInUserNameSpan = document.getElementById('loggedInUserName'); // New: Element for displaying username
 
         // Function para ipakita ang modal na may mensahe
         function showModal(message) {
             modalMessage.textContent = message;
-            messageModal.style.display = 'flex';
+            messageModal.style.display = 'flex'; // Gamitin ang flex para i-center ang content
         }
 
         // Function para isara ang modal
@@ -716,7 +456,7 @@
         // Function para makuha ang kasalukuyang MMDD sa 'MMDD' format
         function getCurrentMMDD() {
             const today = new Date();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Ang buwan ay 0-indexed
             const day = String(today.getDate()).padStart(2, '0');
             return `${month}${day}`;
         }
@@ -724,110 +464,96 @@
         // Mga pinapayagang apelyido ng supervisors
         const authorizedLastNames = ['admin', 'ortega', 'apuang', 'calisay', 'reyes'];
 
-        // --- Authentication Logic ---
-
-        // Login function (local validation)
+        // Login function
         function handleLogin() {
             const enteredCode = authCodeInput.value.trim().toLowerCase();
             const currentMMDD = getCurrentMMDD();
-            let isAuthenticatedLocally = false;
-            let authenticatedLastName = '';
+            let isAuthenticated = false;
+            let authenticatedLastName = ''; // To store the successful last name
 
             for (const lastName of authorizedLastNames) {
                 const expectedCode = lastName + currentMMDD;
                 if (enteredCode === expectedCode) {
-                    isAuthenticatedLocally = true;
-                    authenticatedLastName = lastName;
+                    isAuthenticated = true;
+                    authenticatedLastName = lastName; // Store the matched last name
                     break;
                 }
             }
 
-            if (isAuthenticatedLocally) {
-                sessionStorage.setItem('loggedInUserLastName', authenticatedLastName);
+            if (isAuthenticated) {
+                // I-set ang session storage flag
                 sessionStorage.setItem('loggedIn', 'true');
+                sessionStorage.setItem('loggedInUserLastName', authenticatedLastName); // Store the last name
                 showDashboard();
             } else {
                 showModal('Invalid authentication code. Please try again.');
-                authCodeInput.value = '';
+                authCodeInput.value = ''; // I-clear ang input sa pagkabigo
             }
         }
 
-        // Function to show dashboard and hide login
+        // Function para ipakita ang dashboard at itago ang login
         function showDashboard() {
             loginPage.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
-            loginPage.style.flexGrow = '0';
+            // Siguraduhin na ang login page ay hindi na mag-flex-grow kapag nakatago
+            loginPage.style.flexGrow = '0'; 
             dashboardContainer.style.flexGrow = '1';
 
+            // Update the displayed username
             const storedLastName = sessionStorage.getItem('loggedInUserLastName');
             if (loggedInUserNameSpan && storedLastName) {
                 loggedInUserNameSpan.textContent = storedLastName;
-            }
-            // Activate dashboard tab by default
-            activateDashboardTab('dashboard-main'); 
-            // Load and render all data from localStorage
-            loadAllDataFromLocalStorage();
-            updateDashboardCards(); // Update cards after loading data
-        }
-
-        // Function to handle UI updates on logout
-        function handleLogoutUI() {
-            sessionStorage.removeItem('loggedIn');
-            sessionStorage.removeItem('loggedInUserLastName');
-            dashboardContainer.classList.add('hidden');
-            loginPage.classList.remove('hidden');
-            authCodeInput.value = '';
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('md:translate-x-0');
-            loginPage.style.flexGrow = '1';
-            dashboardContainer.style.flexGrow = '0';
-            if (loggedInUserNameSpan) {
-                loggedInUserNameSpan.textContent = 'Guest'; // Reset to default
             }
         }
 
         // Logout function
         function handleLogout() {
-            handleLogoutUI();
+            sessionStorage.removeItem('loggedIn'); // I-clear ang session storage flag
+            sessionStorage.removeItem('loggedInUserLastName'); // Clear the stored last name
+            dashboardContainer.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            authCodeInput.value = ''; // I-clear ang input sa pag-logout
+            // Opsyonal: itago ang sidebar sa pag-logout para sa mobile
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('md:translate-x-0');
+            // Ibalik ang flex-grow sa login page
+            loginPage.style.flexGrow = '1'; 
+            dashboardContainer.style.flexGrow = '0';
+            // Reset the displayed username
+            if (loggedInUserNameSpan) {
+                loggedInUserNameSpan.textContent = 'Admin'; // Default text or empty
+            }
         }
 
-        // Event Listeners for Login/Logout
+        // Event Listeners para sa Login/Logout
         loginButton.addEventListener('click', handleLogin);
         logoutButtonSidebar.addEventListener('click', handleLogout);
+
+        // Payagan ang pagpindot ng Enter key para mag-login
         authCodeInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 handleLogin();
             }
         });
 
-        // Toggle password visibility
-        togglePassword.addEventListener('click', function () {
-            const type = authCodeInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            authCodeInput.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('fa-eye');
-            this.querySelector('i').classList.toggle('fa-eye-slash');
-        });
-
-        // --- Dashboard UI Updates ---
-
-        // Update current date and time for the dashboard
+        // I-update ang kasalukuyang petsa at oras para sa dashboard
         function updateDateTime() {
             const now = new Date();
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
             };
             const dateTimeElement = document.getElementById('currentDateTime');
-            if (dateTimeElement) {
+            if (dateTimeElement) { // I-check kung may element (nasa dashboard page lang)
                 dateTimeElement.textContent = now.toLocaleDateString('en-US', options);
             }
         }
-
-        // Update immediately and then every minute
+        
+        // I-update agad at pagkatapos ay kada minuto
         updateDateTime();
         setInterval(updateDateTime, 60000);
 
@@ -837,851 +563,20 @@
             sidebar.classList.toggle('md:translate-x-0');
         });
 
-        // --- Tab Switching Logic for Dashboard Sections ---
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        function activateDashboardTab(tabId) {
-            tabContents.forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            document.getElementById(tabId).classList.remove('hidden');
-
-            sidebarLinks.forEach(link => {
-                link.classList.remove('bg-green-800', 'active-tab-link');
-                link.classList.add('text-green-200', 'hover:bg-green-600');
-            });
-
-            const activeLink = document.querySelector(`[data-tab-target="${tabId}"]`);
-            if (activeLink) {
-                activeLink.classList.add('bg-green-800', 'active-tab-link');
-                activeLink.classList.remove('text-green-200', 'hover:bg-green-600');
-            }
-
-            // Re-render logs for the activated tab if it's a log tab
-            if (tabId === 'coal-management') {
-                renderCoalLogs();
-            } else if (tabId === 'power-consumption') {
-                renderPowerLogs();
-            } else if (tabId === 'gpm-calculator') {
-                renderGpmLogs();
-            }
-        }
-
-        // Attach event listeners to sidebar links for tab switching
-        sidebarLinks.forEach(link => {
-            if (link.dataset.tabTarget) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    activateDashboardTab(link.dataset.tabTarget);
-                    // Close sidebar on mobile after clicking a link
-                    sidebar.classList.add('-translate-x-full');
-                    sidebar.classList.remove('md:translate-x-0');
-                });
-            }
-        });
-
-        // --- localStorage Data Management ---
-
-        function getStoredData(key) {
-            try {
-                const data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : [];
-            } catch (e) {
-                console.error(`Error parsing data from localStorage for key "${key}":`, e);
-                return [];
-            }
-        }
-
-        function setStoredData(key, data) {
-            try {
-                localStorage.setItem(key, JSON.stringify(data));
-            } catch (e) {
-                console.error(`Error saving data to localStorage for key "${key}":`, e);
-                showModal("Error saving data. Local storage might be full.");
-            }
-        }
-
-        function loadAllDataFromLocalStorage() {
-            window.coalData = getStoredData('coalDeliveries').sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            window.powerData = getStoredData('powerConsumption').sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            window.gpmData = getStoredData('gpmCalculations').sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
-
-
-        // --- Coal Management ---
-        const coalLogTableBody = document.getElementById('coalLogTableBody');
-        const noCoalLogsMessage = document.getElementById('noCoalLogsMessage');
-        const coalDeliveryForm = document.getElementById('coalDeliveryForm');
-        const addCoalEntryBtn = document.getElementById('addCoalEntryBtn');
-        const clearCoalFormBtn = document.getElementById('clearCoalFormBtn');
-
-        const coalFormInputs = {
-            date: document.getElementById('coal-date'),
-            time: document.getElementById('coal-time'),
-            driver: document.getElementById('coal-driver'),
-            plate: document.getElementById('coal-plate'),
-            kg: document.getElementById('coal-kg'),
-            ctp: document.getElementById('coal-ctp'),
-            dr: document.getElementById('coal-dr'),
-            supplier: document.getElementById('coal-supplier'),
-            yard: document.getElementById('coal-yard'),
-            operator: document.getElementById('coal-operator'),
-            remarks: document.getElementById('coal-remarks')
-        };
-
-        let editingCoalRowId = null;
-
-        function renderCoalLogs() {
-            coalLogTableBody.innerHTML = '';
-            const entries = window.coalData || [];
-
-            if (entries.length === 0) {
-                noCoalLogsMessage.classList.remove('hidden');
-            } else {
-                noCoalLogsMessage.classList.add('hidden');
-                entries.forEach(entry => {
-                    const row = document.createElement('tr');
-                    row.classList.add('hover:bg-gray-50', 'transition-colors');
-                    row.dataset.id = entry.id;
-
-                    let remarksDisplay = entry.remarks;
-                    if (entry.remarks === '✅ In Use' && entry.dateInUse && entry.timeInUse) {
-                        remarksDisplay += ` (In Use: ${entry.dateInUse} ${entry.timeInUse})`;
-                    } else if (entry.remarks === '❌ Used Up' && entry.dateUsedUp && entry.timeUsedUp) {
-                        remarksDisplay += ` (Used Up: ${entry.dateUsedUp} ${entry.timeUsedUp})`;
-                    }
-
-                    row.innerHTML = `
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.date || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.time || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.driver || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.plate || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.kg || 0}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.ctp || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.dr || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.supplier || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.yard || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.operator || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${remarksDisplay}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                            <button class="text-blue-600 hover:text-blue-800 transition-colors edit-coal-btn mr-2" data-id="${entry.id}">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="text-red-600 hover:text-red-800 transition-colors delete-coal-btn" data-id="${entry.id}">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    coalLogTableBody.appendChild(row);
-                });
-
-                document.querySelectorAll('.edit-coal-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const idToEdit = event.currentTarget.dataset.id;
-                        editCoalEntry(idToEdit);
-                    });
-                });
-
-                document.querySelectorAll('.delete-coal-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const idToDelete = event.currentTarget.dataset.id;
-                        if (confirm('Are you sure you want to delete this entry?')) {
-                             deleteCoalEntry(idToDelete);
-                        }
-                    });
-                });
-            }
-        }
-
-        function validateCoalEntryData(data, rowElement = null) {
-            let isValid = true;
-            const fieldsToValidate = [
-                { key: 'date', type: 'date', message: 'Date is required.' },
-                { key: 'time', type: 'time', message: 'Time is required.' },
-                { key: 'driver', type: 'text', message: "Driver's name is required." },
-                { key: 'plate', type: 'text', message: "Plate number is required." },
-                { key: 'kg', type: 'number', message: "Coal kg is required and must be a positive number." },
-                { key: 'ctp', type: 'text', message: "CTP number is required." },
-                { key: 'dr', type: 'text', message: "DR number is required." },
-                { key: 'supplier', type: 'text', message: "Supplier name is required." },
-                { key: 'yard', type: 'select', message: "Coal Yard No. is required." },
-                { key: 'operator', type: 'text', message: "Operator's name is required." },
-                { key: 'remarks', type: 'select', message: "Remarks is required." }
-            ];
-
-            for (const field of fieldsToValidate) {
-                const value = data[field.key];
-                let fieldIsValid = true;
-                if (field.type === 'number') {
-                    if (isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
-                        fieldIsValid = false;
-                    }
-                } else if (typeof value === 'string' && value.trim() === '') {
-                    fieldIsValid = false;
-                } else if (value === null || value === undefined || value === '') {
-                    fieldIsValid = false;
-                }
-                if (!fieldIsValid) {
-                    isValid = false;
-                    if (!rowElement) showError(coalFormInputs[field.key], field.message);
-                } else {
-                    if (!rowElement) hideError(coalFormInputs[field.key]);
-                }
-            }
-
-            if (data.remarks === '✅ In Use') {
-                if (!data.dateInUse || data.dateInUse.trim() === '') { isValid = false; showModal('Date In Use is required when Remarks is "In Use".'); }
-                if (!data.timeInUse || data.timeInUse.trim() === '') { isValid = false; showModal('Time In Use is required when Remarks is "In Use".'); }
-            } else if (data.remarks === '❌ Used Up') {
-                if (!data.dateUsedUp || data.dateUsedUp.trim() === '') { isValid = false; showModal('Date Used Up is required when Remarks is "Used Up".'); }
-                if (!data.timeUsedUp || data.timeUsedUp.trim() === '') { isValid = false; showModal('Time Used Up is required when Remarks is "Used Up".'); }
-            }
-            return isValid;
-        }
-
-        for (const key in coalFormInputs) {
-            const input = coalFormInputs[key];
-            input.addEventListener('blur', () => {
-                if (input.hasAttribute('required') && (input.value.trim() === '' || (input.type === 'number' && parseFloat(input.value) <= 0))) {
-                    showError(input, input.placeholder ? `${input.labels[0].textContent.replace(':', '')} is required.` : 'This field is required.');
-                } else {
-                    hideError(input);
-                }
-            });
-        }
-
-        clearCoalFormBtn.addEventListener('click', () => {
-            coalDeliveryForm.reset();
-            for (const key in coalFormInputs) { hideError(coalFormInputs[key]); }
-            showMessage('success', 'Coal form cleared!');
-        });
-
-        coalDeliveryForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const newEntry = {
-                id: Date.now().toString(36) + Math.random().toString(36).substring(2), // Unique ID
-                date: coalFormInputs.date.value, time: coalFormInputs.time.value, driver: coalFormInputs.driver.value,
-                plate: coalFormInputs.plate.value, kg: parseFloat(coalFormInputs.kg.value), ctp: coalFormInputs.ctp.value,
-                dr: coalFormInputs.dr.value, supplier: coalFormInputs.supplier.value, yard: coalFormInputs.yard.value,
-                operator: coalFormInputs.operator.value, remarks: coalFormInputs.remarks.value,
-                dateInUse: null, timeInUse: null, dateUsedUp: null, timeUsedUp: null,
-                timestamp: new Date().toISOString()
-            };
-
-            if (!validateCoalEntryData(newEntry)) { showModal('Please fill in all required fields correctly.'); return; }
-
-            addCoalEntryBtn.disabled = true;
-            addCoalEntryBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Adding...';
-            addCoalEntryBtn.classList.add('opacity-70', 'cursor-not-allowed');
-
-            window.coalData.push(newEntry);
-            setStoredData('coalDeliveries', window.coalData);
-            
-            showMessage('success', 'Coal delivery entry added successfully!');
-            coalDeliveryForm.reset();
-            renderCoalLogs();
-            updateDashboardCards(); // Update dashboard cards
-            
-            addCoalEntryBtn.disabled = false;
-            addCoalEntryBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Add Entry';
-            addCoalEntryBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-        });
-
-        function editCoalEntry(idToEdit) {
-            if (editingCoalRowId && editingCoalRowId !== idToEdit) { showModal('Please save or cancel the current edit before editing another row.'); return; }
-
-            editingCoalRowId = idToEdit;
-            const row = document.querySelector(`tr[data-id="${idToEdit}"]`);
-            if (!row) return;
-
-            const entry = window.coalData.find(e => e.id === idToEdit);
-            if (!entry) { showModal("Coal entry not found for editing."); editingCoalRowId = null; renderCoalLogs(); return; }
-
-            const fields = [
-                { key: 'date', type: 'date' }, { key: 'time', type: 'time' }, { key: 'driver', type: 'text' },
-                { key: 'plate', type: 'text' }, { key: 'kg', type: 'number' }, { key: 'ctp', type: 'text' },
-                { key: 'dr', type: 'text' }, { key: 'supplier', type: 'text' },
-                { key: 'yard', type: 'select', options: ['1', '2', '3', '4', '5', '6', '7', '8', '9'] },
-                { key: 'operator', type: 'text' },
-                { key: 'remarks', type: 'select', options: ['✅ In Use', '❌ Used Up', '🔔Standby'] }
-            ];
-
-            row.querySelectorAll('td:not(:last-child)').forEach((td, index) => {
-                const field = fields[index];
-                if (!field) return;
-                const originalValue = entry[field.key];
-                let inputElement;
-
-                if (field.key === 'remarks') {
-                    td.classList.add('remarks-cell');
-                    inputElement = document.createElement('select');
-                    inputElement.className = 'w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none';
-                    inputElement.dataset.fieldKey = field.key;
-                    field.options.forEach(optionValue => {
-                        const option = document.createElement('option');
-                        option.value = optionValue;
-                        option.textContent = optionValue;
-                        if (optionValue === originalValue) option.selected = true;
-                        inputElement.appendChild(option);
-                    });
-
-                    const inUseContainer = document.createElement('div');
-                    inUseContainer.className = 'in-use-container flex flex-col gap-1 mt-2 hidden';
-                    inUseContainer.innerHTML = `<label class="block text-gray-700 text-xs font-medium">Date In Use:</label><input type="date" class="w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none" data-field-key="dateInUse" data-original-value="${entry.dateInUse || ''}"><label class="block text-gray-700 text-xs font-medium">Time In Use:</label><input type="time" class="w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none" data-field-key="timeInUse" data-original-value="${entry.timeInUse || ''}">`;
-                    const dateInUseInput = inUseContainer.querySelector('[data-field-key="dateInUse"]');
-                    const timeInUseInput = inUseContainer.querySelector('[data-field-key="timeInUse"]');
-                    dateInUseInput.value = entry.dateInUse || ''; timeInUseInput.value = entry.timeInUse || '';
-
-                    const usedUpContainer = document.createElement('div');
-                    usedUpContainer.className = 'used-up-container flex flex-col gap-1 mt-2 hidden';
-                    usedUpContainer.innerHTML = `<label class="block text-gray-700 text-xs font-medium">Date Used Up:</label><input type="date" class="w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none" data-field-key="dateUsedUp" data-original-value="${entry.dateUsedUp || ''}"><label class="block text-gray-700 text-xs font-medium">Time Used Up:</label><input type="time" class="w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none" data-field-key="timeUsedUp" data-original-value="${entry.timeUsedUp || ''}">`;
-                    const dateUsedUpInput = usedUpContainer.querySelector('[data-field-key="dateUsedUp"]');
-                    const timeUsedUpInput = usedUpContainer.querySelector('[data-field-key="timeUsedUp"]');
-                    dateUsedUpInput.value = entry.dateUsedUp || ''; timeUsedUpInput.value = entry.timeUsedUp || '';
-
-                    const toggleDateTimeInputs = () => {
-                        inUseContainer.classList.add('hidden'); dateInUseInput.required = false; timeInUseInput.required = false;
-                        usedUpContainer.classList.add('hidden'); dateUsedUpInput.required = false; timeUsedUpInput.required = false;
-                        if (inputElement.value === '✅ In Use') { inUseContainer.classList.remove('hidden'); dateInUseInput.required = true; timeInUseInput.required = true; }
-                        else if (inputElement.value === '❌ Used Up') { usedUpContainer.classList.remove('hidden'); dateUsedUpInput.required = true; timeUsedUpInput.required = true; }
-                    };
-                    inputElement.addEventListener('change', toggleDateTimeInputs);
-                    td.innerHTML = ''; td.appendChild(inputElement); td.appendChild(inUseContainer); td.appendChild(usedUpContainer);
-                    toggleDateTimeInputs();
-                } else if (field.type === 'select') {
-                    inputElement = document.createElement('select');
-                    inputElement.className = 'w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none';
-                    field.options.forEach(optionValue => {
-                        const option = document.createElement('option');
-                        option.value = optionValue;
-                        option.textContent = optionValue;
-                        if (optionValue === originalValue) option.selected = true;
-                        inputElement.appendChild(option);
-                    });
-                } else {
-                    inputElement = document.createElement('input');
-                    inputElement.type = field.type;
-                    inputElement.value = originalValue;
-                    inputElement.className = 'w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none';
-                    if (field.type === 'number') inputElement.min = "0";
-                }
-                if (field.key !== 'remarks') { inputElement.dataset.originalValue = originalValue; inputElement.dataset.fieldKey = field.key; }
-                if (field.key !== 'remarks') { td.innerHTML = ''; td.appendChild(inputElement); }
-            });
-
-            const actionsCell = row.querySelector('td:last-child');
-            actionsCell.innerHTML = `
-                <button class="text-green-600 hover:text-green-800 transition-colors save-coal-btn mr-2" data-id="${idToEdit}">
-                    <i class="fas fa-save"></i> Save
-                </button>
-                <button class="text-gray-600 hover:text-gray-800 transition-colors cancel-coal-btn" data-id="${idToEdit}">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            `;
-            actionsCell.querySelector('.save-coal-btn').addEventListener('click', (event) => saveCoalEntry(event.currentTarget.dataset.id));
-            actionsCell.querySelector('.cancel-coal-btn').addEventListener('click', (event) => cancelCoalEdit(event.currentTarget.dataset.id));
-        }
-
-        function saveCoalEntry(idToSave) {
-            const row = document.querySelector(`tr[data-id="${idToSave}"]`);
-            if (!row) return;
-
-            const updatedData = {};
-            row.querySelectorAll('td:not(:last-child) input, td:not(:last-child) select').forEach(input => {
-                const fieldKey = input.dataset.fieldKey;
-                if (fieldKey) {
-                    let value = input.value;
-                    if (input.type === 'number') value = parseFloat(value);
-                    updatedData[fieldKey] = value;
-                }
-            });
-
-            const remarksSelect = row.querySelector('[data-field-key="remarks"]');
-            const currentRemarks = remarksSelect ? remarksSelect.value : '';
-            updatedData.dateInUse = null; updatedData.timeInUse = null; updatedData.dateUsedUp = null; updatedData.timeUsedUp = null;
-
-            if (currentRemarks === '✅ In Use') {
-                const dateInUseInput = row.querySelector('[data-field-key="dateInUse"]');
-                const timeInUseInput = row.querySelector('[data-field-key="timeInUse"]');
-                updatedData.dateInUse = dateInUseInput ? dateInUseInput.value : null;
-                updatedData.timeInUse = timeInUseInput ? timeInUseInput.value : null;
-            } else if (currentRemarks === '❌ Used Up') {
-                const dateUsedUpInput = row.querySelector('[data-field-key="dateUsedUp"]');
-                const timeUsedUpInput = row.querySelector('[data-field-key="timeUsedUp"]');
-                updatedData.dateUsedUp = dateUsedUpInput ? dateUsedUpInput.value : null;
-                updatedData.timeUsedUp = timeUsedUpInput ? timeUsedUpInput.value : null;
-            }
-
-            if (!validateCoalEntryData(updatedData, row)) { return; }
-
-            const entryIndex = window.coalData.findIndex(e => e.id === idToSave);
-            if (entryIndex !== -1) {
-                window.coalData[entryIndex] = { ...window.coalData[entryIndex], ...updatedData };
-                setStoredData('coalDeliveries', window.coalData);
-                showMessage('success', 'Coal entry updated successfully!');
-                editingCoalRowId = null;
-                renderCoalLogs();
-                updateDashboardCards(); // Update dashboard cards
-            } else {
-                showModal("Error updating coal entry. Entry not found.");
-            }
-        }
-
-        function cancelCoalEdit(idToCancel) {
-            editingCoalRowId = null;
-            showMessage('info', 'Coal edit cancelled. Changes discarded.');
-            renderCoalLogs();
-        }
-
-        function deleteCoalEntry(idToDelete) {
-            window.coalData = window.coalData.filter(entry => entry.id !== idToDelete);
-            setStoredData('coalDeliveries', window.coalData);
-            showMessage('success', 'Coal entry deleted successfully!');
-            renderCoalLogs();
-            updateDashboardCards(); // Update dashboard cards
-        }
-
-
-        // --- Power Consumption ---
-        const powerLogTableBody = document.getElementById('powerLogTableBody');
-        const noPowerLogsMessage = document.getElementById('noPowerLogsMessage');
-        const powerConsumptionForm = document.getElementById('powerConsumptionForm');
-        const addPowerEntryBtn = document.getElementById('addPowerEntryBtn');
-        const clearPowerFormBtn = document.getElementById('clearPowerFormBtn');
-
-        const powerFormInputs = {
-            date: document.getElementById('power-date'),
-            time: document.getElementById('power-time'),
-            kwh: document.getElementById('power-kwh'),
-            equipment: document.getElementById('power-equipment')
-        };
-
-        let editingPowerRowId = null;
-
-        function renderPowerLogs() {
-            powerLogTableBody.innerHTML = '';
-            const entries = window.powerData || [];
-
-            if (entries.length === 0) {
-                noPowerLogsMessage.classList.remove('hidden');
-            } else {
-                noPowerLogsMessage.classList.add('hidden');
-                entries.forEach(entry => {
-                    const row = document.createElement('tr');
-                    row.classList.add('hover:bg-gray-50', 'transition-colors');
-                    row.dataset.id = entry.id;
-
-                    row.innerHTML = `
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.date || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.time || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.kwh || 0}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.equipment || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                            <button class="text-blue-600 hover:text-blue-800 transition-colors edit-power-btn mr-2" data-id="${entry.id}">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="text-red-600 hover:text-red-800 transition-colors delete-power-btn" data-id="${entry.id}">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    powerLogTableBody.appendChild(row);
-                });
-
-                document.querySelectorAll('.edit-power-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const idToEdit = event.currentTarget.dataset.id;
-                        editPowerEntry(idToEdit);
-                    });
-                });
-
-                document.querySelectorAll('.delete-power-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const idToDelete = event.currentTarget.dataset.id;
-                        if (confirm('Are you sure you want to delete this entry?')) {
-                             deletePowerEntry(idToDelete);
-                        }
-                    });
-                });
-            }
-        }
-
-        function validatePowerEntryData(data, rowElement = null) {
-            let isValid = true;
-            const fieldsToValidate = [
-                { key: 'date', type: 'date', message: 'Date is required.' },
-                { key: 'time', type: 'time', message: 'Time is required.' },
-                { key: 'kwh', type: 'number', message: 'Consumption (kWh) is required and must be a positive number.' },
-                { key: 'equipment', type: 'text', message: 'Equipment is required.' }
-            ];
-
-            for (const field of fieldsToValidate) {
-                const value = data[field.key];
-                let fieldIsValid = true;
-                if (field.type === 'number') {
-                    if (isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
-                        fieldIsValid = false;
-                    }
-                } else if (typeof value === 'string' && value.trim() === '') {
-                    fieldIsValid = false;
-                }
-                if (!fieldIsValid) {
-                    isValid = false;
-                    if (!rowElement) showError(powerFormInputs[field.key], field.message);
-                } else {
-                    if (!rowElement) hideError(powerFormInputs[field.key]);
-                }
-            }
-            return isValid;
-        }
-
-        for (const key in powerFormInputs) {
-            const input = powerFormInputs[key];
-            input.addEventListener('blur', () => {
-                if (input.hasAttribute('required') && (input.value.trim() === '' || (input.type === 'number' && parseFloat(input.value) <= 0))) {
-                    showError(input, input.placeholder ? `${input.labels[0].textContent.replace(':', '')} is required.` : 'This field is required.');
-                } else {
-                    hideError(input);
-                }
-            });
-        }
-
-        clearPowerFormBtn.addEventListener('click', () => {
-            powerConsumptionForm.reset();
-            for (const key in powerFormInputs) { hideError(powerFormInputs[key]); }
-            showMessage('success', 'Power consumption form cleared!');
-        });
-
-        powerConsumptionForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const newEntry = {
-                id: Date.now().toString(36) + Math.random().toString(36).substring(2), // Unique ID
-                date: powerFormInputs.date.value,
-                time: powerFormInputs.time.value,
-                kwh: parseFloat(powerFormInputs.kwh.value),
-                equipment: powerFormInputs.equipment.value,
-                timestamp: new Date().toISOString()
-            };
-
-            if (!validatePowerEntryData(newEntry)) { showModal('Please fill in all required fields correctly.'); return; }
-
-            addPowerEntryBtn.disabled = true;
-            addPowerEntryBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Adding...';
-            addPowerEntryBtn.classList.add('opacity-70', 'cursor-not-allowed');
-
-            window.powerData.push(newEntry);
-            setStoredData('powerConsumption', window.powerData);
-            
-            showMessage('success', 'Power consumption entry added successfully!');
-            powerConsumptionForm.reset();
-            renderPowerLogs();
-            updateDashboardCards(); // Update dashboard cards
-            
-            addPowerEntryBtn.disabled = false;
-            addPowerEntryBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Add Entry';
-            addPowerEntryBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-        });
-
-        function editPowerEntry(idToEdit) {
-            if (editingPowerRowId && editingPowerRowId !== idToEdit) { showModal('Please save or cancel the current edit before editing another row.'); return; }
-
-            editingPowerRowId = idToEdit;
-            const row = document.querySelector(`tr[data-id="${idToEdit}"]`);
-            if (!row) return;
-
-            const entry = window.powerData.find(e => e.id === idToEdit);
-            if (!entry) { showModal("Power entry not found for editing."); editingPowerRowId = null; renderPowerLogs(); return; }
-
-            const fields = [
-                { key: 'date', type: 'date' }, { key: 'time', type: 'time' },
-                { key: 'kwh', type: 'number' }, { key: 'equipment', type: 'text' }
-            ];
-
-            row.querySelectorAll('td:not(:last-child)').forEach((td, index) => {
-                const field = fields[index];
-                if (!field) return;
-                const originalValue = entry[field.key];
-                let inputElement = document.createElement('input');
-                inputElement.type = field.type;
-                inputElement.value = originalValue;
-                inputElement.className = 'w-full px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none';
-                if (field.type === 'number') inputElement.min = "0";
-                inputElement.dataset.originalValue = originalValue;
-                inputElement.dataset.fieldKey = field.key;
-
-                td.innerHTML = '';
-                td.appendChild(inputElement);
-            });
-
-            const actionsCell = row.querySelector('td:last-child');
-            actionsCell.innerHTML = `
-                <button class="text-green-600 hover:text-green-800 transition-colors save-power-btn mr-2" data-id="${idToEdit}">
-                    <i class="fas fa-save"></i> Save
-                </button>
-                <button class="text-gray-600 hover:text-gray-800 transition-colors cancel-power-btn" data-id="${idToEdit}">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            `;
-            actionsCell.querySelector('.save-power-btn').addEventListener('click', (event) => savePowerEntry(event.currentTarget.dataset.id));
-            actionsCell.querySelector('.cancel-power-btn').addEventListener('click', (event) => cancelPowerEdit(event.currentTarget.dataset.id));
-        }
-
-        function savePowerEntry(idToSave) {
-            const row = document.querySelector(`tr[data-id="${idToSave}"]`);
-            if (!row) return;
-
-            const updatedData = {};
-            row.querySelectorAll('td:not(:last-child) input, td:not(:last-child) select').forEach(input => {
-                const fieldKey = input.dataset.fieldKey;
-                if (fieldKey) {
-                    let value = input.value;
-                    if (input.type === 'number') value = parseFloat(value);
-                    updatedData[fieldKey] = value;
-                }
-            });
-
-            if (!validatePowerEntryData(updatedData, row)) { return; }
-
-            const entryIndex = window.powerData.findIndex(e => e.id === idToSave);
-            if (entryIndex !== -1) {
-                window.powerData[entryIndex] = { ...window.powerData[entryIndex], ...updatedData };
-                setStoredData('powerConsumption', window.powerData);
-                showMessage('success', 'Power entry updated successfully!');
-                editingPowerRowId = null;
-                renderPowerLogs();
-                updateDashboardCards(); // Update dashboard cards
-            } else {
-                showModal("Error updating power entry. Entry not found.");
-            }
-        }
-
-        function cancelPowerEdit(idToCancel) {
-            editingPowerRowId = null;
-            showMessage('info', 'Power edit cancelled. Changes discarded.');
-            renderPowerLogs();
-        }
-
-        function deletePowerEntry(idToDelete) {
-            window.powerData = window.powerData.filter(entry => entry.id !== idToDelete);
-            setStoredData('powerConsumption', window.powerData);
-            showMessage('success', 'Power entry deleted successfully!');
-            renderPowerLogs();
-            updateDashboardCards(); // Update dashboard cards
-        }
-
-
-        // --- GPM Calculator ---
-        const gpmLogTableBody = document.getElementById('gpmLogTableBody');
-        const noGpmLogsMessage = document.getElementById('noGpmLogsMessage');
-        const gpmFlowRateInput = document.getElementById('gpm-flow-rate');
-        const gpmPipeDiameterInput = document.getElementById('gpm-pipe-diameter');
-        const calculateGpmBtn = document.getElementById('calculateGpmBtn');
-        const calculatedGpmResult = document.getElementById('calculatedGpmResult');
-
-        function renderGpmLogs() {
-            gpmLogTableBody.innerHTML = '';
-            const entries = window.gpmData || [];
-
-            if (entries.length === 0) {
-                noGpmLogsMessage.classList.remove('hidden');
-            } else {
-                noGpmLogsMessage.classList.add('hidden');
-                entries.forEach(entry => {
-                    const row = document.createElement('tr');
-                    row.classList.add('hover:bg-gray-50', 'transition-colors');
-                    row.dataset.id = entry.id;
-
-                    row.innerHTML = `
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.date || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.time || ''}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.flowRate || 0}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.pipeDiameter || 0}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${entry.calculatedGpm ? entry.calculatedGpm.toFixed(2) : 'N/A'}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                            <button class="text-red-600 hover:text-red-800 transition-colors delete-gpm-btn" data-id="${entry.id}">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    gpmLogTableBody.appendChild(row);
-                });
-
-                document.querySelectorAll('.delete-gpm-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const idToDelete = event.currentTarget.dataset.id;
-                        if (confirm('Are you sure you want to delete this entry?')) {
-                             deleteGpmEntry(idToDelete);
-                        }
-                    });
-                });
-            }
-        }
-
-        // GPM Calculation Logic
-        calculateGpmBtn.addEventListener('click', () => {
-            const flowRate = parseFloat(gpmFlowRateInput.value);
-            const pipeDiameter = parseFloat(gpmPipeDiameterInput.value);
-
-            let isValid = true;
-            if (isNaN(flowRate) || flowRate <= 0) {
-                showError(gpmFlowRateInput, 'Flow Rate must be a positive number.'); isValid = false;
-            } else { hideError(gpmFlowRateInput); }
-            if (isNaN(pipeDiameter) || pipeDiameter <= 0) {
-                showError(gpmPipeDiameterInput, 'Pipe Diameter must be a positive number.'); isValid = false;
-            } else { hideError(gpmPipeDiameterInput); }
-
-            if (!isValid) {
-                showModal('Please enter valid positive numbers for Flow Rate and Pipe Diameter.');
-                return;
-            }
-
-            // Simple GPM calculation formula (example: for a specific scenario, adjust as needed)
-            // This formula is a placeholder. Real GPM calculation depends on specific units and physics.
-            const calculatedGpm = flowRate; // Simple assumption for now
-
-            calculatedGpmResult.textContent = calculatedGpm.toFixed(2);
-            showMessage('success', 'GPM calculated successfully!');
-
-            const newCalculation = {
-                id: Date.now().toString(36) + Math.random().toString(36).substring(2), // Unique ID
-                date: new Date().toISOString().split('T')[0], // Current date
-                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }), // Current time
-                flowRate: flowRate,
-                pipeDiameter: pipeDiameter,
-                calculatedGpm: calculatedGpm,
-                timestamp: new Date().toISOString()
-            };
-
-            window.gpmData.push(newCalculation);
-            setStoredData('gpmCalculations', window.gpmData);
-            
-            showMessage('success', 'GPM calculation saved to history!');
-            gpmFlowRateInput.value = '';
-            gpmPipeDiameterInput.value = '';
-            renderGpmLogs();
-            updateDashboardCards(); // Update dashboard cards
-        });
-
-        function deleteGpmEntry(idToDelete) {
-            window.gpmData = window.gpmData.filter(entry => entry.id !== idToDelete);
-            setStoredData('gpmCalculations', window.gpmData);
-            showMessage('success', 'GPM entry deleted successfully!');
-            renderGpmLogs();
-            updateDashboardCards(); // Update dashboard cards
-        }
-
-        // --- Dashboard Cards Update Logic ---
-        function updateDashboardCards() {
-            // Coal Card
-            const latestCoal = window.coalData && window.coalData.length > 0 ? window.coalData[0] : null;
-            document.getElementById('dashboard-coal-yard').textContent = latestCoal ? latestCoal.yard : 'N/A';
-            document.getElementById('dashboard-coal-supplier').textContent = latestCoal ? latestCoal.supplier : 'N/A';
-            document.getElementById('dashboard-coal-kg').textContent = latestCoal ? `${latestCoal.kg} kg` : '0 kg';
-
-            // GPM Card
-            const latestGpm = window.gpmData && window.gpmData.length > 0 ? window.gpmData[0] : null;
-            document.getElementById('dashboard-gpm-latest').textContent = latestGpm ? latestGpm.calculatedGpm.toFixed(2) : '0.00';
-            
-            const gpmValues = window.gpmData.map(entry => entry.calculatedGpm).filter(val => typeof val === 'number');
-            const monthlyAvgGpm = gpmValues.length > 0 ? (gpmValues.reduce((sum, val) => sum + val, 0) / gpmValues.length).toFixed(2) : '0.00';
-            document.getElementById('dashboard-gpm-monthly-avg').textContent = monthlyAvgGpm;
-
-            const gpmGauge = document.getElementById('dashboard-gpm-gauge');
-            if (gpmGauge && latestGpm) {
-                // Assuming max GPM for gauge is 500 for example, adjust as needed
-                const percentage = (latestGpm.calculatedGpm / 500) * 100; 
-                gpmGauge.style.setProperty('--percentage', Math.min(percentage, 100)); // Cap at 100%
-            } else if (gpmGauge) {
-                gpmGauge.style.setProperty('--percentage', 0);
-            }
-
-            // Power Consumption Card
-            const totalKwhMonthly = window.powerData.reduce((sum, entry) => sum + (entry.kwh || 0), 0);
-            document.getElementById('dashboard-power-monthly').textContent = `${totalKwhMonthly.toFixed(2)} kWh`;
-
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayString = yesterday.toISOString().split('T')[0];
-            const yesterdayKwh = window.powerData.filter(entry => entry.date === yesterdayString)
-                                                .reduce((sum, entry) => sum + (entry.kwh || 0), 0);
-            document.getElementById('dashboard-power-yesterday').textContent = `${yesterdayKwh.toFixed(2)} kWh`;
-
-            const powerProgressBar = document.getElementById('dashboard-power-progress');
-            if (powerProgressBar) {
-                const maxKwh = 30000; // Example max kWh for progress bar
-                const progressPercentage = (totalKwhMonthly / maxKwh) * 100;
-                powerProgressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
-            }
-
-            // Recent Activity (combine latest from all logs)
-            const allActivities = [
-                ...(window.coalData || []).map(e => ({ type: 'coal', timestamp: e.timestamp, message: `New coal delivery: ${e.kg} kg from ${e.supplier} at Yard ${e.yard}` })),
-                ...(window.powerData || []).map(e => ({ type: 'power', timestamp: e.timestamp, message: `Power consumption: ${e.kwh} kWh for ${e.equipment}` })),
-                ...(window.gpmData || []).map(e => ({ type: 'gpm', timestamp: e.timestamp, message: `GPM calculated: ${e.calculatedGpm.toFixed(2)} (Flow: ${e.flowRate}, Pipe: ${e.pipeDiameter})` }))
-            ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5); // Get top 5 recent
-
-            const recentActivityContainer = document.getElementById('dashboard-recent-activity');
-            recentActivityContainer.innerHTML = '';
-            if (allActivities.length === 0) {
-                recentActivityContainer.innerHTML = '<p class="text-gray-400 text-center">No recent activities.</p>';
-            } else {
-                allActivities.forEach(activity => {
-                    let iconClass = '';
-                    let bgColorClass = '';
-                    if (activity.type === 'coal') { iconClass = 'fas fa-fire'; bgColorClass = 'bg-green-100 text-green-600'; }
-                    else if (activity.type === 'power') { iconClass = 'fas fa-bolt'; bgColorClass = 'bg-green-100 text-green-600'; }
-                    else if (activity.type === 'gpm') { iconClass = 'fas fa-calculator'; bgColorClass = 'bg-green-100 text-green-600'; }
-
-                    const timeAgo = formatTimeAgo(activity.timestamp);
-
-                    const activityHtml = `
-                        <div class="flex items-start">
-                            <div class="${bgColorClass} p-2 rounded-full mr-3">
-                                <i class="${iconClass}"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium">${activity.message}</p>
-                                <p class="text-xs text-gray-400 mt-1">${timeAgo}</p>
-                            </div>
-                        </div>
-                    `;
-                    recentActivityContainer.innerHTML += activityHtml;
-                });
-            }
-        }
-
-        // Helper to format time ago
-        function formatTimeAgo(timestamp) {
-            const now = new Date();
-            const past = new Date(timestamp);
-            const seconds = Math.floor((now - past) / 1000);
-
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + " years ago";
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + " months ago";
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + " days ago";
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + " hours ago";
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + " minutes ago";
-            return Math.floor(seconds) + " seconds ago";
-        }
-
-
-        // --- Initializations on Load ---
+        // I-simulate ang paglo-load ng data (galing ito sa orihinal mong script)
+        setTimeout(() => {
+            console.log('Data loaded');
+        }, 1000);
+
+        // I-check ang login status sa paglo-load ng page
         document.addEventListener('DOMContentLoaded', () => {
+            // I-set ang taon sa footer
             currentYearSpan.textContent = new Date().getFullYear();
 
-            // Load all data from localStorage initially
-            loadAllDataFromLocalStorage();
-
-            if (sessionStorage.getItem('loggedIn') === 'true' && sessionStorage.getItem('loggedInUserLastName')) {
+            if (sessionStorage.getItem('loggedIn') === 'true') {
                 showDashboard();
             } else {
+                // Siguraduhin na ang login page ay sumasakop sa buong available space kung hindi naka-login
                 loginPage.style.flexGrow = '1';
                 dashboardContainer.style.flexGrow = '0';
             }
