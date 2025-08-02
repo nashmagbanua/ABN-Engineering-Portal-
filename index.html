@@ -290,15 +290,15 @@
                                 <div class="space-y-4">
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Used Coal Yard:</span>
-                                        <span class="font-medium">Coal Yard #9</span>
+                                        <span class="font-medium" id="latestCoalYard">N/A</span> <!-- ADDED ID -->
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Supplier:</span>
-                                        <span class="font-medium">Luzon Black Mountain Corp. (LBMC)</span>
+                                        <span class="font-medium" id="latestCoalSupplier">N/A</span> <!-- ADDED ID -->
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Kilos:</span>
-                                        <span class="font-medium text-green-600">36,500 kg</span>
+                                        <span class="font-medium text-green-600" id="latestCoalKilos">0 kg</span> <!-- ADDED ID -->
                                     </div>
                                 </div>
                                 <div class="mt-6 pt-4 border-t border-gray-100">
@@ -322,22 +322,22 @@
                                 <div class="flex items-center justify-between mb-6">
                                     <div>
                                         <p class="text-gray-500">Latest GpM</p>
-                                        <p class="text-3xl font-bold text-green-600">305.82</p>
+                                        <p class="text-3xl font-bold text-green-600" id="latestGpM">N/A</p> <!-- ADDED ID -->
                                     </div>
-                                    <div class="gauge" style="--percentage: 58.2; --fill: #10b981;"></div>
+                                    <div class="gauge" id="gpmGauge" style="--percentage: 0; --fill: #10b981;"></div> <!-- ADDED ID -->
                                 </div>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Night Shift Avg:</span>
-                                        <span class="font-medium">267.4</span>
+                                        <span class="font-medium" id="nightShiftAvg">N/A</span> <!-- ADDED ID -->
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Day Shift Avg:</span>
-                                        <span class="font-medium">465.90</span>
+                                        <span class="font-medium" id="dayShiftAvg">N/A</span> <!-- ADDED ID -->
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600">Monthly Avg:</span>
-                                        <span class="font-medium text-green-600">375.79</span>
+                                        <span class="font-medium text-green-600" id="monthlyAvg">N/A</span> <!-- ADDED ID -->
                                     </div>
                                 </div>
                                 <div class="mt-6 pt-4 border-t border-gray-100">
@@ -390,6 +390,57 @@
                         </div>
                     </div>
 
+                    <!-- Coal Yard Status Overview (NEW SECTION) -->
+                    <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Coal Yard Status Overview</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                            <!-- Vacant Yards Card -->
+                            <div class="bg-green-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-lg font-bold text-green-700" id="vacantCoalYards">0</p>
+                                <p class="text-sm text-green-600">Vacant Yards</p>
+                            </div>
+                            <!-- In Use Yards Card -->
+                            <div class="bg-blue-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-lg font-bold text-blue-700" id="inUseCoalYards">0</p>
+                                <p class="text-sm text-blue-600">In Use Yards</p>
+                            </div>
+                            <!-- Standby Yards Card -->
+                            <div class="bg-yellow-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-lg font-bold text-yellow-700" id="standbyCoalYards">0</p>
+                                <p class="text-sm text-yellow-600">Standby Yards</p>
+                            </div>
+                            <!-- Used Up Yards Card -->
+                            <div class="bg-red-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-lg font-bold text-red-700" id="usedUpCoalYards">0</p>
+                                <p class="text-sm text-red-600">Used Up Yards</p>
+                            </div>
+                        </div>
+
+                        <!-- Specific Coal Yard Numbers Display -->
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="text-md font-semibold text-gray-700 mb-3">Details by Coalyard:</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Vacant:</span>
+                                    <span class="font-medium text-green-600" id="vacantYardList">None</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">In Use:</span>
+                                    <span class="font-medium text-blue-600" id="inUseYardList">None</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Standby:</span>
+                                    <span class="font-medium text-yellow-600" id="standbyYardList">None</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Used Up:</span>
+                                    <span class="font-medium text-red-600" id="usedUpYardList">None</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END NEW SECTION -->
+
                     <!-- Charts Section -->
                     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Coal Delivery Trend -->
@@ -410,56 +461,66 @@
                         <!-- Power Consumption Comparison -->
                         <div class="bg-white p-6 rounded-xl shadow-md">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Equipment Power Consumption</h3>
+                                <h3 class="text-lg font-semibold">Equipment Power Consumption</h3>
                                 <select class="border border-gray-300 rounded-md px-3 py-1 text-sm">
                                     <option>Daily</option>
                                     <option selected>Weekly</option>
                                     <option>Monthly</option>
-                            </select>
-                        </div>
-                        <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                            <p class="text-gray-400">Chart visualization would appear here</p>
+                                </select>
+                            </div>
+                            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                                <p class="text-gray-400">Chart visualization would appear here</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Recent Activity -->
-                <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <div class="bg-green-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-fire text-green-600"></i>
+                    <!-- Recent Activity -->
+                    <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+                        <div class="space-y-4">
+                            <!-- New coal delivery received -->
+                            <div class="flex items-start" id="recentCoalActivityItem"> <!-- ADDED ID -->
+                                <div class="bg-green-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-fire text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium" id="recentCoalTitle">New coal delivery received</p> <!-- ADDED ID -->
+                                    <p class="text-sm text-gray-500" id="recentCoalDetails">No recent coal deliveries.</p> <!-- ADDED ID -->
+                                    <p class="text-xs text-gray-400 mt-1" id="recentCoalTime">N/A</p> <!-- ADDED ID -->
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-medium">New coal delivery received</p>
-                                <p class="text-sm text-gray-500">3,500 kg from ABN Coal Corp at South Yard</p>
-                                <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                            <!-- GpM calculation updated -->
+                            <div class="flex items-start">
+                                <div class="bg-green-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-calculator text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium" id="recentGpMTitle">GpM calculation updated</p> <!-- ADDED ID -->
+                                    <p class="text-sm text-gray-500" id="recentGpMDetails">No recent GpM data.</p> <!-- ADDED ID -->
+                                    <p class="text-xs text-gray-400 mt-1" id="recentGpMTime">N/A</p> <!-- ADDED ID -->
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-start">
-                            <div class="bg-green-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-calculator text-green-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium">GpM calculation updated</p>
-                                <p class="text-sm text-gray-500">Latest GpM is 5.82, showing 2% improvement</p>
-                                <p class="text-xs text-gray-400 mt-1">4 hours ago</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <div class="bg-green-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-bolt text-green-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium">Power consumption alert</p>
-                                <p class="text-sm text-gray-500">Pasteurizer #3 exceeded expected consumption by 15%</p>
-                                <p class="text-xs text-gray-400 mt-1">Yesterday</p>
+                            <!-- Power consumption alert -->
+                            <div class="flex items-start">
+                                <div class="bg-green-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-bolt text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Power consumption alert</p>
+                                    <p class="text-sm text-gray-500">Pasteurizer #3 exceeded expected consumption by 15%</p>
+                                    <p class="text-xs text-gray-400 mt-1">Yesterday</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
+                </section>
+                <!-- Analytics Section (remains in index.html) -->
+                <section id="analytics-section" class="tab-content hidden">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Analytics Overview</h2>
+                    <p class="text-gray-600">Detailed charts and data analysis will be displayed here.</p>
+                    <!-- Add your analytics content here -->
+                </section>
+            </div>
         </div>
     </div>
 
@@ -473,7 +534,329 @@
     </footer>
 
     <script>
-        // DOM Elements
+        // --- GLOBAL VARIABLES FOR COAL AND GPM DATA ---
+        const NUM_COAL_YARDS = 9; // Assuming 9 coal yards based on your previous app
+        let coalYardStatuses = {}; // Object to store status of each coalyard (e.g., {1: 'vacant', 2: 'in use'})
+        let deliveryLogs = []; // Array to store delivery logs
+        let gpmMetrics = {}; // Object to store GpM data
+
+        // --- Utility Functions for Data Persistence ---
+
+        // Function to initialize coal yard statuses
+        function initializeCoalYards() {
+            const storedStatuses = JSON.parse(localStorage.getItem('coalYardStatuses'));
+            if (storedStatuses) {
+                coalYardStatuses = storedStatuses;
+            } else {
+                for (let i = 1; i <= NUM_COAL_YARDS; i++) {
+                    coalYardStatuses[i] = 'vacant'; // Default to vacant
+                }
+            }
+            // Ensure the object has statuses for all NUM_COAL_YARDS
+            for (let i = 1; i <= NUM_COAL_YARDS; i++) {
+                if (!coalYardStatuses[i]) {
+                    coalYardStatuses[i] = 'vacant';
+                }
+            }
+            saveData(); // Save the initialized/updated statuses
+        }
+
+        // Function to save data to localStorage
+        function saveData() {
+            localStorage.setItem('deliveryLogs', JSON.stringify(deliveryLogs));
+            localStorage.setItem('coalYardStatuses', JSON.stringify(coalYardStatuses));
+            // Note: gpmMetrics is loaded from 'gpmCalculatorData' key, not saved here.
+            // It's assumed the GpM Calculator app handles its own saving.
+        }
+
+        // Function to load data from localStorage
+        function loadData() {
+            deliveryLogs = JSON.parse(localStorage.getItem('deliveryLogs')) || [];
+            initializeCoalYards(); // Initialize or load statuses after deliveryLogs
+            
+            // --- LOAD GPM DATA FROM GPM CALCULATOR'S KEY ---
+            gpmMetrics = JSON.parse(localStorage.getItem('gpmCalculatorData')) || { // Load from GpM Calculator's key
+                latestGpM: 0,
+                lastCalculated: null // To track when it was last updated
+            };
+            // Retain static averages if the GpM Calculator doesn't provide them
+            // These values will remain 0 unless the GpM app is updated to save them.
+            gpmMetrics.nightShiftAvg = gpmMetrics.nightShiftAvg || 0;
+            gpmMetrics.dayShiftAvg = gpmMetrics.dayShiftAvg || 0;
+            gpmMetrics.monthlyAvg = gpmMetrics.monthlyAvg || 0;
+            // --- END MODIFICATION ---
+        }
+
+        /**
+         * Recalculates the status of all coal yards based on the current delivery logs.
+         * This function ensures the coalYardStatuses object is always accurate.
+         */
+        function recalculateAllYardStatuses() {
+            const yardStatusMap = {}; // Temporary map to build the new statuses
+
+            // Initialize all yards as vacant by default
+            for (let i = 1; i <= NUM_COAL_YARDS; i++) {
+                yardStatusMap[i] = 'vacant';
+            }
+
+            // Define priority order (higher index means higher priority)
+            const statusPriority = ['vacant', 'used up', 'standby', 'in use'];
+
+            // Iterate through all delivery logs to determine the highest priority status for each yard
+            deliveryLogs.forEach(log => {
+                const yardNum = parseInt(log.yard); // Ensure it's a number
+                const remark = log.remarks;
+
+                // Only process if yardNum is valid
+                if (yardNum >= 1 && yardNum <= NUM_COAL_YARDS) {
+                    // Get current priority of the yard
+                    const currentPriorityIndex = statusPriority.indexOf(yardStatusMap[yardNum]);
+                    // Get priority of the remark from the current log
+                    const remarkPriorityIndex = statusPriority.indexOf(remark);
+
+                    // If the remark's priority is higher than the current yard's status, update it
+                    if (remarkPriorityIndex > currentPriorityIndex) {
+                        yardStatusMap[yardNum] = remark;
+                    }
+                    // Special case: if a yard is "used up", it should ultimately go to "vacant"
+                    // UNLESS there's another active log for it.
+                    // This is handled by the initial `yardStatusMap[i] = 'vacant'` and the priority logic.
+                    // If a yard is 'used up' and no other logs mark it as 'in use' or 'standby',
+                    // it will remain 'vacant' from the initial assignment.
+                }
+            });
+
+            // Copy the determined statuses to the global coalYardStatuses
+            coalYardStatuses = { ...yardStatusMap };
+
+            // Save the updated statuses to localStorage
+            saveData();
+            // Update the dashboard display
+            updateSummary();
+            updateCoalyardStatusDisplay();
+        }
+
+        // Function to update summary counts and display for dashboard
+        function updateSummary() {
+            const vacantCount = Object.values(coalYardStatuses).filter(status => status === 'vacant').length;
+            const inUseCount = Object.values(coalYardStatuses).filter(status => status === 'in use').length;
+            const standbyCount = Object.values(coalYardStatuses).filter(status => status === 'standby').length;
+            const usedUpCount = Object.values(coalYardStatuses).filter(status => status === 'used up').length;
+
+            // Update counts on the dashboard
+            // Check if elements exist before setting textContent to prevent errors
+            const vacantCoalYardsEl = document.getElementById('vacantCoalYards');
+            const inUseCoalYardsEl = document.getElementById('inUseCoalYards');
+            const standbyCoalYardsEl = document.getElementById('standbyCoalYards');
+            const usedUpCoalYardsEl = document.getElementById('usedUpCoalYards');
+            const totalDeliveriesEl = document.getElementById('totalDeliveries'); // Assuming you want to display total deliveries somewhere
+            const totalCoalEl = document.getElementById('totalCoal'); // Assuming you want to display total coal somewhere
+            const uniqueDriversEl = document.getElementById('uniqueDrivers'); // Assuming you want to display unique drivers somewhere
+
+            if (vacantCoalYardsEl) vacantCoalYardsEl.textContent = vacantCount;
+            if (inUseCoalYardsEl) inUseCoalYardsEl.textContent = inUseCount;
+            if (standbyCoalYardsEl) standbyCoalYardsEl.textContent = standbyCount;
+            if (usedUpCoalYardsEl) usedUpCoalYardsEl.textContent = usedUpCount;
+
+            // These elements might not be in the dashboard, so add null checks
+            // (These are currently not in the dashboard HTML, but included for completeness if added later)
+            // if (totalDeliveriesEl) totalDeliveriesEl.textContent = deliveryLogs.length;
+            // const totalCoal = deliveryLogs.reduce((sum, log) => sum + parseFloat(log.coal || 0), 0);
+            // if (totalCoalEl) totalCoalEl.textContent = totalCoal.toFixed(2);
+            // const uniqueDrivers = new Set(deliveryLogs.map(log => log.driver.toLowerCase())).size;
+            // if (uniqueDriversEl) uniqueDriversEl.textContent = uniqueDrivers;
+        }
+
+        // Function to update the specific coalyard number lists
+        function updateCoalyardStatusDisplay() {
+            const vacantYards = [];
+            const inUseYards = [];
+            const standbyYards = [];
+            const usedUpYards = [];
+
+            for (const yardNum in coalYardStatuses) {
+                const status = coalYardStatuses[yardNum];
+                if (status === 'vacant') {
+                    vacantYards.push(`#${yardNum}`);
+                } else if (status === 'in use') {
+                    inUseYards.push(`#${yardNum}`);
+                } else if (status === 'standby') {
+                    standbyYards.push(`#${yardNum}`);
+                } else if (status === 'used up') {
+                    usedUpYards.push(`#${yardNum}`);
+                }
+            }
+
+            // Update lists on the dashboard
+            const vacantYardListEl = document.getElementById('vacantYardList');
+            const inUseYardListEl = document.getElementById('inUseYardList');
+            const standbyYardListEl = document.getElementById('standbyYardList');
+            const usedUpYardListEl = document.getElementById('usedUpYardList'); // Make sure this ID exists in HTML
+
+            if (vacantYardListEl) vacantYardListEl.textContent = vacantYards.length > 0 ? vacantYards.join(', ') : 'None';
+            if (inUseYardListEl) inUseYardListEl.textContent = inUseYards.length > 0 ? inUseYards.join(', ') : 'None';
+            if (standbyYardListEl) standbyYardListEl.textContent = standbyYards.length > 0 ? standbyYards.join(', ') : 'None';
+            if (usedUpYardListEl) usedUpYardListEl.textContent = usedUpYards.length > 0 ? usedUpYards.join(', ') : 'None';
+        }
+
+        // --- Update the Latest Coal Delivery Summary Card ---
+        function updateLatestDeliverySummary() {
+            // Get DOM elements for the latest delivery card
+            const latestCoalYardEl = document.getElementById('latestCoalYard');
+            const latestCoalSupplierEl = document.getElementById('latestCoalSupplier');
+            const latestCoalKilosEl = document.getElementById('latestCoalKilos');
+
+            if (deliveryLogs.length === 0) {
+                // If no logs, set default "N/A" or "0 kg"
+                if (latestCoalYardEl) latestCoalYardEl.textContent = 'N/A';
+                if (latestCoalSupplierEl) latestCoalSupplierEl.textContent = 'N/A';
+                if (latestCoalKilosEl) latestCoalKilosEl.textContent = '0 kg';
+                return;
+            }
+
+            // Sort deliveryLogs by date and time in descending order to get the latest
+            const sortedLogs = [...deliveryLogs].sort((a, b) => {
+                const dateA = new Date(`${a.date}T${a.time}`);
+                const dateB = new Date(`${b.date}T${b.time}`);
+                return dateB - dateA; // Newest first
+            });
+
+            const latestLog = sortedLogs[0]; // Get the most recent log
+
+            // Update the content of the elements
+            if (latestCoalYardEl) latestCoalYardEl.textContent = `Coal Yard #${latestLog.yard}`;
+            if (latestCoalSupplierEl) latestCoalSupplierEl.textContent = latestLog.supplier;
+            if (latestCoalKilosEl) latestCoalKilosEl.textContent = `${latestLog.coal} kg`;
+        }
+
+        // --- NEW FUNCTION: Update GpM Calculator Summary Card (MODIFIED) ---
+        function updateGpMCalculatorSummary() {
+            const latestGpMEl = document.getElementById('latestGpM');
+            const nightShiftAvgEl = document.getElementById('nightShiftAvg');
+            const dayShiftAvgEl = document.getElementById('dayShiftAvg');
+            const monthlyAvgEl = document.getElementById('monthlyAvg');
+            const gpmGaugeEl = document.getElementById('gpmGauge');
+
+            // Check if gpmMetrics has valid latestGpM data
+            if (gpmMetrics.latestGpM === 0 && gpmMetrics.lastCalculated === null) {
+                // If no GpM data, set defaults
+                if (latestGpMEl) latestGpMEl.textContent = 'N/A';
+                if (nightShiftAvgEl) nightShiftAvgEl.textContent = 'N/A';
+                if (dayShiftAvgEl) dayShiftAvgEl.textContent = 'N/A';
+                if (monthlyAvgEl) monthlyAvgEl.textContent = 'N/A';
+                if (gpmGaugeEl) gpmGaugeEl.style.setProperty('--percentage', 0);
+                return;
+            }
+
+            // Update Latest GpM from loaded data
+            if (latestGpMEl) latestGpMEl.textContent = gpmMetrics.latestGpM.toFixed(2);
+            
+            // NOTE: Night Shift Avg, Day Shift Avg, Monthly Avg are not calculated/saved by GpM Calculator app.
+            // They will remain static or show default values unless the GpM app is updated to provide them.
+            if (nightShiftAvgEl) nightShiftAvgEl.textContent = gpmMetrics.nightShiftAvg.toFixed(2);
+            if (dayShiftAvgEl) dayShiftAvgEl.textContent = gpmMetrics.dayShiftAvg.toFixed(2);
+            if (monthlyAvgEl) monthlyAvgEl.textContent = gpmMetrics.monthlyAvg.toFixed(2);
+
+            // Update gauge percentage (assuming max GpM for gauge is 500 for calculation)
+            const maxGpMForGauge = 500;
+            const percentage = (gpmMetrics.latestGpM / maxGpMForGauge) * 100;
+            if (gpmGaugeEl) gpmGaugeEl.style.setProperty('--percentage', Math.min(percentage, 100)); // Cap at 100%
+        }
+
+
+        // --- Update Recent Coal Activity ---
+        function updateRecentCoalActivity() {
+            const recentCoalTitleEl = document.getElementById('recentCoalTitle');
+            const recentCoalDetailsEl = document.getElementById('recentCoalDetails');
+            const recentCoalTimeEl = document.getElementById('recentCoalTime');
+
+            if (deliveryLogs.length === 0) {
+                if (recentCoalTitleEl) recentCoalTitleEl.textContent = 'No recent activity';
+                if (recentCoalDetailsEl) recentCoalDetailsEl.textContent = 'No coal deliveries recorded yet.';
+                if (recentCoalTimeEl) recentCoalTimeEl.textContent = 'N/A';
+                return;
+            }
+
+            // Sort deliveryLogs by date and time in descending order to get the latest
+            const sortedLogs = [...deliveryLogs].sort((a, b) => {
+                const dateA = new Date(`${a.date}T${a.time}`);
+                const dateB = new Date(`${b.date}T${b.time}`);
+                return dateB - dateA; // Newest first
+            });
+
+            const latestLog = sortedLogs[0];
+
+            if (recentCoalTitleEl) recentCoalTitleEl.textContent = 'New coal delivery received';
+            if (recentCoalDetailsEl) recentCoalDetailsEl.textContent = `${latestLog.coal} kg from ${latestLog.supplier} at Coal Yard #${latestLog.yard}`;
+            if (recentCoalTimeEl) {
+                const logDateTime = new Date(`${latestLog.date}T${latestLog.time}`);
+                const now = new Date();
+                const diffMs = now - logDateTime; // Difference in milliseconds
+                
+                const diffSeconds = Math.round(diffMs / 1000);
+                const diffMinutes = Math.round(diffMs / (1000 * 60));
+                const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+                let timeAgo = 'just now';
+                if (diffSeconds > 0 && diffSeconds < 60) {
+                    timeAgo = `${diffSeconds} seconds ago`;
+                } else if (diffMinutes > 0 && diffMinutes < 60) {
+                    timeAgo = `${diffMinutes} minutes ago`;
+                } else if (diffHours > 0 && diffHours < 24) {
+                    timeAgo = `${diffHours} hours ago`;
+                } else if (diffDays > 0) {
+                    timeAgo = `${diffDays} days ago`;
+                }
+                recentCoalTimeEl.textContent = timeAgo;
+            }
+        }
+
+        // --- NEW FUNCTION: Update Recent GpM Activity (MODIFIED) ---
+        function updateRecentGpMActivity() {
+            const recentGpMTitleEl = document.getElementById('recentGpMTitle');
+            const recentGpMDetailsEl = document.getElementById('recentGpMDetails');
+            const recentGpMTimeEl = document.getElementById('recentGpMTime');
+
+            // Check if gpmMetrics has valid latestGpM data
+            if (gpmMetrics.latestGpM === 0 && gpmMetrics.lastCalculated === null) {
+                if (recentGpMTitleEl) recentGpMTitleEl.textContent = 'No recent GpM activity';
+                if (recentGpMDetailsEl) recentGpMDetailsEl.textContent = 'No GpM data recorded yet.';
+                if (recentGpMTimeEl) recentGpMTimeEl.textContent = 'N/A';
+                return;
+            }
+
+            if (recentGpMTitleEl) recentGpMTitleEl.textContent = 'GpM calculation updated';
+            if (recentGpMDetailsEl) recentGpMDetailsEl.textContent = `Latest GpM is ${gpmMetrics.latestGpM.toFixed(2)}`;
+            
+            if (recentGpMTimeEl && gpmMetrics.lastCalculated) {
+                const lastUpdatedTime = new Date(gpmMetrics.lastCalculated); // Use lastCalculated
+                const now = new Date();
+                const diffMs = now - lastUpdatedTime;
+                
+                const diffSeconds = Math.round(diffMs / 1000);
+                const diffMinutes = Math.round(diffMs / (1000 * 60));
+                const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+                let timeAgo = 'just now';
+                if (diffSeconds > 0 && diffSeconds < 60) {
+                    timeAgo = `${diffSeconds} seconds ago`;
+                } else if (diffMinutes > 0 && diffMinutes < 60) {
+                    timeAgo = `${diffMinutes} minutes ago`;
+                } else if (diffHours > 0 && diffHours < 24) {
+                    timeAgo = `${diffHours} hours ago`;
+                } else if (diffDays > 0) {
+                    timeAgo = `${diffDays} days ago`;
+                }
+                recentGpMTimeEl.textContent = timeAgo;
+            } else if (recentGpMTimeEl) {
+                recentGpMTimeEl.textContent = 'N/A';
+            }
+        }
+
+
+        // DOM Elements for Dashboard Script (Existing)
         const loginPage = document.getElementById('login-page');
         const dashboardContainer = document.getElementById('dashboard-container');
         const authCodeInput = document.getElementById('auth-code-input');
@@ -487,7 +870,7 @@
         const loggedInUserNameSpan = document.getElementById('loggedInUserName');
         const togglePassword = document.getElementById('togglePassword');
 
-        // --- Utility Functions ---
+        // --- Utility Functions (Existing) ---
 
         // Function para ipakita ang modal na may mensahe
         function showModal(message) {
@@ -497,7 +880,7 @@
 
         // Function para isara ang modal
         function closeModal() {
-            modalMessage.style.display = 'none';
+            messageModal.style.display = 'none'; // Fixed: Use messageModal here
         }
 
         // Function para makuha ang kasalukuyang MMDD sa 'MMDD' format
@@ -511,7 +894,7 @@
         // Mga pinapayagang apelyido ng supervisors
         const authorizedLastNames = ['admin', 'ortega', 'apuang', 'calisay', 'reyes'];
 
-        // --- Authentication Logic ---
+        // --- Authentication Logic (Existing) ---
 
         // Login function (local validation)
         function handleLogin() {
@@ -552,6 +935,14 @@
             }
             // Activate dashboard tab by default
             activateDashboardTab('dashboard-main'); 
+            
+            // --- LOAD AND UPDATE ALL DATA ON DASHBOARD SHOW ---
+            loadData(); // Load delivery logs and initialize coal yard statuses, and GpM metrics
+            recalculateAllYardStatuses(); // Recalculate and update display for overall coal yard status
+            updateLatestDeliverySummary(); // Update the latest coal delivery summary card
+            updateGpMCalculatorSummary(); // Call the new function for GpM summary here!
+            updateRecentCoalActivity(); // Update recent coal activity
+            updateRecentGpMActivity(); // Call the new function for recent GpM activity here!
         }
 
         // Function to handle UI updates on logout
@@ -592,7 +983,7 @@
             this.querySelector('i').classList.toggle('fa-eye-slash');
         });
 
-        // --- Dashboard UI Updates ---
+        // --- Dashboard UI Updates (Existing) ---
 
         // Update current date and time for the dashboard
         function updateDateTime() {
@@ -621,7 +1012,7 @@
             sidebar.classList.toggle('md:translate-x-0');
         });
 
-        // --- Tab Switching Logic for Dashboard Sections ---
+        // --- Tab Switching Logic for Dashboard Sections (Existing) ---
         const tabContents = document.querySelectorAll('.tab-content'); // For dashboard-main and analytics
         const sidebarLinks = document.querySelectorAll('.fixed.inset-y-0.left-0 nav a'); // All sidebar navigation links
 
@@ -645,47 +1036,36 @@
             const activeLink = document.querySelector(`[data-tab-target="${tabId}"]`);
             if (activeLink) {
                 activeLink.classList.add('bg-green-800', 'active-tab-link');
-                activeLink.classList.remove('text-green-200', 'hover:bg-green-600');
             }
         }
 
-        // Attach event listeners to sidebar links for tab switching or external navigation
-        sidebarLinks.forEach(link => {
-            if (link.dataset.tabTarget) { // For local tabs (Dashboard, Analytics)
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    activateDashboardTab(link.dataset.tabTarget);
-                    // Close sidebar on mobile after clicking a link
-                    // Check if the screen is NOT desktop size (md or larger)
-                    if (window.innerWidth < 768) { // Assuming 768px is the md breakpoint
-                        sidebar.classList.add('-translate-x-full');
-                        sidebar.classList.remove('md:translate-x-0');
-                    }
-                });
-            } else if (link.href && link.href.startsWith('http')) { // For external links
-                link.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default navigation
-                    window.open(link.href, '_blank'); // Open in new tab
-                    // Close sidebar on mobile after clicking a link
-                    // Check if the screen is NOT desktop size (md or larger)
-                    if (window.innerWidth < 768) { // Assuming 768px is the md breakpoint
-                        sidebar.classList.add('-translate-x-full');
-                        sidebar.classList.remove('md:translate-x-0');
-                    }
-                });
-            }
-        });
-
-        // --- Initializations on Load ---
+        // --- INITIALIZATION ON PAGE LOAD ---
         document.addEventListener('DOMContentLoaded', () => {
             currentYearSpan.textContent = new Date().getFullYear();
+            updateDateTime(); // Initial call for date/time
 
-            if (sessionStorage.getItem('loggedIn') === 'true' && sessionStorage.getItem('loggedInUserLastName')) {
+            // Check login status on page load
+            if (sessionStorage.getItem('loggedIn') === 'true') {
                 showDashboard();
+                // Data loading and updates are now handled within showDashboard()
             } else {
-                loginPage.style.flexGrow = '1';
-                dashboardContainer.style.flexGrow = '0';
+                loginPage.style.flexGrow = '1'; // Ensure login page takes full height when shown
             }
+
+            // Existing event listeners...
+            // (These are already defined above, so no need to redefine here)
+
+            // Tab switching logic for sidebar links
+            document.querySelectorAll('.fixed.inset-y-0.left-0 nav a').forEach(link => {
+                link.addEventListener('click', function(event) {
+                    const tabTarget = this.getAttribute('data-tab-target');
+                    if (tabTarget) {
+                        event.preventDefault(); // Prevent default link behavior for internal tabs
+                        activateDashboardTab(tabTarget);
+                    }
+                    // For external links, let default behavior happen
+                });
+            });
         });
     </script>
 </body>
