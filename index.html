@@ -341,7 +341,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-6 pt-4 border-t border-gray-100">
-                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="window.open('https://gpmcalculator-v2.vercel.app', '_blank')">
+                                    <button class="w-full bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg font-medium" onclick="window.open('https://gpmcalculatorv2.vercel.app/trends.html', '_blank')">
                                         Analyze Trends
                                     </button>
                                 </div>
@@ -577,7 +577,8 @@
             // --- LOAD GPM DATA FROM GPM CALCULATOR'S KEY ---
             gpmMetrics = JSON.parse(localStorage.getItem('gpmCalculatorData')) || { // Load from GpM Calculator's key
                 latestGpM: 0,
-                lastCalculated: null // To track when it was last updated
+                lastCalculated: null, // To track when it was last updated
+                history: [] // Ensure history is initialized, even if empty
             };
             // Retain static averages if the GpM Calculator doesn't provide them
             // These values will remain 0 unless the GpM app is updated to save them.
