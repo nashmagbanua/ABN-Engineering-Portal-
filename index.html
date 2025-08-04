@@ -18,6 +18,9 @@
     <meta name="theme-color" content="#ffffff">
     <!-- End Favicon Links -->
 
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         /* Base styles for the dashboard */
         body {
@@ -283,7 +286,7 @@
                                 <div class="flex justify-between items-center">
                                     <h3 class="text-lg font-semibold">Coal Delivery Summary</h3>
                                     <i class="fas fa-fire text-xl"></i>
-                                </div>
+                                    </div>
                                 <p class="text-green-100 text-sm">Today's delivery</p>
                             </div>
                             <div class="p-6">
@@ -534,11 +537,18 @@
     </footer>
 
     <script>
+        // --- Supabase Client Initialization ---
+        // REPLACE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY
+        const SUPABASE_URL = 'https://qbeacrpoyfacgmbzxjcu.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZWFjcnBveWZhY2dtYnp4amN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NTM5NTIsImV4cCI6MjA2NDIyOTk1Mn0.6kfxKLJxidW4BcqsMJte61AtzydrTW-1ZJIJytiUBt4';
+
+        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // --- GLOBAL VARIABLES FOR COAL AND GPM DATA ---
         const NUM_COAL_YARDS = 9; // Assuming 9 coal yards based on your previous app
         let coalYardStatuses = {}; // Object to store status of each coalyard (e.g., {1: 'vacant', 2: 'in use'})
         let deliveryLogs = []; // Array to store delivery logs
-        let gpmMetrics = {}; // Object to store GpM data
+        let gpmMetrics = {}; // Object to store GpM data (now includes averages)
 
         // --- Utility Functions for Data Persistence ---
 
@@ -561,31 +571,90 @@
             saveData(); // Save the initialized/updated statuses
         }
 
-        // Function to save data to localStorage
+        // Function to save data to localStorage (for Coal, GpM is now Supabase)
         function saveData() {
             localStorage.setItem('deliveryLogs', JSON.stringify(deliveryLogs));
             localStorage.setItem('coalYardStatuses', JSON.stringify(coalYardStatuses));
-            // Note: gpmMetrics is loaded from 'gpmCalculatorData' key, not saved here.
-            // It's assumed the GpM Calculator app handles its own saving.
         }
 
-        // Function to load data from localStorage
-        function loadData() {
+        // Function to load data (Coal from localStorage, GpM from Supabase)
+        async function loadData() { // Made async
             deliveryLogs = JSON.parse(localStorage.getItem('deliveryLogs')) || [];
             initializeCoalYards(); // Initialize or load statuses after deliveryLogs
             
-            // --- LOAD GPM DATA FROM GPM CALCULATOR'S KEY ---
-            gpmMetrics = JSON.parse(localStorage.getItem('gpmCalculatorData')) || { // Load from GpM Calculator's key
-                latestGpM: 0,
-                lastCalculated: null, // To track when it was last updated
-                history: [] // Ensure history is initialized, even if empty
-            };
-            // Retain static averages if the GpM Calculator doesn't provide them
-            // These values will remain 0 unless the GpM app is updated to save them.
-            gpmMetrics.nightShiftAvg = gpmMetrics.nightShiftAvg || 0;
-            gpmMetrics.dayShiftAvg = gpmMetrics.dayShiftAvg || 0;
-            gpmMetrics.monthlyAvg = gpmMetrics.monthlyAvg || 0;
+            // --- LOAD GPM DATA FROM SUPABASE (MODIFIED) ---
+            try {
+                const { data, error } = await supabase
+                    .from('gpm_readings') // Using the recommended table name
+                    .select('*')
+                    .order('timestamp', { ascending: false }); // Get all for calculation
+
+                if (error) throw error;
+
+                // Use the fetched data to calculate latest and averages
+                if (data.length > 0) {
+                    const latestEntry = data[0]; // Newest entry is at index 0 due to descending order
+                    gpmMetrics.latestGpM = latestEntry.gpm;
+                    gpmMetrics.lastCalculated = latestEntry.timestamp;
+                } else {
+                    gpmMetrics.latestGpM = 0;
+                    gpmMetrics.lastCalculated = null;
+                }
+                
+                // Calculate averages based on all fetched history for the dashboard
+                calculateAveragesForDashboard(data); // Pass all data to calculate averages
+
+            } catch (error) {
+                console.error('Error loading GpM data for dashboard from Supabase:', error.message);
+                // Fallback to initial empty state if Supabase fails
+                gpmMetrics = {
+                    latestGpM: 0,
+                    lastCalculated: null,
+                    nightShiftAvg: 0,
+                    dayShiftAvg: 0,
+                    monthlyAvg: 0
+                };
+            }
             // --- END MODIFICATION ---
+        }
+
+        // --- NEW FUNCTION: Calculate Averages for Dashboard (Similar to GpM app, but standalone) ---
+        function calculateAveragesForDashboard(historyData) {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            let nightShiftGpMs = [];
+            let dayShiftGpMs = [];
+            let monthlyGpMs = [];
+
+            historyData.forEach(entry => {
+                const entryDate = new Date(entry.timestamp);
+                const entryMonth = entryDate.getMonth();
+                const entryYear = entryDate.getFullYear();
+
+                // Monthly Average (for current month and year)
+                if (entryMonth === currentMonth && entryYear === currentYear) {
+                    monthlyGpMs.push(entry.gpm);
+                }
+
+                // Day/Night Shift Averages (for today)
+                if (entryDate.toDateString() === now.toDateString()) { // Check if it's today's entry
+                    if (entry.shift === 'Night') {
+                        nightShiftGpMs.push(entry.gpm);
+                    } else if (entry.shift === 'Day') {
+                        dayShiftGpMs.push(entry.gpm);
+                    }
+                }
+            });
+
+            // Calculate averages
+            const sum = (arr) => arr.reduce((acc, val) => acc + val, 0);
+            const avg = (arr) => arr.length > 0 ? sum(arr) / arr.length : 0;
+
+            gpmMetrics.nightShiftAvg = avg(nightShiftGpMs);
+            gpmMetrics.dayShiftAvg = avg(dayShiftGpMs);
+            gpmMetrics.monthlyAvg = avg(monthlyGpMs);
         }
 
         /**
@@ -752,8 +821,7 @@
             // Update Latest GpM from loaded data
             if (latestGpMEl) latestGpMEl.textContent = gpmMetrics.latestGpM.toFixed(2);
             
-            // NOTE: Night Shift Avg, Day Shift Avg, Monthly Avg are not calculated/saved by GpM Calculator app.
-            // They will remain static or show default values unless the GpM app is updated to provide them.
+            // Display calculated averages
             if (nightShiftAvgEl) nightShiftAvgEl.textContent = gpmMetrics.nightShiftAvg.toFixed(2);
             if (dayShiftAvgEl) dayShiftAvgEl.textContent = gpmMetrics.dayShiftAvg.toFixed(2);
             if (monthlyAvgEl) monthlyAvgEl.textContent = gpmMetrics.monthlyAvg.toFixed(2);
@@ -938,12 +1006,17 @@
             activateDashboardTab('dashboard-main'); 
             
             // --- LOAD AND UPDATE ALL DATA ON DASHBOARD SHOW ---
-            loadData(); // Load delivery logs and initialize coal yard statuses, and GpM metrics
-            recalculateAllYardStatuses(); // Recalculate and update display for overall coal yard status
-            updateLatestDeliverySummary(); // Update the latest coal delivery summary card
-            updateGpMCalculatorSummary(); // Call the new function for GpM summary here!
-            updateRecentCoalActivity(); // Update recent coal activity
-            updateRecentGpMActivity(); // Call the new function for recent GpM activity here!
+            // loadData() is now async, so we need to await it
+            loadData().then(() => {
+                recalculateAllYardStatuses(); // Recalculate and update display for overall coal yard status
+                updateLatestDeliverySummary(); // Update the latest coal delivery summary card
+                updateGpMCalculatorSummary(); // Call the new function for GpM summary here!
+                updateRecentCoalActivity(); // Update recent coal activity
+                updateRecentGpMActivity(); // Call the new function for recent GpM activity here!
+            }).catch(error => {
+                console.error("Failed to load dashboard data:", error);
+                // Handle error display if needed
+            });
         }
 
         // Function to handle UI updates on logout
@@ -956,7 +1029,7 @@
             sidebar.classList.add('-translate-x-full');
             sidebar.classList.remove('md:translate-x-0');
             loginPage.style.flexGrow = '1';
-            dashboardContainer.style.flexGrow = '0';
+            dashboardContainer.style.flex-grow = '0';
             if (loggedInUserNameSpan) {
                 loggedInUserNameSpan.textContent = 'Guest'; // Reset to default
             }
