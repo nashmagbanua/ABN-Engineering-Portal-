@@ -9,15 +9,6 @@
     <!-- Use Supabase JS for database connection -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5"> <!-- Optional, if you have this file -->
-    <link rel="shortcut icon" href="favicon.ico">
-    <meta name="msapplication-TileColor" content="#da532c"> <!-- Optional, for Windows tiles -->
-    <meta name="theme-color" content="#ffffff">
-    <!-- End Favicon Links -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -262,10 +253,15 @@
         </div>
     </div>
     
-    <script>
+    <script type="module">
+        // Import createClient from the Supabase library
+        import { createClient } from 'https://unpkg.com/@supabase/supabase-js@2';
+
         // Supabase configuration from the prompt
         const SUPABASE_URL = 'https://qbeacrpoyfacgmbzxjcu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZWFjcnBveWZhY2dtYnp4amN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NTM5NTIsImV4cCI6MjA2NDIyOTk1Mn0.6kfxKLJxidW4BcqsMJte61AtzydrTW-1ZJIJytiUBt4';
+        
+        // Use the imported createClient function
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Chart instances
