@@ -113,7 +113,15 @@
             text-decoration: none;
             cursor: pointer;
         }
-        
+
+        /* Loading animation for the quick stats */
+        .loading-animation {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -153,11 +161,13 @@
     <div id="main-dashboard" class="hidden">
         <!-- Sidebar -->
         <div id="sidebar" class="fixed z-50 left-0 top-0 w-64 h-full bg-white dark:bg-gray-800 shadow-xl transition-transform duration-300 transform -translate-x-full lg:translate-x-0">
-            <div class="p-6">
+            <div class="p-6 flex items-center">
+                <!-- ABN Logo for the sidebar -->
+                <img src="abnlogo.png" alt="ABN Logo" class="w-10 h-10 mr-3 rounded-full">
                 <h1 class="text-2xl font-bold text-abn-green">ABN Industrial</h1>
             </div>
             <nav class="mt-8">
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
+                <a href="#" id="sidebar-dashboard-link" class="flex items-center px-6 py-3 text-white bg-abn-green transition-colors duration-200">
                     <i class="fas fa-home mr-3"></i> Dashboard
                 </a>
                 <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
@@ -191,17 +201,85 @@
                     </button>
                     <div class="relative">
                         <button class="flex items-center text-gray-800 dark:text-white">
-                            <img src="abnlogo.png" alt="User" class="rounded-full mr-2">
+                            <img src="abnlogo.png" alt="User" class="w-8 h-8 rounded-full mr-2">
                             <span>Admin</span>
                         </button>
                     </div>
                 </div>
             </header>
 
-            <!-- Date Filter & Quick Stats -->
+            <!-- Main dashboard content area - this is where the chart previews will go -->
+            <div id="dashboard-content" class="min-h-[500px]">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Welcome, Admin!</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Narito ang pangkalahatang-ideya ng mga operasyon ngayon.</p>
+                </div>
+                
+                <!-- Expanded Quick Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <!-- Total Members Card -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Members</p>
+                            <div id="totalMembers" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                        </div>
+                        <div class="text-abn-green text-3xl">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <!-- Total Endorsements Card -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Endorsements</p>
+                            <div id="totalEndorsements" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                        </div>
+                        <div class="text-abn-green text-3xl">
+                            <i class="fas fa-list"></i>
+                        </div>
+                    </div>
+                    <!-- Coal Delivered Card -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Coal Delivered (kg)</p>
+                            <div id="coalDelivered" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                        </div>
+                        <div class="text-abn-green text-3xl">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <!-- Average GPM Card -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Average GPM</p>
+                            <div id="averageGPM" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                        </div>
+                        <div class="text-abn-green text-3xl">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Recent Activity</h3>
+                        <div class="relative w-full sm:w-auto">
+                            <input type="text" id="recent-activity-search" placeholder="Search activity..."
+                                class="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-abn-green">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="recent-activity-list" class="space-y-4">
+                        <!-- Content will be dynamically loaded here by JavaScript -->
+                        <p class="text-gray-400 text-center loading-animation">Loading recent activity...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Date Filter & Quick Stats (Updated to use two inputs for custom range) -->
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
                 <div class="flex flex-wrap justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Quick Stats</h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Quick Stats (Original)</h3>
                     <div class="flex flex-wrap items-center space-x-2">
                         <select id="dateFilter" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
                             <option value="today">Today</option>
@@ -211,25 +289,30 @@
                             <option value="thisMonth">This Month</option>
                             <option value="custom">Custom Range</option>
                         </select>
-                        <input type="date" id="customDate" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white hidden">
+                        <div id="custom-date-inputs" class="flex items-center space-x-2 hidden">
+                            <input type="date" id="customDateStart" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
+                            <span>to</span>
+                            <input type="date" id="customDateEnd" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
+                            <button id="apply-date-filter" class="p-2 bg-abn-green text-white rounded-lg hover:bg-abn-green-dark">Apply</button>
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
                         <div class="text-gray-500 dark:text-gray-400">Total Members</div>
-                        <div id="totalMembers" class="text-2xl font-bold text-gray-800 dark:text-white loading-placeholder">0</div>
+                        <div id="totalMembers-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
                     </div>
                     <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
                         <div class="text-gray-500 dark:text-gray-400">Total Endorsements</div>
-                        <div id="totalEndorsements" class="text-2xl font-bold text-gray-800 dark:text-white loading-placeholder">0</div>
+                        <div id="totalEndorsements-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
                     </div>
                     <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
                         <div class="text-gray-500 dark:text-gray-400">Coal Delivered (kg)</div>
-                        <div id="coalDelivered" class="text-2xl font-bold text-gray-800 dark:text-white loading-placeholder">0</div>
+                        <div id="coalDelivered-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
                     </div>
                     <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
                         <div class="text-gray-500 dark:text-gray-400">Average GPM</div>
-                        <div id="averageGPM" class="text-2xl font-bold text-gray-800 dark:text-white loading-placeholder">0</div>
+                        <div id="averageGPM-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
                     </div>
                 </div>
             </div>
@@ -250,11 +333,12 @@
                         <canvas id="gpmChart"></canvas>
                     </div>
                 </div>
+                <!-- UPDATED CHART TITLE -->
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Endorsements by Team</h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Endorsements by Team Area</h3>
                     <div class="chart-container">
                         <div class="loading-overlay hidden">Loading...</div>
-                        <canvas id="endorsementsByTeamChart"></canvas>
+                        <canvas id="endorsementsByTeamAreaChart"></canvas>
                     </div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -278,6 +362,8 @@
 
         // Chart instances
         let charts = {};
+        // Cache all recent activities to enable searching without re-fetching
+        let cachedRecentActivities = [];
 
         // Helper function to show a custom modal alert
         function showAlert(message) {
@@ -313,11 +399,20 @@
                     start = new Date(now.getFullYear(), now.getMonth(), 1);
                     end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
                     break;
-                default: // custom
-                    const customDate = document.getElementById('customDate').value;
-                    start = new Date(customDate);
-                    end = new Date(start);
-                    end.setDate(end.getDate() + 1);
+                case 'custom':
+                    const customStart = document.getElementById('customDateStart').value;
+                    const customEnd = document.getElementById('customDateEnd').value;
+                    if (!customStart || !customEnd) {
+                        showAlert('Please select a start and end date for the custom range.');
+                        return null;
+                    }
+                    start = new Date(customStart);
+                    end = new Date(customEnd);
+                    end.setDate(end.getDate() + 1); // Make end date inclusive
+                    break;
+                default:
+                    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
                     break;
             }
             return {
@@ -326,7 +421,7 @@
             };
         }
 
-        // Show/hide loading indicators
+        // Show/hide loading indicators for charts
         function showLoading(elementId) {
             const element = document.getElementById(elementId);
             const parent = element.parentElement;
@@ -339,6 +434,14 @@
             const parent = element.parentElement;
             const overlay = parent.querySelector('.loading-overlay');
             if (overlay) overlay.classList.add('hidden');
+        }
+
+        // Toggle loading state for quick stats
+        function toggleQuickStatsLoading(isLoading) {
+            document.getElementById('totalMembers').classList.toggle('loading-animation', isLoading);
+            document.getElementById('totalEndorsements').classList.toggle('loading-animation', isLoading);
+            document.getElementById('coalDelivered').classList.toggle('loading-animation', isLoading);
+            document.getElementById('averageGPM').classList.toggle('loading-animation', isLoading);
         }
 
         // Helper function to generate random colors for charts
@@ -355,7 +458,7 @@
 
         // --- Supabase Data Fetching Functions ---
 
-        // Fetch Total Members Today
+        // Fetch Total Members
         async function fetchTotalMembers(range) {
             try {
                 const {
@@ -373,6 +476,7 @@
                 return count || 0;
             } catch (err) {
                 console.error("Error fetching total members:", err.message);
+                showAlert(`Error fetching total members: ${err.message}`);
                 return 0;
             }
         }
@@ -395,6 +499,7 @@
                 return count || 0;
             } catch (err) {
                 console.error("Error fetching total endorsements:", err.message);
+                showAlert(`Error fetching total endorsements: ${err.message}`);
                 return 0;
             }
         }
@@ -415,6 +520,7 @@
                 return total;
             } catch (err) {
                 console.error("Error fetching coal delivered:", err.message);
+                showAlert(`Error fetching coal delivered: ${err.message}`);
                 return 0;
             }
         }
@@ -437,74 +543,8 @@
                 return average.toFixed(2); // Format to 2 decimal places
             } catch (err) {
                 console.error("Error fetching average GPM:", err.message);
+                showAlert(`Error fetching average GPM: ${err.message}`);
                 return 0;
-            }
-        }
-
-        // Fetch Endorsement data by team for the pie chart
-        async function fetchEndorsementsByTeam(range) {
-            try {
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from('endorsement')
-                    .select('team_info')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (error) throw error;
-
-                // Aggregate data by team
-                const teamCounts = {};
-                data.forEach(item => {
-                    const teamName = item.team_info?.teamName || 'Unknown'; // Assuming team_info has a teamName property
-                    teamCounts[teamName] = (teamCounts[teamName] || 0) + 1;
-                });
-
-                return {
-                    labels: Object.keys(teamCounts),
-                    values: Object.values(teamCounts)
-                };
-            } catch (err) {
-                console.error("Error fetching endorsements by team:", err.message);
-                return {
-                    labels: [],
-                    values: []
-                };
-            }
-        }
-
-        // Fetch Coal Delivered by Supplier for the bar chart
-        async function fetchCoalBySupplier(range) {
-            try {
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from('delivery_logs')
-                    .select('supplier_name, coal_kg')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (error) throw error;
-
-                // Aggregate data by supplier
-                const supplierTotals = {};
-                data.forEach(item => {
-                    const supplierName = item.supplier_name || 'Unknown';
-                    const coalKg = item.coal_kg || 0;
-                    supplierTotals[supplierName] = (supplierTotals[supplierName] || 0) + coalKg;
-                });
-
-                return {
-                    labels: Object.keys(supplierTotals),
-                    values: Object.values(supplierTotals)
-                };
-            } catch (err) {
-                console.error("Error fetching coal by supplier:", err.message);
-                return {
-                    labels: [],
-                    values: []
-                };
             }
         }
 
@@ -513,7 +553,7 @@
             try {
                 showLoading('coalDeliveryChart');
                 showLoading('gpmChart');
-                showLoading('endorsementsByTeamChart');
+                showLoading('endorsementsByTeamAreaChart'); // UPDATED ID
                 showLoading('coalBySupplierChart');
 
                 const { data: coalData, error: coalError } = await supabaseClient
@@ -532,9 +572,10 @@
                     .order('created_at', { ascending: true });
                 if (gpmError) throw gpmError;
                 
+                // UPDATED QUERY TO USE `area` FIELD
                 const { data: endorsementData, error: endorsementError } = await supabaseClient
                     .from('endorsement')
-                    .select('team_info')
+                    .select('area')
                     .gte('created_at', range.start)
                     .lt('created_at', range.end);
                 if (endorsementError) throw endorsementError;
@@ -553,15 +594,16 @@
                 const gpmLabels = gpmData.map(item => new Date(item.created_at).toLocaleString());
                 const gpmValues = gpmData.map(item => item.gpm);
                 
-                const teamCounts = {};
+                // UPDATED LOGIC TO COUNT BY `area`
+                const areaCounts = {};
                 endorsementData.forEach(item => {
-                    const teamName = item.team_info?.teamName || 'Unknown';
-                    teamCounts[teamName] = (teamCounts[teamName] || 0) + 1;
+                    const areaName = item.area || 'Unknown';
+                    areaCounts[areaName] = (areaCounts[areaName] || 0) + 1;
                 });
                 
                 const supplierTotals = {};
                 deliveryLogData.forEach(item => {
-                    const supplierName = item.supplier_name || 'Unknown';
+                    const supplierName = item.supplier_name || 'Unknown Supplier';
                     const coalKg = item.coal_kg || 0;
                     supplierTotals[supplierName] = (supplierTotals[supplierName] || 0) + coalKg;
                 });
@@ -569,42 +611,155 @@
                 return {
                     coal: { labels: coalLabels, values: coalValues },
                     gpm: { labels: gpmLabels, values: gpmValues },
-                    endorsementsByTeam: { labels: Object.keys(teamCounts), values: Object.values(teamCounts) },
+                    endorsementsByTeamArea: { labels: Object.keys(areaCounts), values: Object.values(areaCounts) }, // UPDATED KEY
                     coalBySupplier: { labels: Object.keys(supplierTotals), values: Object.values(supplierTotals) }
                 };
             } catch (err) {
                 console.error("Error fetching all chart data:", err.message);
+                showAlert(`Error fetching chart data: ${err.message}`);
                 return {
                     coal: { labels: [], values: [] },
                     gpm: { labels: [], values: [] },
-                    endorsementsByTeam: { labels: [], values: [] },
+                    endorsementsByTeamArea: { labels: [], values: [] }, // UPDATED KEY
                     coalBySupplier: { labels: [], values: [] }
                 };
             } finally {
                 hideLoading('coalDeliveryChart');
                 hideLoading('gpmChart');
-                hideLoading('endorsementsByTeamChart');
+                hideLoading('endorsementsByTeamAreaChart'); // UPDATED ID
                 hideLoading('coalBySupplierChart');
             }
         }
 
+        // Fetch recent activity for the dashboard summary
+        async function fetchRecentActivity() {
+            try {
+                // Fetch latest endorsements
+                const { data: endorsements, error: endorsementError } = await supabaseClient
+                    .from('endorsement')
+                    .select('created_at, area') // UPDATED TO USE `area`
+                    .order('created_at', { ascending: false })
+                    .limit(20); // Fetch more to enable local searching
+                if (endorsementError) throw endorsementError;
+
+                // Fetch latest deliveries
+                const { data: deliveries, error: deliveryError } = await supabaseClient
+                    .from('delivery_logs')
+                    .select('created_at, supplier_name, coal_kg')
+                    .order('created_at', { ascending: false })
+                    .limit(20); // Fetch more to enable local searching
+                if (deliveryError) throw deliveryError;
+
+                const recentActivities = [];
+                
+                // Add endorsements to the list
+                endorsements.forEach(item => {
+                    const areaName = item.area || 'Unknown Area'; // UPDATED LOGIC
+                    recentActivities.push({
+                        type: 'Endorsement',
+                        description: `A new endorsement was submitted for area: ${areaName}.`, // UPDATED DESCRIPTION
+                        timestamp: new Date(item.created_at)
+                    });
+                });
+
+                // Add deliveries to the list
+                deliveries.forEach(item => {
+                    const supplierName = item.supplier_name || 'Unknown Supplier';
+                    recentActivities.push({
+                        type: 'Delivery',
+                        description: `${item.coal_kg} kg of coal delivered from ${supplierName}.`,
+                        timestamp: new Date(item.created_at)
+                    });
+                });
+                
+                // Sort by timestamp in descending order
+                recentActivities.sort((a, b) => b.timestamp - a.timestamp);
+                
+                cachedRecentActivities = recentActivities; // Cache the fetched data
+                return recentActivities;
+
+            } catch (err) {
+                console.error("Error fetching recent activity:", err.message);
+                showAlert(`Error fetching recent activity: ${err.message}`);
+                return [];
+            }
+        }
+        
+        // Render recent activity to the UI, with optional search query
+        function renderRecentActivity(activities, searchQuery = '') {
+            const listContainer = document.getElementById('recent-activity-list');
+            listContainer.innerHTML = ''; // Clear previous content
+            
+            const filteredActivities = activities.filter(activity =>
+                activity.description.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+
+            if (filteredActivities.length === 0) {
+                listContainer.innerHTML = `<p class="text-gray-400 text-center">No results found for "${searchQuery}".</p>`;
+                return;
+            }
+
+            filteredActivities.slice(0, 10).forEach(activity => { // Show top 10 results
+                const activityItem = document.createElement('div');
+                activityItem.className = 'flex items-center space-x-3 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg';
+                
+                let iconClass = '';
+                let iconBgClass = '';
+                if (activity.type === 'Endorsement') {
+                    iconClass = 'fas fa-list text-abn-green';
+                    iconBgClass = 'bg-white dark:bg-gray-800';
+                } else if (activity.type === 'Delivery') {
+                    iconClass = 'fas fa-truck text-blue-500';
+                    iconBgClass = 'bg-white dark:bg-gray-800';
+                }
+
+                activityItem.innerHTML = `
+                    <div class="p-2 rounded-full ${iconBgClass}">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-800 dark:text-white">${activity.description}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${activity.timestamp.toLocaleString()}</p>
+                    </div>
+                `;
+                listContainer.appendChild(activityItem);
+            });
+        }
+
         // Update the quick stats
         async function updateOverviewData(filter) {
+            toggleQuickStatsLoading(true);
             const range = getDateRange(filter);
-            const totalMembers = await fetchTotalMembers(range);
-            const totalEndorsements = await fetchTotalEndorsements(range);
-            const coalDelivered = await fetchCoalDelivered(range);
-            const averageGPM = await fetchAverageGPM(range);
+            if (!range) {
+                toggleQuickStatsLoading(false);
+                return;
+            }
+            
+            const [totalMembers, totalEndorsements, coalDelivered, averageGPM] = await Promise.all([
+                fetchTotalMembers(range),
+                fetchTotalEndorsements(range),
+                fetchCoalDelivered(range),
+                fetchAverageGPM(range)
+            ]);
 
             document.getElementById('totalMembers').textContent = totalMembers.toLocaleString();
             document.getElementById('totalEndorsements').textContent = totalEndorsements.toLocaleString();
             document.getElementById('coalDelivered').textContent = coalDelivered.toLocaleString();
             document.getElementById('averageGPM').textContent = averageGPM;
+            
+            // Also update the original quick stats section
+            document.getElementById('totalMembers-old').textContent = totalMembers.toLocaleString();
+            document.getElementById('totalEndorsements-old').textContent = totalEndorsements.toLocaleString();
+            document.getElementById('coalDelivered-old').textContent = coalDelivered.toLocaleString();
+            document.getElementById('averageGPM-old').textContent = averageGPM;
+            
+            toggleQuickStatsLoading(false);
         }
 
         // Update the charts
         async function updateCharts(filter) {
             const range = getDateRange(filter);
+            if (!range) return;
             const chartData = await fetchAllChartData(range);
 
             // Coal Delivery Chart (Bar)
@@ -660,18 +815,19 @@
                 }
             });
 
-            // Endorsements by Team Chart (Pie)
-            const teamColors = getRandomColors(chartData.endorsementsByTeam.labels.length);
-            const teamCtx = document.getElementById('endorsementsByTeamChart').getContext('2d');
-            if (charts.endorsementsByTeam) charts.endorsementsByTeam.destroy();
-            charts.endorsementsByTeam = new Chart(teamCtx, {
+            // Endorsements by Team Area Chart (Pie)
+            // UPDATED CHART ID
+            const areaColors = getRandomColors(chartData.endorsementsByTeamArea.labels.length);
+            const areaCtx = document.getElementById('endorsementsByTeamAreaChart').getContext('2d');
+            if (charts.endorsementsByTeamArea) charts.endorsementsByTeamArea.destroy();
+            charts.endorsementsByTeamArea = new Chart(areaCtx, {
                 type: 'pie',
                 data: {
-                    labels: chartData.endorsementsByTeam.labels,
+                    labels: chartData.endorsementsByTeamArea.labels,
                     datasets: [{
-                        label: 'Endorsements by Team',
-                        data: chartData.endorsementsByTeam.values,
-                        backgroundColor: teamColors,
+                        label: 'Endorsements by Team Area', // UPDATED LABEL
+                        data: chartData.endorsementsByTeamArea.values,
+                        backgroundColor: areaColors,
                         hoverOffset: 4
                     }]
                 },
@@ -711,7 +867,10 @@
         // Initial setup and event listeners
         document.addEventListener('DOMContentLoaded', () => {
             const dateFilterSelect = document.getElementById('dateFilter');
-            const customDateInput = document.getElementById('customDate');
+            const customDateInputsContainer = document.getElementById('custom-date-inputs');
+            const customDateStartInput = document.getElementById('customDateStart');
+            const customDateEndInput = document.getElementById('customDateEnd');
+            const applyDateFilterButton = document.getElementById('apply-date-filter');
             const body = document.body;
 
             // --- Login Page Logic ---
@@ -730,6 +889,7 @@
                     const initialFilter = dateFilterSelect.value;
                     updateOverviewData(initialFilter);
                     updateCharts(initialFilter);
+                    fetchRecentActivity().then(activities => renderRecentActivity(activities));
                 } else {
                     showAlert('Incorrect authentication code. Please try again.');
                 }
@@ -755,18 +915,22 @@
             dateFilterSelect.addEventListener('change', (e) => {
                 const filter = e.target.value;
                 if (filter === 'custom') {
-                    customDateInput.classList.remove('hidden');
+                    customDateInputsContainer.classList.remove('hidden');
                 } else {
-                    customDateInput.classList.add('hidden');
+                    customDateInputsContainer.classList.add('hidden');
                     updateOverviewData(filter);
                     updateCharts(filter);
+                    // Fetch recent activity regardless of filter
+                    fetchRecentActivity().then(activities => renderRecentActivity(activities));
                 }
             });
-
-            customDateInput.addEventListener('change', (e) => {
-                if (e.target.value) {
-                    updateOverviewData('custom');
-                    updateCharts('custom');
+            
+            applyDateFilterButton.addEventListener('click', () => {
+                const filter = dateFilterSelect.value;
+                if (filter === 'custom') {
+                    updateOverviewData(filter);
+                    updateCharts(filter);
+                    fetchRecentActivity().then(activities => renderRecentActivity(activities));
                 }
             });
 
@@ -791,6 +955,13 @@
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('-translate-x-full');
                 mainContent.classList.toggle('lg:ml-64');
+            });
+
+            // Recent activity search bar functionality
+            const searchInput = document.getElementById('recent-activity-search');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value;
+                renderRecentActivity(cachedRecentActivities, query);
             });
 
             // Responsive chart resize
