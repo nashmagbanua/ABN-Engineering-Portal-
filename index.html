@@ -6,6 +6,8 @@
     <title>ABN Industrial Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- We're now loading the Supabase library using a standard script tag, which makes createClient available globally without using modules. -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
@@ -251,16 +253,13 @@
         </div>
     </div>
     
-    <script type="module">
-        // Fixed the import statement to correctly get createClient from the Supabase ES module.
-        import { createClient } from 'https://unpkg.com/@supabase/supabase-js@2.52.0/dist/esm/supabase.js';
-
+    <script>
         // Supabase configuration from the prompt
         const SUPABASE_URL = 'https://qbeacrpoyfacgmbzxjcu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZWFjcnBveWZhY2dtYnp4amN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NTM5NTIsImV4cCI6MjA2NDIyOTk1Mn0.6kfxKLJxidW4BcqsMJte61AtzydrTW-1ZJIJytiUBt4';
         
-        // Use the imported createClient function
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Use the globally available createClient function
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Chart instances
         let charts = {};
