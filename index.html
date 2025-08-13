@@ -6,9 +6,24 @@
     <title>ABN Industrial Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- We're now loading the Supabase library using a standard script tag, which makes createClient available globally without using modules. -->
+    <!-- Loading Supabase globally without modules to avoid CORS errors. -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        // Custom Tailwind config for the ABN brand colors
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'abn-green': '#1DB954',
+                        'abn-green-dark': '#1ed760',
+                        'abn-green-light': '#1db954'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -41,8 +56,8 @@
 
         /* Styles for the login page */
         .login-bg {
-            /* Set the new background image */
-            background-image: url('08398BA4-586D-4BB1-B02C-BD3833DA329F.png');
+            /* Using a placeholder for the background image */
+            background-image: url('https://placehold.co/1920x1080/4F46E5/ffffff?text=ABN+Engineering');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -114,8 +129,8 @@
     <!-- Login Page -->
     <div id="login-page" class="flex flex-col items-center justify-center flex-grow p-4 sm:p-6 lg:p-8 login-bg min-h-screen">
         <div class="bg-white p-8 rounded-xl shadow-lg border border-green-100 max-w-md w-full text-center z-10 relative">
-            <!-- Logo - Using the provided filename -->
-            <img src="abnlogo.png" alt="ABN Logo" class="mx-auto mb-6 w-32 h-auto rounded-full shadow-md">
+            <!-- Logo - Using a placeholder for the logo -->
+            <img src="https://placehold.co/100x100/1DB954/ffffff?text=ABN" alt="ABN Logo" class="mx-auto mb-6 w-32 h-auto rounded-full shadow-md">
             
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
             <p class="text-lg text-green-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
@@ -258,8 +273,8 @@
         const SUPABASE_URL = 'https://qbeacrpoyfacgmbzxjcu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZWFjcnBveWZhY2dtYnp4amN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NTM5NTIsImV4cCI6MjA2NDIyOTk1Mn0.6kfxKLJxidW4BcqsMJte61AtzydrTW-1ZJIJytiUBt4';
         
-        // Use the globally available createClient function
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Correctly initialize the Supabase client
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Chart instances
         let charts = {};
@@ -346,7 +361,7 @@
                 const {
                     count,
                     error
-                } = await supabase
+                } = await supabaseClient
                     .from('members')
                     .select('*', {
                         count: 'exact',
@@ -368,7 +383,7 @@
                 const {
                     count,
                     error
-                } = await supabase
+                } = await supabaseClient
                     .from('endorsement')
                     .select('*', {
                         count: 'exact',
@@ -390,7 +405,7 @@
                 const {
                     data,
                     error
-                } = await supabase
+                } = await supabaseClient
                     .from('delivery_logs')
                     .select('coal_kg')
                     .gte('created_at', range.start)
@@ -410,7 +425,7 @@
                 const {
                     data,
                     error
-                } = await supabase
+                } = await supabaseClient
                     .from('gpm_readings')
                     .select('gpm')
                     .gte('created_at', range.start)
@@ -432,7 +447,7 @@
                 const {
                     data,
                     error
-                } = await supabase
+                } = await supabaseClient
                     .from('endorsement')
                     .select('team_info')
                     .gte('created_at', range.start)
@@ -465,7 +480,7 @@
                 const {
                     data,
                     error
-                } = await supabase
+                } = await supabaseClient
                     .from('delivery_logs')
                     .select('supplier_name, coal_kg')
                     .gte('created_at', range.start)
@@ -501,7 +516,7 @@
                 showLoading('endorsementsByTeamChart');
                 showLoading('coalBySupplierChart');
 
-                const { data: coalData, error: coalError } = await supabase
+                const { data: coalData, error: coalError } = await supabaseClient
                     .from('delivery_logs')
                     .select('created_at, coal_kg')
                     .gte('created_at', range.start)
@@ -509,7 +524,7 @@
                     .order('created_at', { ascending: true });
                 if (coalError) throw coalError;
 
-                const { data: gpmData, error: gpmError } = await supabase
+                const { data: gpmData, error: gpmError } = await supabaseClient
                     .from('gpm_readings')
                     .select('created_at, gpm')
                     .gte('created_at', range.start)
@@ -517,14 +532,14 @@
                     .order('created_at', { ascending: true });
                 if (gpmError) throw gpmError;
                 
-                const { data: endorsementData, error: endorsementError } = await supabase
+                const { data: endorsementData, error: endorsementError } = await supabaseClient
                     .from('endorsement')
                     .select('team_info')
                     .gte('created_at', range.start)
                     .lt('created_at', range.end);
                 if (endorsementError) throw endorsementError;
 
-                const { data: deliveryLogData, error: deliveryLogError } = await supabase
+                const { data: deliveryLogData, error: deliveryLogError } = await supabaseClient
                     .from('delivery_logs')
                     .select('supplier_name, coal_kg')
                     .gte('created_at', range.start)
