@@ -6,7 +6,8 @@
     <title>ABN Industrial Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Loading Supabase globally without modules to avoid CORS errors. -->
+    <script src="https://cdn.jsdelivr.net/npm/date-fns/dist/date-fns.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -126,7 +127,6 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
-    <!-- Modal for error messages -->
     <div id="alert-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -134,21 +134,17 @@
         </div>
     </div>
 
-    <!-- Login Page -->
     <div id="login-page" class="flex flex-col items-center justify-center flex-grow p-4 sm:p-6 lg:p-8 login-bg min-h-screen">
         <div class="bg-white p-8 rounded-xl shadow-lg border border-green-100 max-w-md w-full text-center z-10 relative">
-            <!-- Logo - Using the user-provided filename for the logo -->
             <img src="abnlogo.png" alt="ABN Logo" class="mx-auto mb-6 w-32 h-auto rounded-full shadow-md">
             
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to Utilities Panel</h1>
             <p class="text-lg text-green-700 mb-6">Your Gateway to Real-Time Operational Oversight</p>
 
-            <div class="mb-6 relative"> <!-- Added relative positioning for the icon -->
-                <input type="password" id="auth-code-input" placeholder="Enter authentication code"
+            <div class="mb-6 relative"> <input type="password" id="auth-code-input" placeholder="Enter authentication code"
                     class="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-center text-lg">
                 <span id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                    <i class="fas fa-eye text-gray-500"></i> <!-- Eye icon -->
-                </span>
+                    <i class="fas fa-eye text-gray-500"></i> </span>
             </div>
             <button id="login-button"
                     class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md text-lg font-semibold">
@@ -157,37 +153,32 @@
         </div>
     </div>
     
-    <!-- Main Dashboard Content (Initially Hidden) -->
     <div id="main-dashboard" class="hidden">
-        <!-- Sidebar -->
         <div id="sidebar" class="fixed z-50 left-0 top-0 w-64 h-full bg-white dark:bg-gray-800 shadow-xl transition-transform duration-300 transform -translate-x-full lg:translate-x-0">
             <div class="p-6 flex items-center">
-                <!-- ABN Logo for the sidebar -->
                 <img src="abnlogo.png" alt="ABN Logo" class="w-10 h-10 mr-3 rounded-full">
                 <h1 class="text-2xl font-bold text-abn-green">ABN Industrial</h1>
             </div>
             <nav class="mt-8">
-                <a href="#" id="sidebar-dashboard-link" class="flex items-center px-6 py-3 text-white bg-abn-green transition-colors duration-200">
-                    <i class="fas fa-home mr-3"></i> Dashboard
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
-                    <i class="fas fa-list mr-3"></i> Endorsements
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
-                    <i class="fas fa-truck mr-3"></i> Deliveries
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
-                    <i class="fas fa-cog mr-3"></i> GPM Readings
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
-                    <i class="fas fa-users mr-3"></i> Team Members
-                </a>
-            </nav>
+    <a href="#" data-target="overview-section" class="flex items-center px-6 py-3 text-white bg-abn-green transition-colors duration-200">
+        <i class="fas fa-home mr-3"></i> Dashboard
+    </a>
+    <a href="#" data-target="endorsements-section" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
+        <i class="fas fa-list mr-3"></i> Endorsements
+    </a>
+    <a href="#" data-target="deliveries-section" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
+        <i class="fas fa-truck mr-3"></i> Deliveries
+    </a>
+    <a href="#" data-target="gpm-readings-section" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
+        <i class="fas fa-cog mr-3"></i> GPM Readings
+    </a>
+    <a href="#" data-target="team-members-section" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-abn-green hover:text-white transition-colors duration-200">
+        <i class="fas fa-users mr-3"></i> Team Members
+    </a>
+</nav>
         </div>
 
-        <!-- Main Content -->
         <div class="lg:ml-64 p-6 transition-all duration-300">
-            <!-- Navbar -->
             <header class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6">
                 <div class="flex items-center">
                     <button id="sidebarToggle" class="text-gray-500 lg:hidden">
@@ -200,578 +191,701 @@
                         <i class="fas fa-moon"></i>
                     </button>
                     <div class="relative">
-                        <button class="flex items-center text-gray-800 dark:text-white">
+                        <button id="profile-menu-button" class="flex items-center text-gray-800 dark:text-white focus:outline-none">
                             <img src="abnlogo.png" alt="User" class="w-8 h-8 rounded-full mr-2">
                             <span>Admin</span>
+                            <i class="fas fa-chevron-down ml-2 text-sm"></i>
                         </button>
+                        <div id="profile-menu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="#" id="logout-button" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </a>
+                        </div>
                     </div>
-                </div>
+                    </div>
             </header>
 
-            <!-- Main dashboard content area - this is where the chart previews will go -->
             <div id="dashboard-content" class="min-h-[500px]">
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Welcome, Admin!</h2>
-                    <p class="text-gray-600 dark:text-gray-400">Narito ang pangkalahatang-ideya ng mga operasyon ngayon.</p>
+                
+                <div id="overview-section">
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Welcome, Admin!</h2>
+                        <p class="text-gray-600 dark:text-gray-400">Narito ang pangkalahatang-ideya ng mga operasyon ngayon.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Members</p>
+                                <div id="totalMembers" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                            </div>
+                            <div class="text-abn-green text-3xl">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Endorsements</p>
+                                <div id="totalEndorsements" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                            </div>
+                            <div class="text-abn-green text-3xl">
+                                <i class="fas fa-list"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Coal Delivered (kg)</p>
+                                <div id="coalDelivered" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                            </div>
+                            <div class="text-abn-green text-3xl">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Average GPM</p>
+                                <div id="averageGPM" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
+                            </div>
+                            <div class="text-abn-green text-3xl">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                        <div class="flex flex-wrap justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Recent Activity</h3>
+                            <div class="relative w-full sm:w-auto">
+                                <input type="text" id="recent-activity-search" placeholder="Search activity..."
+                                    class="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-abn-green">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div id="recent-activity-list" class="space-y-4">
+                            <p class="text-gray-400 text-center loading-animation">Loading recent activity...</p>
+                        </div>
+                    </div>
+                
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                        <div class="flex flex-wrap justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Quick Stats (Original)</h3>
+                            <div class="flex flex-wrap items-center space-x-2">
+                                <select id="dateFilter" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
+                                    <option value="today">Today</option>
+                                    <option value="yesterday">Yesterday</option>
+                                    <option value="last7days">Last 7 Days</option>
+                                    <option value="last30days">Last 30 Days</option>
+                                    <option value="thisMonth">This Month</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                                <div id="custom-date-inputs" class="flex items-center space-x-2 hidden">
+                                    <input type="date" id="customDateStart" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
+                                    <span>to</span>
+                                    <input type="date" id="customDateEnd" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
+                                    <button id="apply-date-filter" class="p-2 bg-abn-green text-white rounded-lg hover:bg-abn-green-dark">Apply</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
+                                <div class="text-gray-500 dark:text-gray-400">Total Members</div>
+                                <div id="totalMembers-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
+                                <div class="text-gray-500 dark:text-gray-400">Total Endorsements</div>
+                                <div id="totalEndorsements-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
+                                <div class="text-gray-500 dark:text-gray-400">Coal Delivered (kg)</div>
+                                <div id="coalDelivered-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
+                                <div class="text-gray-500 dark:text-gray-400">Average GPM</div>
+                                <div id="averageGPM-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Daily Coal Delivery</h3>
+                            <div class="chart-container">
+                                <div class="loading-overlay hidden">Loading...</div>
+                                <canvas id="coalDeliveryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">GPM Readings Over Time</h3>
+                            <div class="chart-container">
+                                <div class="loading-overlay hidden">Loading...</div>
+                                <canvas id="gpmChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Endorsements by Team Area</h3>
+                            <div class="chart-container">
+                                <div class="loading-overlay hidden">Loading...</div>
+                                <canvas id="endorsementsByTeamAreaChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Coal Delivered by Supplier</h3>
+                            <div class="chart-container">
+                                <div class="loading-overlay hidden">Loading...</div>
+                                <canvas id="coalBySupplierChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Expanded Quick Stats Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <!-- Total Members Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Members</p>
-                            <div id="totalMembers" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
-                        </div>
-                        <div class="text-abn-green text-3xl">
-                            <i class="fas fa-users"></i>
+                <div id="endorsements-section" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Endorsements</h2>
+    <a href="https://digital-logbook-xi.vercel.app" target="_blank" class="bg-abn-green text-white py-2 px-4 rounded-lg hover:bg-abn-green-dark transition-colors duration-200">
+        <i class="fas fa-external-link-alt mr-2"></i> Go to App
+    </a>
+</div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Date
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Area
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Operators
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Ops Crew
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Description
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="endorsements-table-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">
+                                            Loading endorsements...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <!-- Total Endorsements Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Endorsements</p>
-                            <div id="totalEndorsements" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
-                        </div>
-                        <div class="text-abn-green text-3xl">
-                            <i class="fas fa-list"></i>
+                </div>
+                
+                <div id="deliveries-section" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Deliveries</h2>
+    <a href="https://coaldelivery.vercel.app" target="_blank" class="bg-abn-green text-white py-2 px-4 rounded-lg hover:bg-abn-green-dark transition-colors duration-200">
+        <i class="fas fa-external-link-alt mr-2"></i> Go to App
+    </a>
+</div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Date
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Supplier
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Driver Name
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Coal (kg)
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deliveries-table-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">
+                                            Loading deliveries...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <!-- Coal Delivered Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Coal Delivered (kg)</p>
-                            <div id="coalDelivered" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
-                        </div>
-                        <div class="text-abn-green text-3xl">
-                            <i class="fas fa-truck"></i>
-                        </div>
-                    </div>
-                    <!-- Average GPM Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Average GPM</p>
-                            <div id="averageGPM" class="text-3xl font-bold text-gray-800 dark:text-white mt-1 loading-placeholder">0</div>
-                        </div>
-                        <div class="text-abn-green text-3xl">
-                            <i class="fas fa-cog"></i>
+                </div>
+                
+                <div id="gpm-readings-section" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">GPM Readings</h2>
+    <a href="https://gpmcalculatorv2.vercel.app" target="_blank" class="bg-abn-green text-white py-2 px-4 rounded-lg hover:bg-abn-green-dark transition-colors duration-200">
+        <i class="fas fa-external-link-alt mr-2"></i> Go to App
+    </a>
+</div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Date
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Operator
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            GPM
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gpm-readings-table-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">
+                                            Loading GPM readings...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity Section -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-                    <div class="flex flex-wrap justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Recent Activity</h3>
-                        <div class="relative w-full sm:w-auto">
-                            <input type="text" id="recent-activity-search" placeholder="Search activity..."
-                                class="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-abn-green">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <div id="team-members-section" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Team Members</h2>
+    <a href="https://kaizen-invitation.vercel.app" target="_blank" class="bg-abn-green text-white py-2 px-4 rounded-lg hover:bg-abn-green-dark transition-colors duration-200">
+        <i class="fas fa-external-link-alt mr-2"></i> Go to App
+    </a>
+</div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Name
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Team
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="team-members-table-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                    <tr>
+                                        <td colspan="2" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">
+                                            Loading team members...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                    <div id="recent-activity-list" class="space-y-4">
-                        <!-- Content will be dynamically loaded here by JavaScript -->
-                        <p class="text-gray-400 text-center loading-animation">Loading recent activity...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Date Filter & Quick Stats (Updated to use two inputs for custom range) -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-                <div class="flex flex-wrap justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Quick Stats (Original)</h3>
-                    <div class="flex flex-wrap items-center space-x-2">
-                        <select id="dateFilter" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
-                            <option value="today">Today</option>
-                            <option value="yesterday">Yesterday</option>
-                            <option value="last7days">Last 7 Days</option>
-                            <option value="last30days">Last 30 Days</option>
-                            <option value="thisMonth">This Month</option>
-                            <option value="custom">Custom Range</option>
-                        </select>
-                        <div id="custom-date-inputs" class="flex items-center space-x-2 hidden">
-                            <input type="date" id="customDateStart" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
-                            <span>to</span>
-                            <input type="date" id="customDateEnd" class="p-2 border rounded-lg bg-white dark:bg-gray-700 dark:text-white">
-                            <button id="apply-date-filter" class="p-2 bg-abn-green text-white rounded-lg hover:bg-abn-green-dark">Apply</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
-                        <div class="text-gray-500 dark:text-gray-400">Total Members</div>
-                        <div id="totalMembers-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
-                    </div>
-                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
-                        <div class="text-gray-500 dark:text-gray-400">Total Endorsements</div>
-                        <div id="totalEndorsements-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
-                    </div>
-                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
-                        <div class="text-gray-500 dark:text-gray-400">Coal Delivered (kg)</div>
-                        <div id="coalDelivered-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
-                    </div>
-                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center shadow-sm">
-                        <div class="text-gray-500 dark:text-gray-400">Average GPM</div>
-                        <div id="averageGPM-old" class="text-2xl font-bold text-gray-800 dark:text-white loading-animation">0</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Daily Coal Delivery</h3>
-                    <div class="chart-container">
-                        <div class="loading-overlay hidden">Loading...</div>
-                        <canvas id="coalDeliveryChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">GPM Readings Over Time</h3>
-                    <div class="chart-container">
-                        <div class="loading-overlay hidden">Loading...</div>
-                        <canvas id="gpmChart"></canvas>
-                    </div>
-                </div>
-                <!-- UPDATED CHART TITLE -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Endorsements by Team Area</h3>
-                    <div class="chart-container">
-                        <div class="loading-overlay hidden">Loading...</div>
-                        <canvas id="endorsementsByTeamAreaChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Coal Delivered by Supplier</h3>
-                    <div class="chart-container">
-                        <div class="loading-overlay hidden">Loading...</div>
-                        <canvas id="coalBySupplierChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script>
-        // Supabase configuration from the prompt
+<script>
+        // Supabase configuration
         const SUPABASE_URL = 'https://qbeacrpoyfacgmbzxjcu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiZWFjcnBveWZhY2dtYnp4amN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NTM5NTIsImV4cCI6MjA2NDIyOTk1Mn0.6kfxKLJxidW4BcqsMJte61AtzydrTW-1ZJIJytiUBt4';
-        
-        // Correctly initialize the Supabase client
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Chart instances
+        // Global variable for charts to allow for responsive resizing and destruction
         let charts = {};
-        // Cache all recent activities to enable searching without re-fetching
         let cachedRecentActivities = [];
 
-        // Helper function to show a custom modal alert
         function showAlert(message) {
             const modal = document.getElementById('alert-modal');
-            const alertMessage = document.getElementById('alert-message');
-            alertMessage.textContent = message;
+            const messageElement = document.getElementById('alert-message');
+            messageElement.textContent = message;
             modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
         }
 
-        // Helper function to get date range for Supabase queries
-        function getDateRange(filter) {
-            const now = new Date();
-            let start, end;
+        function hideAlert() {
+            const modal = document.getElementById('alert-modal');
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
 
-            switch (filter) {
-                case 'today':
-                    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                    end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-                    break;
-                case 'yesterday':
-                    start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-                    end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                    break;
-                case 'last7days':
-                    start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
-                    end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-                    break;
-                case 'last30days':
-                    start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
-                    end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-                    break;
-                case 'thisMonth':
-                    start = new Date(now.getFullYear(), now.getMonth(), 1);
-                    end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-                    break;
-                case 'custom':
-                    const customStart = document.getElementById('customDateStart').value;
-                    const customEnd = document.getElementById('customDateEnd').value;
-                    if (!customStart || !customEnd) {
-                        showAlert('Please select a start and end date for the custom range.');
-                        return null;
-                    }
-                    start = new Date(customStart);
-                    end = new Date(customEnd);
-                    end.setDate(end.getDate() + 1); // Make end date inclusive
-                    break;
-                default:
-                    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                    end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-                    break;
-            }
-            return {
-                start: start.toISOString(),
-                end: end.toISOString()
+        document.addEventListener('DOMContentLoaded', function () {
+            // Event listener for the close button
+            const closeButton = document.querySelector('#alert-modal .close-button');
+            closeButton.addEventListener('click', hideAlert);
+
+            window.onclick = function(event) {
+                const modal = document.getElementById('alert-modal');
+                if (event.target == modal) {
+                    hideAlert();
+                }
             };
-        }
+        });
 
-        // Show/hide loading indicators for charts
-        function showLoading(elementId) {
-            const element = document.getElementById(elementId);
-            const parent = element.parentElement;
-            const overlay = parent.querySelector('.loading-overlay');
-            if (overlay) overlay.classList.remove('hidden');
-        }
+        // =========================================================
+        // Supabase Data Fetching Functions
+        // =========================================================
 
-        function hideLoading(elementId) {
-            const element = document.getElementById(elementId);
-            const parent = element.parentElement;
-            const overlay = parent.querySelector('.loading-overlay');
-            if (overlay) overlay.classList.add('hidden');
-        }
-
-        // Toggle loading state for quick stats
-        function toggleQuickStatsLoading(isLoading) {
-            document.getElementById('totalMembers').classList.toggle('loading-animation', isLoading);
-            document.getElementById('totalEndorsements').classList.toggle('loading-animation', isLoading);
-            document.getElementById('coalDelivered').classList.toggle('loading-animation', isLoading);
-            document.getElementById('averageGPM').classList.toggle('loading-animation', isLoading);
-        }
-
-        // Helper function to generate random colors for charts
-        function getRandomColors(count) {
-            const colors = [];
-            for (let i = 0; i < count; i++) {
-                const r = Math.floor(Math.random() * 255);
-                const g = Math.floor(Math.random() * 255);
-                const b = Math.floor(Math.random() * 255);
-                colors.push(`rgba(${r}, ${g}, ${b}, 0.6)`);
-            }
-            return colors;
-        }
-
-        // --- Supabase Data Fetching Functions ---
-
-        // Fetch Total Members
-        async function fetchTotalMembers(range) {
+        async function fetchAndCombineRecentActivities() {
             try {
-                const {
-                    count,
-                    error
-                } = await supabaseClient
-                    .from('members')
-                    .select('*', {
-                        count: 'exact',
-                        head: true
-                    })
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (error) throw error;
-                return count || 0;
-            } catch (err) {
-                console.error("Error fetching total members:", err.message);
-                showAlert(`Error fetching total members: ${err.message}`);
-                return 0;
-            }
-        }
-
-        // Fetch Total Endorsements
-        async function fetchTotalEndorsements(range) {
-            try {
-                const {
-                    count,
-                    error
-                } = await supabaseClient
+                // Fetch recent endorsements
+                const { data: endorsements, error: endorsementsError } = await supabaseClient
                     .from('endorsement')
-                    .select('*', {
-                        count: 'exact',
-                        head: true
-                    })
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (error) throw error;
-                return count || 0;
-            } catch (err) {
-                console.error("Error fetching total endorsements:", err.message);
-                showAlert(`Error fetching total endorsements: ${err.message}`);
-                return 0;
-            }
-        }
-
-        // Fetch Total Coal Delivered
-        async function fetchCoalDelivered(range) {
-            try {
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from('delivery_logs')
-                    .select('coal_kg')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (error) throw error;
-                const total = data.reduce((sum, item) => sum + (item.coal_kg || 0), 0);
-                return total;
-            } catch (err) {
-                console.error("Error fetching coal delivered:", err.message);
-                showAlert(`Error fetching coal delivered: ${err.message}`);
-                return 0;
-            }
-        }
-
-        // Fetch Average GPM
-        async function fetchAverageGPM(range) {
-            try {
-                const {
-                    data,
-                    error
-                } = await supabaseClient
-                    .from('gpm_readings')
-                    .select('gpm')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (error) throw error;
-                if (data.length === 0) return 0;
-                const total = data.reduce((sum, item) => sum + item.gpm, 0);
-                const average = total / data.length;
-                return average.toFixed(2); // Format to 2 decimal places
-            } catch (err) {
-                console.error("Error fetching average GPM:", err.message);
-                showAlert(`Error fetching average GPM: ${err.message}`);
-                return 0;
-            }
-        }
-
-        // Fetch all chart data
-        async function fetchAllChartData(range) {
-            try {
-                showLoading('coalDeliveryChart');
-                showLoading('gpmChart');
-                showLoading('endorsementsByTeamAreaChart'); // UPDATED ID
-                showLoading('coalBySupplierChart');
-
-                const { data: coalData, error: coalError } = await supabaseClient
-                    .from('delivery_logs')
-                    .select('created_at, coal_kg')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end)
-                    .order('created_at', { ascending: true });
-                if (coalError) throw coalError;
-
-                const { data: gpmData, error: gpmError } = await supabaseClient
-                    .from('gpm_readings')
-                    .select('created_at, gpm')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end)
-                    .order('created_at', { ascending: true });
-                if (gpmError) throw gpmError;
-                
-                // UPDATED QUERY TO USE `area` FIELD
-                const { data: endorsementData, error: endorsementError } = await supabaseClient
-                    .from('endorsement')
-                    .select('area')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (endorsementError) throw endorsementError;
-
-                const { data: deliveryLogData, error: deliveryLogError } = await supabaseClient
-                    .from('delivery_logs')
-                    .select('supplier_name, coal_kg')
-                    .gte('created_at', range.start)
-                    .lt('created_at', range.end);
-                if (deliveryLogError) throw deliveryLogError;
-                
-                // Process data for charts
-                const coalLabels = coalData.map(item => new Date(item.created_at).toLocaleDateString());
-                const coalValues = coalData.map(item => item.coal_kg);
-
-                const gpmLabels = gpmData.map(item => new Date(item.created_at).toLocaleString());
-                const gpmValues = gpmData.map(item => item.gpm);
-                
-                // UPDATED LOGIC TO COUNT BY `area`
-                const areaCounts = {};
-                endorsementData.forEach(item => {
-                    const areaName = item.area || 'Unknown';
-                    areaCounts[areaName] = (areaCounts[areaName] || 0) + 1;
-                });
-                
-                const supplierTotals = {};
-                deliveryLogData.forEach(item => {
-                    const supplierName = item.supplier_name || 'Unknown Supplier';
-                    const coalKg = item.coal_kg || 0;
-                    supplierTotals[supplierName] = (supplierTotals[supplierName] || 0) + coalKg;
-                });
-                
-                return {
-                    coal: { labels: coalLabels, values: coalValues },
-                    gpm: { labels: gpmLabels, values: gpmValues },
-                    endorsementsByTeamArea: { labels: Object.keys(areaCounts), values: Object.values(areaCounts) }, // UPDATED KEY
-                    coalBySupplier: { labels: Object.keys(supplierTotals), values: Object.values(supplierTotals) }
-                };
-            } catch (err) {
-                console.error("Error fetching all chart data:", err.message);
-                showAlert(`Error fetching chart data: ${err.message}`);
-                return {
-                    coal: { labels: [], values: [] },
-                    gpm: { labels: [], values: [] },
-                    endorsementsByTeamArea: { labels: [], values: [] }, // UPDATED KEY
-                    coalBySupplier: { labels: [], values: [] }
-                };
-            } finally {
-                hideLoading('coalDeliveryChart');
-                hideLoading('gpmChart');
-                hideLoading('endorsementsByTeamAreaChart'); // UPDATED ID
-                hideLoading('coalBySupplierChart');
-            }
-        }
-
-        // Fetch recent activity for the dashboard summary
-        async function fetchRecentActivity() {
-            try {
-                // Fetch latest endorsements
-                const { data: endorsements, error: endorsementError } = await supabaseClient
-                    .from('endorsement')
-                    .select('created_at, area') // UPDATED TO USE `area`
+                    .select('created_at, area, operators, activity_description')
                     .order('created_at', { ascending: false })
-                    .limit(20); // Fetch more to enable local searching
-                if (endorsementError) throw endorsementError;
+                    .limit(3);
+                if (endorsementsError) throw endorsementsError;
 
-                // Fetch latest deliveries
-                const { data: deliveries, error: deliveryError } = await supabaseClient
+                const formattedEndorsements = endorsements.map(e => ({
+                    created_at: e.created_at,
+                    type: 'endorsement',
+                    description: `Endorsement sa area ng ${e.area}`,
+                    member: e.operators && e.operators.length > 0 ? e.operators.join(', ') : 'N/A'
+                }));
+
+                // Fetch recent deliveries
+                const { data: deliveries, error: deliveriesError } = await supabaseClient
                     .from('delivery_logs')
-                    .select('created_at, supplier_name, coal_kg')
+                    .select('created_at, supplier_name, coal_kg, driver_name')
                     .order('created_at', { ascending: false })
-                    .limit(20); // Fetch more to enable local searching
-                if (deliveryError) throw deliveryError;
+                    .limit(3);
+                if (deliveriesError) throw deliveriesError;
 
-                const recentActivities = [];
-                
-                // Add endorsements to the list
-                endorsements.forEach(item => {
-                    const areaName = item.area || 'Unknown Area'; // UPDATED LOGIC
-                    recentActivities.push({
-                        type: 'Endorsement',
-                        description: `A new endorsement was submitted for area: ${areaName}.`, // UPDATED DESCRIPTION
-                        timestamp: new Date(item.created_at)
-                    });
-                });
+                const formattedDeliveries = deliveries.map(d => ({
+                    created_at: d.created_at,
+                    type: 'delivery',
+                    description: `Delivery mula sa ${d.supplier_name} (${d.coal_kg}kg)`,
+                    member: d.driver_name || 'N/A'
+                }));
 
-                // Add deliveries to the list
-                deliveries.forEach(item => {
-                    const supplierName = item.supplier_name || 'Unknown Supplier';
-                    recentActivities.push({
-                        type: 'Delivery',
-                        description: `${item.coal_kg} kg of coal delivered from ${supplierName}.`,
-                        timestamp: new Date(item.created_at)
-                    });
-                });
-                
-                // Sort by timestamp in descending order
-                recentActivities.sort((a, b) => b.timestamp - a.timestamp);
-                
-                cachedRecentActivities = recentActivities; // Cache the fetched data
-                return recentActivities;
+                // Fetch recent GPM readings
+                const { data: gpmReadings, error: gpmReadingsError } = await supabaseClient
+                    .from('gpm_readings')
+                    .select('created_at, gpm, operator')
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+                if (gpmReadingsError) throw gpmReadingsError;
 
-            } catch (err) {
-                console.error("Error fetching recent activity:", err.message);
-                showAlert(`Error fetching recent activity: ${err.message}`);
+                const formattedGPMReadings = gpmReadings.map(g => ({
+                    created_at: g.created_at,
+                    type: 'gpm_reading',
+                    description: `Bagong GPM reading na ${g.gpm}`,
+                    member: g.operator || 'N/A'
+                }));
+
+                // Combine and sort all activities
+                let allActivities = [...formattedEndorsements, ...formattedDeliveries, ...formattedGPMReadings];
+                allActivities.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                cachedRecentActivities = allActivities;
+                return allActivities;
+            } catch (error) {
+                console.error("Error fetching recent activity:", error.message);
+                showAlert("Error fetching recent activity: " + error.message);
                 return [];
             }
         }
-        
-        // Render recent activity to the UI, with optional search query
-        function renderRecentActivity(activities, searchQuery = '') {
-            const listContainer = document.getElementById('recent-activity-list');
-            listContainer.innerHTML = ''; // Clear previous content
-            
-            const filteredActivities = activities.filter(activity =>
-                activity.description.toLowerCase().includes(searchQuery.toLowerCase())
-            );
 
-            if (filteredActivities.length === 0) {
-                listContainer.innerHTML = `<p class="text-gray-400 text-center">No results found for "${searchQuery}".</p>`;
-                return;
+        async function fetchAndRenderQuickStats() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const endOfDay = new Date();
+                endOfDay.setHours(23, 59, 59, 999);
+
+                // Fetch Total Members for today only
+                const { count: membersCount, error: membersError } = await supabaseClient
+                    .from('members')
+                    .select('*', { count: 'exact' })
+                    .gte('created_at', today)
+                    .lt('created_at', endOfDay.toISOString());
+                if (membersError) throw membersError;
+                document.getElementById('totalMembers').textContent = membersCount;
+
+                // Fetch Total Endorsements for today only
+                const { count: endorsementsCount, error: endorsementsError } = await supabaseClient
+                    .from('endorsement')
+                    .select('*', { count: 'exact' })
+                    .gte('created_at', today)
+                    .lt('created_at', endOfDay.toISOString());
+                if (endorsementsError) throw endorsementsError;
+                document.getElementById('totalEndorsements').textContent = endorsementsCount;
+
+                // Fetch total coal delivered for today only
+                const { data: deliveriesData, error: deliveriesError } = await supabaseClient
+                    .from('delivery_logs')
+                    .select('coal_kg')
+                    .gte('created_at', today)
+                    .lt('created_at', endOfDay.toISOString());
+                if (deliveriesError) throw deliveriesError;
+                const totalCoal = deliveriesData.reduce((sum, log) => sum + log.coal_kg, 0);
+                document.getElementById('coalDelivered').textContent = totalCoal.toLocaleString();
+
+                // Fetch the latest GPM reading
+                const { data: latestGPMData, error: gpmError } = await supabaseClient
+                    .from('gpm_readings')
+                    .select('gpm')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (gpmError) throw gpmError;
+
+                const latestGPM = latestGPMData.length > 0 ? latestGPMData[0].gpm.toFixed(2) : 0;
+                document.getElementById('averageGPM').textContent = latestGPM;
+
+            } catch (error) {
+                console.error("Error fetching quick stats:", error.message);
+                showAlert("Error fetching quick stats: " + error.message);
+            }
+        }
+        
+        async function fetchQuickStatsAndCharts(startDate, endDate) {
+            try {
+                // Fetch Total Members for the specified date range
+                const { count: membersCount, error: membersError } = await supabaseClient
+                    .from('members')
+                    .select('*', { count: 'exact' })
+                    .gte('created_at', startDate)
+                    .lt('created_at', endDate);
+                if (membersError) throw membersError;
+                document.getElementById('totalMembers-old').textContent = membersCount;
+
+                // Fetch Total Endorsements for the specified date range
+                const { count: endorsementsCount, error: endorsementsError } = await supabaseClient
+                    .from('endorsement')
+                    .select('*', { count: 'exact' })
+                    .gte('created_at', startDate)
+                    .lt('created_at', endDate);
+                if (endorsementsError) throw endorsementsError;
+                document.getElementById('totalEndorsements-old').textContent = endorsementsCount;
+
+                // Fetch total coal delivered for the specified date range and data for charts
+                const { data: deliveriesData, error: deliveriesError } = await supabaseClient
+                    .from('delivery_logs')
+                    .select('coal_kg, created_at, supplier_name')
+                    .gte('created_at', startDate)
+                    .lt('created_at', endDate);
+                if (deliveriesError) throw deliveriesError;
+                const totalCoal = deliveriesData.reduce((sum, log) => sum + log.coal_kg, 0);
+                document.getElementById('coalDelivered-old').textContent = totalCoal.toLocaleString();
+
+                // Fetch GPM data for the specified date range and chart
+                const { data: gpmData, error: gpmError } = await supabaseClient
+                    .from('gpm_readings')
+                    .select('gpm, created_at')
+                    .gte('created_at', startDate)
+                    .lt('created_at', endDate);
+                if (gpmError) throw gpmError;
+                const averageGPM = gpmData.length > 0 ? (gpmData.reduce((sum, reading) => sum + reading.gpm, 0) / gpmData.length).toFixed(2) : 0;
+                document.getElementById('averageGPM-old').textContent = averageGPM;
+                
+                // Fetch Endorsements data for the chart
+                const { data: endorsementsData, error: endorsementsDataError } = await supabaseClient
+                    .from('endorsement')
+                    .select('area')
+                    .gte('created_at', startDate)
+                    .lt('created_at', endDate);
+                if (endorsementsDataError) throw endorsementsDataError;
+
+                // Update charts with the filtered data
+                renderGPMChart(gpmData);
+                renderDailyCoalDeliveryChart(deliveriesData);
+                renderEndorsementsByTeamAreaChart(endorsementsData);
+                renderCoalBySupplierChart(deliveriesData);
+            } catch (error) {
+                console.error("Error fetching quick stats:", error.message);
+                showAlert("Error fetching quick stats: " + error.message);
+            }
+        }
+        
+        // Helper functions to render charts with filtered data
+        
+        //gpm chart 
+        function renderGPMChart(gpmData) {
+            const dates = gpmData.map(item => item.created_at);
+            const gpms = gpmData.map(item => item.gpm);
+
+            const ctx = document.getElementById('gpmChart').getContext('2d');
+            if (charts.gpmChart) {
+                charts.gpmChart.destroy();
             }
 
-            filteredActivities.slice(0, 10).forEach(activity => { // Show top 10 results
-                const activityItem = document.createElement('div');
-                activityItem.className = 'flex items-center space-x-3 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg';
-                
-                let iconClass = '';
-                let iconBgClass = '';
-                if (activity.type === 'Endorsement') {
-                    iconClass = 'fas fa-list text-abn-green';
-                    iconBgClass = 'bg-white dark:bg-gray-800';
-                } else if (activity.type === 'Delivery') {
-                    iconClass = 'fas fa-truck text-blue-500';
-                    iconBgClass = 'bg-white dark:bg-gray-800';
+            charts.gpmChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'GPM Readings',
+                        data: gpms,
+                        borderColor: '#1DB954',
+                        backgroundColor: 'rgba(29, 185, 84, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'll'
+                            },
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'GPM'
+                            }
+                        }
+                    }
                 }
-
-                activityItem.innerHTML = `
-                    <div class="p-2 rounded-full ${iconBgClass}">
-                        <i class="${iconClass}"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-800 dark:text-white">${activity.description}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${activity.timestamp.toLocaleString()}</p>
-                    </div>
-                `;
-                listContainer.appendChild(activityItem);
             });
         }
 
-        // Update the quick stats
-        async function updateOverviewData(filter) {
-            toggleQuickStatsLoading(true);
-            const range = getDateRange(filter);
-            if (!range) {
-                toggleQuickStatsLoading(false);
-                return;
-            }
-            
-            const [totalMembers, totalEndorsements, coalDelivered, averageGPM] = await Promise.all([
-                fetchTotalMembers(range),
-                fetchTotalEndorsements(range),
-                fetchCoalDelivered(range),
-                fetchAverageGPM(range)
-            ]);
+        //endorsement chart
+        function renderEndorsementsByTeamAreaChart(endorsements) {
+            // Step 2: Ihanda ang data para sa Chart.js
+            const endorsementCounts = {};
+            endorsements.forEach(item => {
+                const areaName = item.area || 'Unknown Area';
+                if (endorsementCounts[areaName]) {
+                    endorsementCounts[areaName]++;
+                } else {
+                    endorsementCounts[areaName] = 1;
+                }
+            });
+            const labels = Object.keys(endorsementCounts);
+            const values = Object.values(endorsementCounts);
 
-            document.getElementById('totalMembers').textContent = totalMembers.toLocaleString();
-            document.getElementById('totalEndorsements').textContent = totalEndorsements.toLocaleString();
-            document.getElementById('coalDelivered').textContent = coalDelivered.toLocaleString();
-            document.getElementById('averageGPM').textContent = averageGPM;
-            
-            // Also update the original quick stats section
-            document.getElementById('totalMembers-old').textContent = totalMembers.toLocaleString();
-            document.getElementById('totalEndorsements-old').textContent = totalEndorsements.toLocaleString();
-            document.getElementById('coalDelivered-old').textContent = coalDelivered.toLocaleString();
-            document.getElementById('averageGPM-old').textContent = averageGPM;
-            
-            toggleQuickStatsLoading(false);
+            const ctx = document.getElementById('endorsementsByTeamAreaChart').getContext('2d');
+            if (charts.endorsementsByTeamAreaChart) {
+                charts.endorsementsByTeamAreaChart.destroy();
+            }
+
+            charts.endorsementsByTeamAreaChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#1DB954',
+                            '#FFCD56',
+                            '#FF6384',
+                            '#36A2EB',
+                            '#9966FF',
+                            '#FF9F40'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Endorsements by Area',
+                            color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                        }
+                    }
+                }
+            });
         }
 
-        // Update the charts
-        async function updateCharts(filter) {
-            const range = getDateRange(filter);
-            if (!range) return;
-            const chartData = await fetchAllChartData(range);
+        // coal supplier chart
+        function renderCoalBySupplierChart(deliveries) {
+            const supplierData = deliveries.reduce((acc, curr) => {
+                const supplierName = curr.supplier_name || 'Unknown Supplier';
+                if (!acc[supplierName]) {
+                    acc[supplierName] = 0;
+                }
+                acc[supplierName] += curr.coal_kg / 1000;
+                return acc;
+            }, {});
 
-            // Coal Delivery Chart (Bar)
-            const coalCtx = document.getElementById('coalDeliveryChart').getContext('2d');
-            if (charts.coal) charts.coal.destroy();
-            charts.coal = new Chart(coalCtx, {
+            const labels = Object.keys(supplierData);
+            const values = Object.values(supplierData);
+
+            const ctx = document.getElementById('coalBySupplierChart').getContext('2d');
+
+            if (charts.coalBySupplierChart) {
+                charts.coalBySupplierChart.destroy();
+            }
+
+            charts.coalBySupplierChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#1DB954',
+                            '#FFCD56',
+                            '#FF6384',
+                            '#36A2EB',
+                            '#9966FF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Coal Delivered by Supplier (MT)',
+                            color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                        }
+                    }
+                }
+            });
+        }
+
+        // coal daily delivery chart 
+        function renderDailyCoalDeliveryChart(deliveries) {
+            const dailyData = deliveries.reduce((acc, curr) => {
+                const date = new Date(curr.created_at).toISOString().split('T')[0];
+                acc[date] = (acc[date] || 0) + curr.coal_kg;
+                return acc;
+            }, {});
+
+            const dates = Object.keys(dailyData);
+            const coalAmounts = Object.values(dailyData);
+            
+            const ctx = document.getElementById('coalDeliveryChart').getContext('2d');
+            
+            if (charts.coalDeliveryChart) {
+                charts.coalDeliveryChart.destroy();
+            }
+
+            charts.coalDeliveryChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: chartData.coal.labels,
+                    labels: dates,
                     datasets: [{
                         label: 'Coal Delivered (kg)',
-                        data: chartData.coal.values,
+                        data: coalAmounts,
                         backgroundColor: '#1DB954',
                         borderColor: '#1DB954',
                         borderWidth: 1
@@ -781,164 +895,374 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'll'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
                         y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            // GPM Chart (Line)
-            const gpmCtx = document.getElementById('gpmChart').getContext('2d');
-            if (charts.gpm) charts.gpm.destroy();
-            charts.gpm = new Chart(gpmCtx, {
-                type: 'line',
-                data: {
-                    labels: chartData.gpm.labels,
-                    datasets: [{
-                        label: 'GPM Readings',
-                        data: chartData.gpm.values,
-                        borderColor: '#FF6384',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: true,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            // Endorsements by Team Area Chart (Pie)
-            // UPDATED CHART ID
-            const areaColors = getRandomColors(chartData.endorsementsByTeamArea.labels.length);
-            const areaCtx = document.getElementById('endorsementsByTeamAreaChart').getContext('2d');
-            if (charts.endorsementsByTeamArea) charts.endorsementsByTeamArea.destroy();
-            charts.endorsementsByTeamArea = new Chart(areaCtx, {
-                type: 'pie',
-                data: {
-                    labels: chartData.endorsementsByTeamArea.labels,
-                    datasets: [{
-                        label: 'Endorsements by Team Area', // UPDATED LABEL
-                        data: chartData.endorsementsByTeamArea.values,
-                        backgroundColor: areaColors,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                }
-            });
-
-            // Coal Delivered by Supplier Chart (Bar)
-            const supplierColors = getRandomColors(chartData.coalBySupplier.labels.length);
-            const supplierCtx = document.getElementById('coalBySupplierChart').getContext('2d');
-            if (charts.coalBySupplier) charts.coalBySupplier.destroy();
-            charts.coalBySupplier = new Chart(supplierCtx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.coalBySupplier.labels,
-                    datasets: [{
-                        label: 'Coal Delivered (kg)',
-                        data: chartData.coalBySupplier.values,
-                        backgroundColor: supplierColors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Kilograms (kg)'
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Initial setup and event listeners
-        document.addEventListener('DOMContentLoaded', () => {
+        // =========================================================
+        // New Functions for Sidebar Sections
+        // =========================================================
+
+        async function fetchAndRenderEndorsements() {
+            const tableBody = document.getElementById('endorsements-table-body');
+            tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">Loading endorsements...</td></tr>';
+            try {
+                // The schema provided does not have a foreign key to the members table, so we select columns directly.
+                const { data, error } = await supabaseClient
+                    .from('endorsement')
+                    .select('created_at, area, operators, opscrew, activity_description')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                
+                tableBody.innerHTML = ''; // Clear loading message
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">No endorsements found.</td></tr>';
+                    return;
+                }
+
+                data.forEach(endorsement => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            ${new Date(endorsement.created_at).toLocaleString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${endorsement.area}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${endorsement.operators ? endorsement.operators.join(', ') : 'N/A'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${endorsement.opscrew ? endorsement.opscrew.join(', ') : 'N/A'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${endorsement.activity_description || 'N/A'}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching endorsements:", error.message);
+                showAlert("Error fetching endorsements: " + error.message);
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-red-500">Failed to load data.</td></tr>';
+            }
+        }
+
+        async function fetchAndRenderDeliveries() {
+            const tableBody = document.getElementById('deliveries-table-body');
+            tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">Loading deliveries...</td></tr>';
+            try {
+                // The schema provided does not have a foreign key to the members table, so we select columns directly.
+                const { data, error } = await supabaseClient
+                    .from('delivery_logs')
+                    .select('created_at, supplier_name, coal_kg, driver_name')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                
+                tableBody.innerHTML = ''; // Clear loading message
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">No deliveries found.</td></tr>';
+                    return;
+                }
+
+                data.forEach(delivery => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            ${new Date(delivery.created_at).toLocaleString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${delivery.supplier_name || 'N/A'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${delivery.driver_name || 'N/A'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${delivery.coal_kg.toLocaleString()} kg
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching deliveries:", error.message);
+                showAlert("Error fetching deliveries: " + error.message);
+                tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-red-500">Failed to load data.</td></tr>';
+            }
+        }
+
+        async function fetchAndRenderGPMReadings() {
+            const tableBody = document.getElementById('gpm-readings-table-body');
+            tableBody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">Loading GPM readings...</td></tr>';
+            try {
+                // The schema provided does not have a foreign key to the members table, so we select columns directly.
+                const { data, error } = await supabaseClient
+                    .from('gpm_readings')
+                    .select('created_at, gpm, operator')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                tableBody.innerHTML = ''; // Clear loading message
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">No GPM readings found.</td></tr>';
+                    return;
+                }
+
+                data.forEach(reading => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            ${new Date(reading.created_at).toLocaleString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${reading.operator}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                            ${reading.gpm}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching GPM readings:", error.message);
+                showAlert("Error fetching GPM readings: " + error.message);
+                tableBody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-red-500">Failed to load data.</td></tr>';
+            }
+        }
+        
+        async function fetchAndRenderTeamMembers() {
+            const tableBody = document.getElementById('team-members-table-body');
+            tableBody.innerHTML = '<tr><td colspan="2" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">Loading team members...</td></tr>';
+            try {
+                // The schema provided does not have an email column, so we select name and team directly.
+                const { data, error } = await supabaseClient
+                    .from('members')
+                    .select('name, team')
+                    .order('name', { ascending: true });
+                
+                if (error) throw error;
+                
+                tableBody.innerHTML = ''; // Clear loading message
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="2" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500">No team members found.</td></tr>';
+                    return;
+                }
+
+                data.forEach(member => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                            ${member.name}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${member.team}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching team members:", error.message);
+                showAlert("Error fetching team members: " + error.message);
+                tableBody.innerHTML = '<tr><td colspan="2" class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-red-500">Failed to load data.</td></tr>';
+            }
+        }
+
+        // =========================================================
+        // Main Script Logic
+        // =========================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginPage = document.getElementById('login-page');
+            const mainDashboard = document.getElementById('main-dashboard');
+            const loginButton = document.getElementById('login-button');
+            const authCodeInput = document.getElementById('auth-code-input');
+            const togglePassword = document.getElementById('togglePassword');
+            const sidebarLinks = document.querySelectorAll('#sidebar nav a');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+            const mainContent = document.querySelector('.lg\\:ml-64');
+            // Logout Dropdown functionality
+            const profileMenuButton = document.getElementById('profile-menu-button');
+            const profileMenu = document.getElementById('profile-menu');
+            const logoutButton = document.getElementById('logout-button');
+            
+            // NEW: Quick stats filter functionality
             const dateFilterSelect = document.getElementById('dateFilter');
-            const customDateInputsContainer = document.getElementById('custom-date-inputs');
+            const customDateInputs = document.getElementById('custom-date-inputs');
             const customDateStartInput = document.getElementById('customDateStart');
             const customDateEndInput = document.getElementById('customDateEnd');
             const applyDateFilterButton = document.getElementById('apply-date-filter');
-            const body = document.body;
 
-            // --- Login Page Logic ---
-            const loginPage = document.getElementById('login-page');
-            const mainDashboard = document.getElementById('main-dashboard');
-            const authCodeInput = document.getElementById('auth-code-input');
-            const loginButton = document.getElementById('login-button');
-            const togglePassword = document.getElementById('togglePassword');
-            const passcode = 'abn2025';
+            function updateQuickStatsFilter() {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let startDate;
+                let endDate = new Date(today);
+                endDate.setDate(endDate.getDate() + 1);
+                endDate.setMilliseconds(endDate.getMilliseconds() - 1);
 
-            loginButton.addEventListener('click', () => {
-                if (authCodeInput.value === passcode) {
-                    loginPage.classList.add('hidden');
-                    mainDashboard.classList.remove('hidden');
-                    // Load data only after successful login
-                    const initialFilter = dateFilterSelect.value;
-                    updateOverviewData(initialFilter);
-                    updateCharts(initialFilter);
-                    fetchRecentActivity().then(activities => renderRecentActivity(activities));
+                switch (dateFilterSelect.value) {
+                    case 'today':
+                        startDate = today;
+                        break;
+                    case 'yesterday':
+                        startDate = new Date(today);
+                        startDate.setDate(today.getDate() - 1);
+                        endDate = today;
+                        break;
+                    case 'last7days':
+                        startDate = new Date(today);
+                        startDate.setDate(today.getDate() - 7);
+                        break;
+                    case 'last30days':
+                        startDate = new Date(today);
+                        startDate.setDate(today.getDate() - 30);
+                        break;
+                    case 'thisMonth':
+                        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+                        endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+                        break;
+                    case 'custom':
+                        customDateInputs.classList.remove('hidden');
+                        return;
+                    default:
+                        return;
+                }
+                customDateInputs.classList.add('hidden');
+                fetchQuickStatsAndCharts(startDate.toISOString(), endDate.toISOString());
+            }
+
+            dateFilterSelect.addEventListener('change', updateQuickStatsFilter);
+            applyDateFilterButton.addEventListener('click', () => {
+                const startDate = new Date(customDateStartInput.value);
+                const endDate = new Date(customDateEndInput.value);
+                if (startDate && endDate) {
+                    endDate.setHours(23, 59, 59, 999);
+                    fetchQuickStatsAndCharts(startDate.toISOString(), endDate.toISOString());
                 } else {
-                    showAlert('Incorrect authentication code. Please try again.');
+                    showAlert('Please select a valid date range.');
                 }
             });
-            
+
+            profileMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                profileMenu.classList.toggle('hidden');
+            });
+
+            logoutButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                mainDashboard.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+                authCodeInput.value = '';
+                profileMenu.classList.add('hidden');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (!profileMenuButton.contains(event.target) && !profileMenu.contains(event.target)) {
+                    profileMenu.classList.add('hidden');
+                }
+            });
+
             // Toggle password visibility
             togglePassword.addEventListener('click', () => {
                 const type = authCodeInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 authCodeInput.setAttribute('type', type);
-                // Toggle the eye icon
                 togglePassword.querySelector('i').classList.toggle('fa-eye');
                 togglePassword.querySelector('i').classList.toggle('fa-eye-slash');
             });
 
-            // Handle the custom modal closing
-            document.querySelector('.close-button').addEventListener('click', () => {
-                document.getElementById('alert-modal').classList.add('hidden');
-            });
-
-            // --- Existing Dashboard Logic ---
-
-            // Date filter event listener
-            dateFilterSelect.addEventListener('change', (e) => {
-                const filter = e.target.value;
-                if (filter === 'custom') {
-                    customDateInputsContainer.classList.remove('hidden');
+            // Login functionality
+            loginButton.addEventListener('click', () => {
+                // For demonstration, a simple hardcoded code. Replace with actual authentication logic (e.g., Supabase Auth).
+                if (authCodeInput.value === 'abn2025') { 
+                    loginPage.classList.add('hidden');
+                    mainDashboard.classList.remove('hidden');
+                    // Fetch data and render charts after login
+                    fetchAndRenderQuickStats();
+                    updateQuickStatsFilter(); // Initial call to load "Today" data for the filterable section
+                    fetchAndCombineRecentActivities().then(data => renderRecentActivity(data));
                 } else {
-                    customDateInputsContainer.classList.add('hidden');
-                    updateOverviewData(filter);
-                    updateCharts(filter);
-                    // Fetch recent activity regardless of filter
-                    fetchRecentActivity().then(activities => renderRecentActivity(activities));
+                    showAlert('Invalid authentication code.');
                 }
             });
             
-            applyDateFilterButton.addEventListener('click', () => {
-                const filter = dateFilterSelect.value;
-                if (filter === 'custom') {
-                    updateOverviewData(filter);
-                    updateCharts(filter);
-                    fetchRecentActivity().then(activities => renderRecentActivity(activities));
+            // Handle sidebar link clicks
+            function handleSidebarLinkClick(event) {
+                event.preventDefault();
+
+                const sections = document.querySelectorAll('#dashboard-content > div');
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                const links = document.querySelectorAll('#sidebar nav a');
+                links.forEach(link => {
+                    link.classList.remove('bg-abn-green', 'text-white');
+                    link.classList.add('text-gray-700', 'dark:text-gray-200');
+                });
+                
+                const targetId = this.getAttribute('data-target');
+                const targetSection = document.getElementById(targetId);
+
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    this.classList.add('bg-abn-green', 'text-white');
+                    this.classList.remove('text-gray-700', 'dark:text-gray-200');
+
+                    // Call the corresponding rendering function for the section
+                    if (targetId === 'endorsements-section') {
+                        fetchAndRenderEndorsements();
+                    } else if (targetId === 'deliveries-section') {
+                        fetchAndRenderDeliveries();
+                    } else if (targetId === 'gpm-readings-section') {
+                        fetchAndRenderGPMReadings();
+                    } else if (targetId === 'team-members-section') {
+                        fetchAndRenderTeamMembers();
+                    }
                 }
+
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.add('-translate-x-full');
+                    mainContent.classList.remove('lg:ml-64');
+                }
+            }
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', handleSidebarLinkClick);
             });
 
             // Dark mode toggle
-            const darkModeToggle = document.getElementById('darkModeToggle');
             darkModeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark:bg-gray-900');
-                if (body.classList.contains('dark:bg-gray-900')) {
+                body.classList.toggle('dark');
+                if (body.classList.contains('dark')) {
                     document.documentElement.classList.add('dark');
                     darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
                 } else {
@@ -947,15 +1271,56 @@
                 }
             });
 
-            // Sidebar toggle for mobile
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.lg\\:ml-64');
-
+            // Sidebar toggle for both mobile and desktop
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('-translate-x-full');
                 mainContent.classList.toggle('lg:ml-64');
             });
+            
+            function renderRecentActivity(activities, searchQuery = '') {
+                const activityList = document.getElementById('recent-activity-list');
+                activityList.innerHTML = '';
+                
+                const filteredActivities = activities.filter(activity => 
+                    activity.description.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    activity.member.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+
+                if (filteredActivities.length === 0) {
+                    activityList.innerHTML = `<p class="text-gray-400 text-center">No recent activity found.</p>`;
+                    return;
+                }
+
+                filteredActivities.forEach(activity => {
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'flex items-center space-x-4 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg';
+                    activityItem.innerHTML = `
+                        <div class="flex-shrink-0 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                            <i class="fas ${getActivityIcon(activity.type)}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center">
+                                <p class="font-semibold text-gray-900 dark:text-white">${activity.description} (<span class="font-normal text-sm">By: ${activity.member}</span>)</p>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">${new Date(activity.created_at).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                    activityList.appendChild(activityItem);
+                });
+            }
+
+            function getActivityIcon(activityType) {
+                switch (activityType) {
+                    case 'endorsement':
+                        return 'fa-file-alt';
+                    case 'delivery':
+                        return 'fa-truck';
+                    case 'gpm_reading':
+                        return 'fa-tachometer-alt';
+                    default:
+                        return 'fa-info-circle';
+                }
+            }
 
             // Recent activity search bar functionality
             const searchInput = document.getElementById('recent-activity-search');
