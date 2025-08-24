@@ -607,7 +607,7 @@
                     .from('endorsement')
                     .select('created_at, area, operators, activity_description')
                     .order('created_at', { ascending: false })
-                    .limit(3);
+                    .limit(2);
                 if (endorsementsError) throw endorsementsError;
 
                 const formattedEndorsements = endorsements.map(e => ({
@@ -622,7 +622,7 @@
                     .from('delivery_logs')
                     .select('created_at, supplier_name, coal_kg, driver_name')
                     .order('created_at', { ascending: false })
-                    .limit(3);
+                    .limit(2);
                 if (deliveriesError) throw deliveriesError;
 
                 const formattedDeliveries = deliveries.map(d => ({
@@ -637,7 +637,7 @@
                     .from('gpm_readings')
                     .select('created_at, gpm, operator')
                     .order('created_at', { ascending: false })
-                    .limit(3);
+                    .limit(2);
                 if (gpmReadingsError) throw gpmReadingsError;
 
                 const formattedGPMReadings = gpmReadings.map(g => ({
